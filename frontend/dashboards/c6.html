@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Criterion 6: Faculty Contributions — AI-NBA Readiness</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
+  <link rel="stylesheet" href="../css/base.css">
+  <link rel="stylesheet" href="../css/components.css">
+  <link rel="stylesheet" href="../css/dashboard.css">
+</head>
+<body class="dashboard-layout">
+
+  <div id="cursor-dot"  aria-hidden="true"></div>
+  <div id="cursor-ring" aria-hidden="true"></div>
+  <div id="toast-container" role="log" aria-live="polite"></div>
+
+  <aside class="sidebar" id="dashboard-sidebar"></aside>
+  <header class="topbar" id="dashboard-topbar"></header>
+
+  <div id="command-palette-backdrop">
+    <div class="command-palette-box">
+      <div class="command-palette-header">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/>
+        </svg>
+        <input type="text" id="cmd-palette-input" class="command-palette-input" placeholder="Type a command or jump to page..." autofocus>
+      </div>
+      <ul class="command-palette-list" id="cmd-palette-list"></ul>
+    </div>
+  </div>
+
+  <main class="dashboard-main">
+    <div class="dashboard-content">
+
+      <!-- Header Card with Readiness Ring -->
+      <section class="criterion-header-card" style="border-left: 4px solid var(--c6-accent);">
+        <div class="crit-meta">
+          <div class="chip chip--info" style="margin-bottom:var(--space-2);background:rgba(217,70,239,0.15);color:var(--fuchsia);">
+            Tier I UG (2026 Manual) • 120 Marks
+          </div>
+          <h1>Criterion 6: Faculty Contributions & Research</h1>
+          <p>"What are our faculty contributing to research and innovation?"</p>
+        </div>
+
+        <div class="readiness-ring-widget">
+          <div class="ring-svg-wrap">
+            <svg viewBox="0 0 60 60">
+              <circle class="ring-bg" cx="30" cy="30" r="26"/>
+              <circle class="ring-progress" id="c6-ring-progress" cx="30" cy="30" r="26" style="stroke:var(--fuchsia);"/>
+            </svg>
+            <div class="ring-val-label" id="c6-ring-pct">--%</div>
+          </div>
+          <div>
+            <div style="font-family:var(--font-mono);font-size:var(--text-xs);color:var(--text-muted);text-transform:uppercase;">Criterion Readiness</div>
+            <div style="font-size:var(--text-lg);font-weight:700;" id="c6-score-text">-- / 120 Marks</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Dashboard Tabs -->
+      <nav class="dash-tabs" role="tablist">
+        <button class="dash-tab-btn active" data-tab="tab-c6-reqs">Requirements (6.1 & 6.2)</button>
+        <button class="dash-tab-btn" data-tab="tab-c6-research">Year-wise R&D Stacked Chart</button>
+        <button class="dash-tab-btn" data-tab="tab-c6-leaderboard">Faculty Leaderboard</button>
+        <button class="dash-tab-btn" data-tab="tab-c6-certificates">Certificate Versioning</button>
+      </nav>
+
+      <!-- ── TAB 1: REQUIREMENTS (6.1 & 6.2) ── -->
+      <div class="tab-pane active" id="tab-c6-reqs">
+        <div class="requirements-card">
+          <div style="padding:var(--space-5);border-bottom:1px solid var(--glass-border);display:flex;justify-content:space-between;align-items:center;">
+            <div>
+              <h3 style="font-size:var(--text-lg);font-weight:700;">Criterion 6 Requirements</h3>
+              <p style="font-size:var(--text-xs);color:var(--text-muted);">6.1 Professional Development (60m) and 6.2 R&D (60m).</p>
+            </div>
+            <button class="btn btn--primary btn--sm" id="btn-eval-all-c6" data-require-role="HOD ADMIN">
+              Evaluate Criterion 6
+            </button>
+          </div>
+
+          <table class="req-table">
+            <thead>
+              <tr>
+                <th style="width: 80px;">CODE</th>
+                <th>REQUIREMENT TITLE</th>
+                <th style="width: 100px;">MAX MARKS</th>
+                <th style="width: 140px;">STATUS</th>
+                <th style="width: 180px; text-align: right;">ACTION</th>
+              </tr>
+            </thead>
+            <tbody id="c6-reqs-tbody">
+              <tr><td colspan="5" style="text-align:center;padding:2rem;">Loading requirements...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ── TAB 2: YEAR-WISE R&D STACKED CHART ── -->
+      <div class="tab-pane" id="tab-c6-research" style="display:none;">
+        <div class="chart-card">
+          <div class="chart-card-header">
+            <h3>Year-wise Research Contributions (Publications, Patents, Grants)</h3>
+            <span class="chip chip--info">Tier I 3-Year Average</span>
+          </div>
+          <div style="position:relative;height:320px;">
+            <canvas id="c6-research-chart"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── TAB 3: FACULTY LEADERBOARD ── -->
+      <div class="tab-pane" id="tab-c6-leaderboard" style="display:none;">
+        <div class="requirements-card">
+          <div style="padding:var(--space-5);border-bottom:1px solid var(--glass-border);display:flex;justify-content:space-between;align-items:center;">
+            <h3>Faculty R&D Leaderboard & Contribution Score</h3>
+            <button class="btn btn--outline btn--sm" id="btn-add-pub" data-require-role="HOD ADMIN FACULTY">+ Add Publication</button>
+          </div>
+          <table class="req-table">
+            <thead>
+              <tr>
+                <th>FACULTY</th>
+                <th>PUBLICATIONS (SCI/SCOPUS)</th>
+                <th>PATENTS GRANTED</th>
+                <th>RESEARCH GRANTS</th>
+                <th>TOTAL POINTS</th>
+              </tr>
+            </thead>
+            <tbody id="c6-leaderboard-tbody">
+              <tr>
+                <td>Dr. Priya Nair</td>
+                <td class="mono">14 (Q1: 8)</td>
+                <td class="mono">2</td>
+                <td class="mono">₹ 42.5 Lakhs</td>
+                <td><span class="chip chip--pass">94 pts</span></td>
+              </tr>
+              <tr>
+                <td>Dr. Rajesh Kumar</td>
+                <td class="mono">8 (Q1: 4)</td>
+                <td class="mono">1</td>
+                <td class="mono">₹ 18.0 Lakhs</td>
+                <td><span class="chip chip--pass">78 pts</span></td>
+              </tr>
+              <tr>
+                <td>Ms. Anitha Sharma</td>
+                <td class="mono">3 (Q2: 2)</td>
+                <td class="mono">0</td>
+                <td class="mono">₹ 3.5 Lakhs</td>
+                <td><span class="chip chip--info">46 pts</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ── TAB 4: CERTIFICATE VERSIONING ── -->
+      <div class="tab-pane" id="tab-c6-certificates" style="display:none;">
+        <div class="requirements-card">
+          <div style="padding:var(--space-5);border-bottom:1px solid var(--glass-border);display:flex;justify-content:space-between;align-items:center;">
+            <div>
+              <h3>Certificate Management & Version Replacement</h3>
+              <p style="font-size:var(--text-xs);color:var(--text-muted);">Replace expired FDP/workshop certificates with audit trail tracking.</p>
+            </div>
+            <button class="btn btn--primary btn--sm" id="btn-upload-cert" data-require-role="HOD ADMIN FACULTY">+ Upload Certificate</button>
+          </div>
+          <table class="req-table">
+            <thead>
+              <tr>
+                <th>CERTIFICATE TITLE</th>
+                <th>ORGANIZING BODY</th>
+                <th>DATE ISSUED</th>
+                <th>VERSION</th>
+                <th style="text-align:right;">ACTION</th>
+              </tr>
+            </thead>
+            <tbody id="c6-cert-tbody">
+              <tr>
+                <td>AI & Deep Learning FDP (5-Day)</td>
+                <td>IIT Madras / NPTEL</td>
+                <td class="mono">July 2024</td>
+                <td><span class="chip chip--info">v2.0</span></td>
+                <td style="text-align:right;">
+                  <button class="btn btn--outline btn--sm btn-replace-cert">Replace Version</button>
+                </td>
+              </tr>
+              <tr>
+                <td>Cloud Computing & Kubernetes Workshop</td>
+                <td>AWS Academy</td>
+                <td class="mono">October 2023</td>
+                <td><span class="chip chip--info">v1.0</span></td>
+                <td style="text-align:right;">
+                  <button class="btn btn--outline btn--sm btn-replace-cert">Replace Version</button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <script type="module" src="../js/dash/c6.js"></script>
+</body>
+</html>
+

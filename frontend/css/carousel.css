@@ -1,0 +1,321 @@
+/* ============================================================
+   CAROUSEL.CSS — Criteria Cards 3D Stage (Skiper 48 Port)
+   AI-NBA Readiness System
+   ============================================================ */
+
+#criteria-carousel-section {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: var(--space-20) var(--space-6) calc(var(--space-20) + 40px);
+  overflow: hidden;
+  transition: background var(--dur-slow) var(--ease-in-out);
+}
+
+/* Dynamic ambient glow shifted by active card */
+.carousel-ambient-glow {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 75vw;
+  height: 65vh;
+  background: radial-gradient(circle, var(--active-card-glow, rgba(0, 245, 160, 0.2)) 0%, transparent 70%);
+  filter: blur(110px);
+  pointer-events: none;
+  z-index: 0;
+  transition: background 0.8s ease;
+}
+
+/* 3D Stage Container */
+.criteria-cards-stage {
+  position: relative;
+  width: 100%;
+  max-width: 1240px;
+  height: 530px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  perspective: 1400px;
+  z-index: 2;
+  overflow: visible;
+}
+
+@media (max-width: 900px) {
+  .criteria-cards-stage {
+    max-width: 920px;
+    height: 490px;
+  }
+}
+
+@media (max-width: 600px) {
+  .criteria-cards-stage {
+    max-width: 100%;
+    height: 450px;
+  }
+}
+
+/* Each Slide / Card */
+.criterion-card-slide {
+  position: absolute;
+  width: 320px;
+  height: 490px;
+  border-radius: var(--radius-2xl); /* rounded-3xl */
+  background: var(--ink-800);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--shadow-xl);
+  overflow: hidden;
+  user-select: none;
+  transform-style: preserve-3d;
+  cursor: pointer;
+  will-change: transform, opacity;
+  transition: opacity 0.4s ease,
+              box-shadow 0.4s ease,
+              filter 0.4s ease;
+}
+
+@media (max-width: 600px) {
+  .criterion-card-slide {
+    width: 270px;
+    height: 420px;
+  }
+}
+
+/* Positions: Center (Active), Left (C6 upon scrolling), Right (C5) */
+.criterion-card-slide.is-center {
+  transform: translate3d(0, 0, 40px) scale(1);
+  z-index: 10;
+  opacity: 1;
+  box-shadow: 0 12px 48px rgba(0, 0, 0, 0.7), 0 0 30px var(--card-glow, rgba(0, 245, 160, 0.28));
+}
+
+.criterion-card-slide.is-left {
+  transform: translate3d(-390px, 0, -40px) rotateY(15deg) scale(0.88);
+  z-index: 5;
+  opacity: 0.85;
+  filter: brightness(0.9);
+}
+
+.criterion-card-slide.is-right {
+  transform: translate3d(390px, 0, -40px) rotateY(-15deg) scale(0.88);
+  z-index: 5;
+  opacity: 0.85;
+  filter: brightness(0.9);
+}
+
+.criterion-card-slide.is-left:hover {
+  opacity: 0.98;
+  filter: brightness(1.05);
+}
+
+.criterion-card-slide.is-right:hover {
+  opacity: 0.98;
+  filter: brightness(1.05);
+}
+
+/* Moving gradient border for ACTIVE card */
+.criterion-card-slide.is-center::before {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: inherit;
+  background: linear-gradient(
+    90deg,
+    var(--card-accent, var(--cyan)),
+    var(--violet),
+    var(--fuchsia),
+    var(--card-accent, var(--cyan))
+  );
+  background-size: 300% 300%;
+  z-index: 1;
+  animation: borderGlowMove 4s linear infinite;
+}
+
+@keyframes borderGlowMove {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* Inner Glass Content */
+.criterion-card-inner {
+  height: 100%;
+  padding: var(--space-8);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  position: relative;
+  z-index: 2;
+  border-radius: inherit;
+}
+
+@media (max-width: 600px) {
+  .criterion-card-inner {
+    padding: var(--space-5);
+  }
+}
+
+/* Header of the Card */
+.card-header-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.card-code {
+  font-family: var(--font-heading);
+  font-size: var(--text-4xl);
+  font-weight: 800;
+  color: var(--card-accent, var(--cyan));
+  letter-spacing: -0.03em;
+  text-shadow: 0 0 20px var(--card-glow, rgba(0, 245, 160, 0.4));
+}
+
+.card-icon-wrap {
+  width: 46px;
+  height: 46px;
+  border-radius: var(--radius-lg);
+  background: var(--surface-200);
+  border: 1px solid var(--glass-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--card-accent, var(--cyan));
+}
+
+/* Body of Card */
+.card-body-content {
+  margin: var(--space-3) 0;
+}
+
+.card-title {
+  font-size: var(--text-2xl);
+  font-weight: 700;
+  line-height: 1.2;
+  margin-bottom: var(--space-2);
+  color: var(--text-primary);
+}
+
+@media (max-width: 600px) {
+  .card-title { font-size: var(--text-xl); }
+}
+
+.card-question {
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+  line-height: 1.5;
+  font-style: italic;
+}
+
+/* Mini stat strip */
+.card-stat-strip {
+  background: var(--surface-100);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-3) var(--space-4);
+  margin-top: var(--space-3);
+}
+
+.stat-strip-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-2);
+}
+
+.stat-strip-label {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.stat-strip-pct {
+  font-family: var(--font-mono);
+  font-size: var(--text-base);
+  font-weight: 700;
+  color: var(--card-accent, var(--cyan));
+}
+
+/* Pass / Warning / Fail Mini Bar */
+.stat-mini-bar {
+  height: 6px;
+  border-radius: var(--radius-full);
+  background: var(--surface-300);
+  display: flex;
+  overflow: hidden;
+}
+
+.bar-seg-pass    { background: var(--pass);    height: 100%; transition: width 0.8s ease; }
+.bar-seg-warning { background: var(--warning); height: 100%; transition: width 0.8s ease; }
+.bar-seg-fail    { background: var(--fail);    height: 100%; transition: width 0.8s ease; }
+
+/* Locked shimmer for unauthenticated users */
+.locked-shimmer {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+}
+
+.shimmer-box {
+  flex: 1;
+  height: 12px;
+  border-radius: 4px;
+}
+
+/* Card CTA button */
+.card-cta-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-3) var(--space-5);
+  border-radius: var(--radius-lg);
+  background: var(--surface-200);
+  border: 1px solid var(--glass-border);
+  color: var(--text-primary);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  transition: all var(--dur-normal) ease;
+  cursor: pointer;
+}
+
+.card-cta-btn:hover {
+  background: var(--card-accent, var(--cyan));
+  color: #000000;
+  box-shadow: 0 0 20px var(--card-glow, rgba(0, 245, 160, 0.4));
+  transform: translateY(-2px);
+}
+
+/* Role lock badge */
+.criterion-card-slide.role-locked {
+  filter: grayscale(0.8) opacity(0.65);
+  cursor: not-allowed;
+}
+
+.role-lock-badge {
+  position: absolute;
+  top: var(--space-4);
+  right: var(--space-4);
+  background: rgba(239, 68, 68, 0.2);
+  border: 1px solid var(--fail-border);
+  color: var(--fail);
+  padding: 0.2rem 0.5rem;
+  border-radius: var(--radius-full);
+  font-size: 10px;
+  font-family: var(--font-mono);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  z-index: 10;
+}

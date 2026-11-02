@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI-NBA Readiness System — Your Department Digitally Twinned</title>
+  <meta name="description" content="AI-driven continuous accreditation readiness platform for higher education institutions undergoing NBA Tier I (2026 Edition) review.">
+
+  <!-- Google Fonts Preconnect -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+  <!-- Swiper 11 CSS (Vanilla bundle) -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+
+  <!-- Project CSS -->
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/landing.css">
+  <link rel="stylesheet" href="css/carousel.css">
+</head>
+<body>
+
+  <!-- Custom Cursor -->
+  <div id="cursor-dot"  aria-hidden="true"></div>
+  <div id="cursor-ring" aria-hidden="true"></div>
+
+  <!-- Toast Container -->
+  <div id="toast-container" role="log" aria-live="polite"></div>
+
+  <!-- SVG Gradient Definitions for Gauges & Icons -->
+  <svg style="position: absolute; width: 0; height: 0;" aria-hidden="true">
+    <defs>
+      <linearGradient id="cyan-violet-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="#00F5A0" />
+        <stop offset="100%" stop-color="#8B5CF6" />
+      </linearGradient>
+    </defs>
+  </svg>
+
+  <!-- ══════════════════ NAVIGATION BAR ══════════════════ -->
+  <header class="landing-nav" id="landing-nav">
+    <a href="index.html" class="landing-nav-brand">
+      <svg viewBox="0 0 48 48" fill="none">
+        <rect width="48" height="48" rx="12" fill="url(#cyan-violet-grad)" opacity="0.2"/>
+        <path d="M14 34V24l10-8 10 8v10M20 34v-8h8v8" stroke="url(#cyan-violet-grad)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+        <circle cx="24" cy="14" r="3" stroke="url(#cyan-violet-grad)" stroke-width="2"/>
+      </svg>
+      <span>AI-NBA Twin</span>
+    </a>
+
+    <ul class="landing-nav-links">
+      <li><a href="#problem">The Problem</a></li>
+      <li><a href="#loop-section">Continuous Loop</a></li>
+      <li><a href="#digital-twin-reveal">Digital Twin</a></li>
+      <li><a href="#compliance-demo">Compliance Engine</a></li>
+      <li><a href="#criteria-carousel-section">Criteria</a></li>
+      <li><a href="#ai-advisory">AI Agents</a></li>
+      <li><a href="#virtual-inspection">Virtual Inspection</a></li>
+    </ul>
+
+    <div class="landing-nav-actions">
+      <button class="btn btn--ghost btn--sm" data-theme-toggle aria-label="Toggle theme">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="5"/>
+          <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2"/>
+        </svg>
+      </button>
+      <div id="nav-user-actions" style="display:flex;gap:var(--space-2);align-items:center;">
+        <a href="login.html" class="btn btn--ghost btn--sm">Sign In</a>
+        <a href="register.html" class="btn btn--primary btn--sm" data-magnetic>Faculty Register</a>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- ══════════════════ 1. HERO SECTION ══════════════════ -->
+    <section class="landing-section" id="hero">
+      <div class="hero-spotlight"></div>
+      <canvas id="hero-canvas" class="hero-bg-canvas"></canvas>
+
+      <div class="hero-content">
+        <div class="section-tag">Continuous Accreditation Intelligence</div>
+
+        <h1 class="hero-title" id="hero-title">
+          <span class="text-roll" data-text="Your department." data-center="true">Your department.</span><br>
+          <span class="text-roll gradient-text" data-text="Digitally twinned." data-center="true">Digitally twinned.</span>
+        </h1>
+
+        <p class="hero-desc">
+          Transform accreditation from a last-minute panic into a continuous, automated workflow.
+          Simulate official NBA Tier I reviews with a deterministic compliance engine and 8 advisory AI agents.
+        </p>
+
+        <div class="hero-ctas">
+          <a href="#criteria-carousel-section" class="btn btn--primary btn--lg" data-magnetic>
+            Explore Criteria Dashboards
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M5 12h14M12 5l7 7-7 7"/>
+            </svg>
+          </a>
+          <a href="login.html" class="btn btn--ghost btn--lg">
+            Sign In to Console
+          </a>
+        </div>
+
+        <div style="margin-top:var(--space-3);font-size:var(--text-xs);color:var(--text-muted);display:flex;align-items:center;justify-content:center;gap:var(--space-2);flex-wrap:wrap;">
+          <span>Instant Role Access:</span>
+          <a href="login.html?role=admin" style="color:var(--cyan);text-decoration:underline;">Admin Console</a>
+          <span style="opacity:0.4;">•</span>
+          <a href="login.html?role=hod" style="color:var(--cyan);text-decoration:underline;">HOD Portal</a>
+          <span style="opacity:0.4;">•</span>
+          <a href="login.html?role=faculty" style="color:var(--cyan);text-decoration:underline;">Faculty Sign In</a>
+          <span style="opacity:0.4;">•</span>
+          <a href="register.html" style="color:var(--text-secondary);text-decoration:underline;">Faculty Registration</a>
+        </div>
+
+        <div class="hero-metrics-pill">
+          <span><span class="dot" style="background:var(--pass);"></span> Tier I (2026 Manual)</span>
+          <span><span class="dot" style="background:var(--cyan);"></span> Deterministic Python Engine</span>
+          <span><span class="dot" style="background:var(--violet);"></span> pgvector RAG Evidence</span>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- ══════════════════ 2. THE PROBLEM ══════════════════ -->
+    <section class="landing-section" id="problem">
+      <div class="section-tag" style="background:rgba(239,68,68,0.1);border-color:var(--fail-border);color:var(--fail);">
+        The Traditional Process
+      </div>
+      <h2 class="section-title">The Accreditation Chaos</h2>
+      <p class="section-subtitle">
+        What happens when NBA announces a visit next month? Scattered files, missing evidence, and panic.
+      </p>
+
+      <div class="problem-container">
+        <div class="chaos-center-badge">
+          NBA visit next month 😰
+        </div>
+
+        <!-- Flying Chaos Cards -->
+        <div class="chaos-card" style="top: 15%; left: 10%;">
+          <span class="chaos-icon">📊</span>
+          <div>
+            <strong>Excel Sheets</strong>
+            <div>Outdated CO-PO averages</div>
+          </div>
+        </div>
+
+        <div class="chaos-card" style="top: 20%; right: 10%;">
+          <span class="chaos-icon">📁</span>
+          <div>
+            <strong>Google Drive</strong>
+            <div>Broken shared links</div>
+          </div>
+        </div>
+
+        <div class="chaos-card" style="bottom: 18%; left: 14%;">
+          <span class="chaos-icon">📄</span>
+          <div>
+            <strong>Paper Folders</strong>
+            <div>Missing 2023 certificates</div>
+          </div>
+        </div>
+
+        <div class="chaos-card" style="bottom: 22%; right: 12%;">
+          <span class="chaos-icon">🔢</span>
+          <div>
+            <strong>Manual Calculations</strong>
+            <div>SFR formula discrepancies</div>
+          </div>
+        </div>
+
+        <div class="chaos-card" style="top: 48%; left: 4%;">
+          <span class="chaos-icon">🔍</span>
+          <div>
+            <strong>Missing Records</strong>
+            <div>Course file incomplete</div>
+          </div>
+        </div>
+
+        <div class="chaos-card" style="top: 50%; right: 5%;">
+          <span class="chaos-icon">⏱️</span>
+          <div>
+            <strong>Overdue Actions</strong>
+            <div>Remedial class records lost</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- ══════════════════ 3. THE LOOP ══════════════════ -->
+    <section class="landing-section" id="loop-section">
+      <div class="section-tag">Continuous Closed-Loop Workflow</div>
+      <h2 class="section-title">The 6-Step Engine</h2>
+      <p class="section-subtitle">
+        Continuous accreditation readiness happens throughout the academic year, not one week before the visit.
+      </p>
+
+      <div class="loop-horizontal-wrapper">
+        <!-- 1. COLLECT -->
+        <div class="loop-step-card">
+          <div class="loop-step-num">01</div>
+          <div class="loop-step-icon">📥</div>
+          <h3 class="loop-step-title">COLLECT</h3>
+          <p class="loop-step-desc">
+            Gather department data: faculty profiles, enrolled students, course syllabi, assignments, and publications.
+          </p>
+        </div>
+
+        <!-- 2. STORE -->
+        <div class="loop-step-card">
+          <div class="loop-step-num">02</div>
+          <div class="loop-step-icon">🗄️</div>
+          <h3 class="loop-step-title">STORE</h3>
+          <p class="loop-step-desc">
+            Maintain verified evidence with page citations, version control, and contextual metadata in pgvector.
+          </p>
+        </div>
+
+        <!-- 3. CHECK -->
+        <div class="loop-step-card">
+          <div class="loop-step-num">03</div>
+          <div class="loop-step-icon">⚖️</div>
+          <h3 class="loop-step-title">CHECK</h3>
+          <p class="loop-step-desc">
+            Deterministic rules evaluate criteria requirements against the official NBA Tier I (2026 Manual).
+          </p>
+        </div>
+
+        <!-- 4. ANALYZE -->
+        <div class="loop-step-card">
+          <div class="loop-step-num">04</div>
+          <div class="loop-step-icon">🧠</div>
+          <h3 class="loop-step-title">ANALYZE</h3>
+          <p class="loop-step-desc">
+            Identify weak COs, formula boundaries, threshold warnings, and ungrounded qualitative claims.
+          </p>
+        </div>
+
+        <!-- 5. FIX -->
+        <div class="loop-step-card">
+          <div class="loop-step-num">05</div>
+          <div class="loop-step-icon">🛠️</div>
+          <h3 class="loop-step-title">FIX</h3>
+          <p class="loop-step-desc">
+            Automatically assign corrective action items to responsible faculty with strict deadlines and reminders.
+          </p>
+        </div>
+
+        <!-- 6. PROVE -->
+        <div class="loop-step-card">
+          <div class="loop-step-num">06</div>
+          <div class="loop-step-icon">🏆</div>
+          <h3 class="loop-step-title">PROVE</h3>
+          <p class="loop-step-desc">
+            Generate auditable PDF and Excel reports with verified evidence links ready for the Visiting Team.
+          </p>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- ══════════════════ 4. DIGITAL TWIN REVEAL ══════════════════ -->
+    <section class="landing-section" id="digital-twin-reveal">
+      <div class="section-tag">Core Concept</div>
+      <h2 class="section-title">The Department Digital Twin</h2>
+      <p class="section-subtitle">
+        A real-time software twin of your physical department constantly synced with NBA accreditation benchmarks.
+      </p>
+
+      <div class="twin-graph-preview">
+        <div class="twin-center-hub">
+          <h3>DIGITAL TWIN</h3>
+          <span style="font-family:var(--font-mono);font-size:11px;color:var(--cyan);">LIVE SYNCHRONIZED</span>
+        </div>
+
+        <div class="twin-node" style="top: 15%; left: 12%;">👨‍🏫 Faculty Roster</div>
+        <div class="twin-node" style="top: 18%; right: 12%;">🎓 Students & Results</div>
+        <div class="twin-node" style="bottom: 15%; left: 10%;">📚 CO-PO Mapping</div>
+        <div class="twin-node" style="bottom: 18%; right: 10%;">🔬 Labs & Facilities</div>
+        <div class="twin-node" style="top: 50%; left: 5%;">📝 Course Files</div>
+        <div class="twin-node" style="top: 50%; right: 5%;">💡 Research & Grants</div>
+      </div>
+    </section>
+
+
+    <!-- ══════════════════ 5. COMPLIANCE ENGINE DEMO ══════════════════ -->
+    <section class="landing-section" id="compliance-demo">
+      <div class="section-tag">Deterministic Engine</div>
+      <h2 class="section-title">Rule Evaluation in Real-Time</h2>
+      <p class="section-subtitle">
+        No arbitrary scoring. Every formula is backed by pure deterministic Python functions.
+      </p>
+
+      <div class="compliance-strip">
+        <div class="strip-header">
+          <span>REQUIREMENT</span>
+          <span>NAME / DESCRIPTION</span>
+          <span>CHECK CONDITION</span>
+          <span style="text-align:right;">STATUS</span>
+        </div>
+
+        <div class="strip-rows">
+          <div class="strip-row">
+            <span class="strip-code">C3.7</span>
+            <div><strong>CO Attainment</strong><div style="font-size:12px;color:var(--text-muted)">Direct & indirect attainment calculated</div></div>
+            <span class="strip-check">Attainment ≥ 65%</span>
+            <div style="text-align:right;"><span class="chip chip--pass">PASS</span></div>
+          </div>
+
+          <div class="strip-row">
+            <span class="strip-code">C5.1</span>
+            <div><strong>Faculty Qualifications</strong><div style="font-size:12px;color:var(--text-muted)">Expected 30 faculty records</div></div>
+            <span class="strip-check">Found: 29 records</span>
+            <div style="text-align:right;"><span class="chip chip--warning" id="strip-chip-c5">CHECKING</span></div>
+          </div>
+
+          <div class="strip-row">
+            <span class="strip-code">C5.3</span>
+            <div><strong>Cadre Proportion</strong><div style="font-size:12px;color:var(--text-muted)">Prof : Assoc : Asst ratio evaluation</div></div>
+            <span class="strip-check">Cadre ratio within band</span>
+            <div style="text-align:right;"><span class="chip chip--pass">PASS</span></div>
+          </div>
+
+          <div class="strip-row">
+            <span class="strip-code">C6.2</span>
+            <div><strong>R&D Sponsored Research</strong><div style="font-size:12px;color:var(--text-muted)">Funding threshold evaluation</div></div>
+            <span class="strip-check">Boundary ambiguity</span>
+            <div style="text-align:right;"><span class="chip chip--nrc">NEEDS CLARIFICATION</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- ══════════════════ 6. CRITERIA CARD CAROUSEL (Skiper 48 Port) ══════════════════ -->
+    <section class="landing-section" id="criteria-carousel-section">
+      <div class="carousel-ambient-glow"></div>
+
+      <div class="section-tag">Interactive Criteria Hub</div>
+      <h2 class="section-title">Select an Accreditation Criterion</h2>
+      <p class="section-subtitle">
+        Browse criteria cards. Click to bring forward; click active card to launch its dashboard.
+      </p>
+
+      <!-- Carousel Container Mounted via carousel.js -->
+      <div id="criteria-swiper-root" style="width: 100%;"></div>
+    </section>
+
+
+    <!-- ══════════════════ 7. AI ADVISORY ══════════════════ -->
+    <section class="landing-section" id="ai-advisory">
+      <div class="section-tag">AI Intelligence Layer</div>
+      <h2 class="section-title">8 Specialized Advisory Agents</h2>
+      <p class="section-subtitle">
+        Domain-specific agents analyze qualitative evidence, detect gaps, and compile SAR narratives.
+      </p>
+
+      <!-- Skiper 47 Perspective Coverflow Carousel (8 Advisory Agents) -->
+      <div class="skiper47-wrapper">
+        <div class="swiper skiper47-carousel" id="skiper47-agents-swiper">
+          <div class="swiper-wrapper">
+
+            <!-- Agent 1: Coordinator Agent -->
+            <div class="swiper-slide skiper47-slide" style="--slide-accent: #38BDF8; --slide-glow: rgba(56, 189, 248, 0.35);">
+              <div class="skiper47-card-inner">
+                <div>
+                  <div class="skiper47-badge">
+                    <span class="skiper47-badge-dot"></span>
+                    <span>Orchestrator</span>
+                  </div>
+                  <div class="skiper47-icon-wrap">
+                    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <circle cx="12" cy="12" r="3"/>
+                      <path d="M3 12h6m6 0h6M12 3v6m0 6v6"/>
+                      <circle cx="12" cy="3" r="1"/>
+                      <circle cx="12" cy="21" r="1"/>
+                      <circle cx="3" cy="12" r="1"/>
+                      <circle cx="21" cy="12" r="1"/>
+                    </svg>
+                  </div>
+                  <div class="skiper47-title">Coordinator Agent</div>
+                  <p class="skiper47-desc">
+                    Orchestrates domain agents, routes prompts, and synthesizes multi-agent consensus without altering numerical marks.
+                  </p>
+                </div>
+                <div class="skiper47-footer">
+                  <span>Backend Module</span>
+                  <span class="mono">coordinator_agent.py</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Agent 2: Document Agent -->
+            <div class="swiper-slide skiper47-slide" style="--slide-accent: #818CF8; --slide-glow: rgba(129, 140, 248, 0.35);">
+              <div class="skiper47-card-inner">
+                <div>
+                  <div class="skiper47-badge">
+                    <span class="skiper47-badge-dot"></span>
+                    <span>Evidence & RAG</span>
+                  </div>
+                  <div class="skiper47-icon-wrap">
+                    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                      <polyline points="14 2 14 8 20 8"/>
+                      <line x1="16" y1="13" x2="8" y2="13"/>
+                      <line x1="16" y1="17" x2="8" y2="17"/>
+                      <polyline points="10 9 9 9 8 9"/>
+                    </svg>
+                  </div>
+                  <div class="skiper47-title">Document Agent</div>
+                  <p class="skiper47-desc">
+                    Validates PDF/DOCX hashes, chunks unstructured syllabus, and queries vector embeddings with precise page-number citations.
+                  </p>
+                </div>
+                <div class="skiper47-footer">
+                  <span>Backend Module</span>
+                  <span class="mono">document_agent.py</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Agent 3: Compliance Agent -->
+            <div class="swiper-slide skiper47-slide" style="--slide-accent: #34D399; --slide-glow: rgba(52, 211, 153, 0.35);">
+              <div class="skiper47-card-inner">
+                <div>
+                  <div class="skiper47-badge">
+                    <span class="skiper47-badge-dot"></span>
+                    <span>NBA Tier I Rulebook</span>
+                  </div>
+                  <div class="skiper47-icon-wrap">
+                    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M12 3v18M3 7l9-4 9 4M5 7l-2 5a4 4 0 0 0 4 0L5 7zm14 0l-2 5a4 4 0 0 0 4 0l-2-5z"/>
+                    </svg>
+                  </div>
+                  <div class="skiper47-title">Compliance Agent</div>
+                  <p class="skiper47-desc">
+                    Evaluates criteria against 2026 Tier I Manual guidelines, checks thresholds, and detects critical compliance gaps.
+                  </p>
+                </div>
+                <div class="skiper47-footer">
+                  <span>Backend Module</span>
+                  <span class="mono">compliance_agent.py</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Agent 4: Assessment Agent -->
+            <div class="swiper-slide skiper47-slide" style="--slide-accent: #00F5A0; --slide-glow: rgba(0, 245, 160, 0.35);">
+              <div class="skiper47-card-inner">
+                <div>
+                  <div class="skiper47-badge">
+                    <span class="skiper47-badge-dot"></span>
+                    <span>Criterion 3 Assessment</span>
+                  </div>
+                  <div class="skiper47-icon-wrap">
+                    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <circle cx="12" cy="12" r="10"/>
+                      <circle cx="12" cy="12" r="6"/>
+                      <circle cx="12" cy="12" r="2"/>
+                    </svg>
+                  </div>
+                  <div class="skiper47-title">Assessment Agent</div>
+                  <p class="skiper47-desc">
+                    Verifies Course Outcome attainment calculations, CO-PO articulation matrices, rubric distributions, and exam evaluations.
+                  </p>
+                </div>
+                <div class="skiper47-footer">
+                  <span>Backend Module</span>
+                  <span class="mono">assessment_agent.py</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Agent 5: Faculty Agent -->
+            <div class="swiper-slide skiper47-slide" style="--slide-accent: #A78BFA; --slide-glow: rgba(167, 139, 250, 0.35);">
+              <div class="skiper47-card-inner">
+                <div>
+                  <div class="skiper47-badge">
+                    <span class="skiper47-badge-dot"></span>
+                    <span>Criterion 5 Metrics</span>
+                  </div>
+                  <div class="skiper47-icon-wrap">
+                    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                      <circle cx="9" cy="7" r="4"/>
+                      <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                      <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                    </svg>
+                  </div>
+                  <div class="skiper47-title">Faculty Agent</div>
+                  <p class="skiper47-desc">
+                    Calculates Student-Faculty Ratio (SFR), Cadre proportion (Prof:Assoc:Asst), and Faculty Qualification Index (FQI).
+                  </p>
+                </div>
+                <div class="skiper47-footer">
+                  <span>Backend Module</span>
+                  <span class="mono">faculty_agent.py</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Agent 6: Student Agent -->
+            <div class="swiper-slide skiper47-slide" style="--slide-accent: #F472B6; --slide-glow: rgba(244, 114, 182, 0.35);">
+              <div class="skiper47-card-inner">
+                <div>
+                  <div class="skiper47-badge">
+                    <span class="skiper47-badge-dot"></span>
+                    <span>Criterion 4 Progression</span>
+                  </div>
+                  <div class="skiper47-icon-wrap">
+                    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M22 10v6M2 10l10-5 10 5-10 5z"/>
+                      <path d="M6 12v5c3 3 9 3 12 0v-5"/>
+                    </svg>
+                  </div>
+                  <div class="skiper47-title">Student Agent</div>
+                  <p class="skiper47-desc">
+                    Tracks graduation success rates (GSR) without backlogs, academic progression trends, placement index, and higher studies.
+                  </p>
+                </div>
+                <div class="skiper47-footer">
+                  <span>Backend Module</span>
+                  <span class="mono">student_agent.py</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Agent 7: Report Agent -->
+            <div class="swiper-slide skiper47-slide" style="--slide-accent: #FBBF24; --slide-glow: rgba(251, 191, 36, 0.35);">
+              <div class="skiper47-card-inner">
+                <div>
+                  <div class="skiper47-badge">
+                    <span class="skiper47-badge-dot"></span>
+                    <span>SAR Synthesis</span>
+                  </div>
+                  <div class="skiper47-icon-wrap">
+                    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                      <polyline points="14 2 14 8 20 8"/>
+                      <line x1="16" y1="13" x2="8" y2="13"/>
+                      <line x1="16" y1="17" x2="8" y2="17"/>
+                    </svg>
+                  </div>
+                  <div class="skiper47-title">Report Agent</div>
+                  <p class="skiper47-desc">
+                    Compiles verified criteria, evidence registers, and gap resolutions into auditable Self-Assessment Reports ready for IQAC.
+                  </p>
+                </div>
+                <div class="skiper47-footer">
+                  <span>Backend Module</span>
+                  <span class="mono">report_agent.py</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Agent 8: Inspection Agent -->
+            <div class="swiper-slide skiper47-slide" style="--slide-accent: #FB7185; --slide-glow: rgba(251, 113, 133, 0.35);">
+              <div class="skiper47-card-inner">
+                <div>
+                  <div class="skiper47-badge">
+                    <span class="skiper47-badge-dot"></span>
+                    <span>Virtual Peer Audit</span>
+                  </div>
+                  <div class="skiper47-icon-wrap">
+                    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <circle cx="12" cy="8" r="7"/>
+                      <polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/>
+                    </svg>
+                  </div>
+                  <div class="skiper47-title">Inspection Agent</div>
+                  <p class="skiper47-desc">
+                    Simulates the 3-day on-site peer audit, conducts mock evaluator Q&A queries, and highlights readiness flags before NBA visits.
+                  </p>
+                </div>
+                <div class="skiper47-footer">
+                  <span>Backend Module</span>
+                  <span class="mono">inspection_agent.py</span>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Controls: Prev, Pagination, Next -->
+        <div class="skiper47-controls">
+          <button class="skiper47-btn skiper47-prev" aria-label="Previous Agent">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M15 18l-6-6 6-6"/>
+            </svg>
+          </button>
+          <div class="skiper47-pagination"></div>
+          <button class="skiper47-btn skiper47-next" aria-label="Next Agent">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M9 18l6-6-6-6"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="ai-disclaimer-banner">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0;color:var(--nrc)">
+          <circle cx="12" cy="12" r="10"/>
+          <path d="M12 16v-4m0-4h.01"/>
+        </svg>
+        <div>
+          <strong>AI is advisory only:</strong> Models explain, contextualize, and recommend corrective actions. AI never invents, extrapolates, or alters compliance marks.
+        </div>
+      </div>
+    </section>
+
+
+    <!-- ══════════════════ 8. VIRTUAL NBA INSPECTION TEASER ══════════════════ -->
+    <section class="landing-section" id="virtual-inspection">
+      <div class="section-tag">Audit Simulation</div>
+      <h2 class="section-title">The Virtual NBA Inspection</h2>
+      <p class="section-subtitle">
+        Simulate an on-site visit by an NBA Evaluation Team. Audit all criteria requirements in seconds.
+      </p>
+
+      <div class="inspection-gauge-wrap">
+        <svg class="inspection-gauge-svg" viewBox="0 0 220 220">
+          <circle class="gauge-circle-bg" cx="110" cy="110" r="100"/>
+          <circle class="gauge-circle-val" id="gauge-circle-val" cx="110" cy="110" r="100"/>
+        </svg>
+
+        <div class="gauge-text">
+          <div class="gauge-pct" id="gauge-pct-text">0%</div>
+          <div class="gauge-label">Simulated Readiness</div>
+        </div>
+      </div>
+
+      <p style="font-family:var(--font-mono);font-size:var(--text-xs);color:var(--text-muted);max-width:500px;margin:0 auto var(--space-8);">
+        * Internal readiness indicator, not an official NBA score.
+      </p>
+
+      <a href="dashboards/c3.html" class="btn btn--primary btn--lg" data-magnetic>
+        Run Virtual Inspection
+      </a>
+    </section>
+
+
+    <!-- ══════════════════ 9. CTA & FOOTER ══════════════════ -->
+    <section id="final-cta">
+      <h2 class="section-title">Ready for Your Next Accreditation?</h2>
+      <p class="section-subtitle">
+        Empower your engineering department with continuous compliance and digital twin intelligence.
+      </p>
+      <div style="display:flex;justify-content:center;gap:var(--space-4);">
+        <a href="register.html" class="btn btn--primary btn--lg" data-magnetic>
+          Get Started as Faculty
+        </a>
+        <a href="login.html" class="btn btn--ghost btn--lg">
+          Sign In
+        </a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="landing-footer">
+    <div class="footer-top">
+      <div>
+        <div style="display:flex;align-items:center;gap:var(--space-2);font-weight:700;color:var(--text-primary);margin-bottom:var(--space-2);">
+          <span>AI-Driven NBA Accreditation Readiness System</span>
+        </div>
+        <p style="font-size:var(--text-xs);color:var(--text-muted);max-width:440px;">
+          Engineered for UG Engineering Tier I (2026 Edition) compliance.
+        </p>
+      </div>
+
+      <div style="display:flex;gap:var(--space-8);">
+        <div>
+          <strong style="display:block;color:var(--text-primary);margin-bottom:var(--space-2);">Dashboards</strong>
+          <ul style="list-style:none;display:flex;flex-direction:column;gap:var(--space-1);font-size:var(--text-xs);">
+            <li><a href="dashboards/c3.html">Criterion 3 (Assessment)</a></li>
+            <li><a href="dashboards/c5.html">Criterion 5 (Faculty)</a></li>
+            <li><a href="dashboards/c6.html">Criterion 6 (R&D)</a></li>
+          </ul>
+        </div>
+        <div>
+          <strong style="display:block;color:var(--text-primary);margin-bottom:var(--space-2);">Platform</strong>
+          <ul style="list-style:none;display:flex;flex-direction:column;gap:var(--space-1);font-size:var(--text-xs);">
+            <li><a href="login.html">Sign In</a></li>
+            <li><a href="register.html">Faculty Registration</a></li>
+            <li><a href="pending.html">Approval Queue</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer-attribution">
+      UI Components & Carousels inspired by Skiper UI (<a href="https://skiper-ui.com" target="_blank" rel="noopener noreferrer">Skiper 48</a> & <a href="https://skiper-ui.com/registry/skiper47.json" target="_blank" rel="noopener noreferrer">Skiper 47</a>)
+    </div>
+  </footer>
+
+  <!-- CDN Scripts: Lenis, GSAP + ScrollTrigger, Swiper 11 -->
+  <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.9/dist/lenis.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+
+  <!-- Landing Logic Module -->
+  <script type="module">
+    import { initLandingPage } from './js/landing.js';
+    initLandingPage();
+  </script>
+</body>
+</html>
+

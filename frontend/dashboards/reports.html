@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Accreditation Reports — AI-NBA Readiness System</title>
+  <link rel="stylesheet" href="../css/base.css">
+  <link rel="stylesheet" href="../css/components.css">
+  <link rel="stylesheet" href="../css/dashboard.css">
+</head>
+
+<body class="dashboard-layout">
+
+  <div id="cursor-dot" aria-hidden="true"></div>
+  <div id="cursor-ring" aria-hidden="true"></div>
+  <div id="toast-container" role="log" aria-live="polite"></div>
+
+  <aside class="sidebar" id="dashboard-sidebar"></aside>
+  <header class="topbar" id="dashboard-topbar"></header>
+
+  <main class="dashboard-main">
+    <div class="dashboard-content">
+
+      <section class="criterion-header-card" style="border-left: 4px solid var(--cyan);">
+        <div class="crit-meta">
+          <div class="chip chip--info" style="margin-bottom:var(--space-2);">Self-Assessment Reports</div>
+          <h1>Accreditation Reports & SAR Export</h1>
+          <p>Generate, preview and download NBA Self-Assessment Report documents formatted for the Visiting Committee.
+            All reports are computed from the live Digital Twin compliance snapshot.</p>
+        </div>
+      </section>
+
+      <!-- ── Criteria-wise Readiness Overview ── -->
+      <div
+        style="display:grid;grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));gap:var(--space-6);margin-bottom:var(--space-8);">
+        <div class="chart-card">
+          <div style="font-size:var(--text-xs);color:var(--text-muted);text-transform:uppercase;">C3 — Assessment</div>
+          <div style="font-size:2rem;font-weight:700;color:var(--pass);margin:var(--space-2) 0;" id="rpt-c3-pct">78%
+          </div>
+          <div class="progress-bar">
+            <div class="progress-fill" style="width:78%;background:var(--pass);"></div>
+          </div>
+        </div>
+        <div class="chart-card">
+          <div style="font-size:var(--text-xs);color:var(--text-muted);text-transform:uppercase;">C4 — Students</div>
+          <div style="font-size:2rem;font-weight:700;color:var(--warning);margin:var(--space-2) 0;" id="rpt-c4-pct">65%
+          </div>
+          <div class="progress-bar">
+            <div class="progress-fill" style="width:65%;background:var(--warning);"></div>
+          </div>
+        </div>
+        <div class="chart-card">
+          <div style="font-size:var(--text-xs);color:var(--text-muted);text-transform:uppercase;">C5 — Faculty</div>
+          <div style="font-size:2rem;font-weight:700;color:var(--pass);margin:var(--space-2) 0;" id="rpt-c5-pct">82%
+          </div>
+          <div class="progress-bar">
+            <div class="progress-fill" style="width:82%;background:var(--pass);"></div>
+          </div>
+        </div>
+        <div class="chart-card">
+          <div style="font-size:var(--text-xs);color:var(--text-muted);text-transform:uppercase;">C6 — R&D</div>
+          <div style="font-size:2rem;font-weight:700;color:var(--pass);margin:var(--space-2) 0;" id="rpt-c6-pct">74%
+          </div>
+          <div class="progress-bar">
+            <div class="progress-fill" style="width:74%;background:var(--pass);"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── SAR Document Export Panel ── -->
+      <div class="chart-card" style="margin-bottom:var(--space-8);">
+        <div class="chart-card-header">
+          <h3>Self-Assessment Report (SAR) & Evidence Export</h3>
+          <span class="chip chip--info">IQAC Ready</span>
+        </div>
+        <p style="font-size:var(--text-sm);color:var(--text-secondary);margin-bottom:var(--space-6);">
+          Export comprehensive self-assessment documents formatted for the NBA Visiting Team. Reports include criteria
+          scores, requirement evaluations, evidence linkage, and gap action plans.
+        </p>
+        <div style="display:flex;gap:var(--space-4);flex-wrap:wrap;">
+          <button class="btn btn--outline" id="btn-export-excel" data-require-role="HOD ADMIN">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+              <polyline points="14 2 14 8 20 8" />
+            </svg>
+            <span>Download Full SAR Excel (.xlsx)</span>
+          </button>
+          <button class="btn btn--primary" id="btn-export-pdf" data-require-role="HOD ADMIN">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+              <polyline points="14 2 14 8 20 8" />
+            </svg>
+            <span>Download Executive Summary PDF</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- ── Requirement-Level Compliance Table ── -->
+      <div class="chart-card" style="margin-bottom:var(--space-8);">
+        <div class="chart-card-header">
+          <h3>Requirement-Level Compliance Summary</h3>
+          <span class="chip chip--pass" id="rpt-req-count">17 Requirements</span>
+        </div>
+        <div class="requirements-card">
+          <table class="req-table">
+            <thead>
+              <tr>
+                <th>CODE</th>
+                <th>REQUIREMENT</th>
+                <th>SCORE</th>
+                <th>STATUS</th>
+                <th>LAST EVALUATED</th>
+              </tr>
+            </thead>
+            <tbody id="rpt-requirements-tbody">
+              <!-- Populated by JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ── Evidence Document Registry ── -->
+      <div class="chart-card" style="margin-bottom:var(--space-8);">
+        <div class="chart-card-header">
+          <h3>Evidence Document Registry</h3>
+          <span class="chip chip--info" id="rpt-doc-count">0 Documents</span>
+        </div>
+        <div class="requirements-card">
+          <table class="req-table">
+            <thead>
+              <tr>
+                <th>TITLE</th>
+                <th>CRITERION</th>
+                <th>TYPE</th>
+                <th>UPLOADED BY</th>
+                <th>DATE</th>
+              </tr>
+            </thead>
+            <tbody id="rpt-documents-tbody">
+              <!-- Populated by JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ── Gap / Action Plan Summary ── -->
+      <div class="chart-card">
+        <div class="chart-card-header">
+          <h3>Corrective Action Plans & Gap Tracking</h3>
+          <div style="display:flex;gap:var(--space-2);align-items:center;">
+            <button class="btn btn--outline btn--sm" id="btn-refresh-gaps" data-require-role="HOD ADMIN">
+              <span>↻ Refresh Gaps</span>
+            </button>
+            <span class="chip chip--warning" id="rpt-gap-count">0 Open</span>
+          </div>
+        </div>
+        <div class="requirements-card">
+          <table class="req-table">
+            <thead>
+              <tr>
+                <th>CRITERION</th>
+                <th>TITLE</th>
+                <th>ASSIGNED TO</th>
+                <th>PRIORITY</th>
+                <th>STATUS</th>
+                <th>TARGET DATE</th>
+              </tr>
+            </thead>
+            <tbody id="rpt-gaps-tbody">
+              <!-- Populated by JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <script type="module">
+    import { initDashboardShell } from '../js/dash/shared.js';
+    import { api } from '../js/api.js';
+    import { toast, toastSuccess, toastError, countUp } from '../js/ui.js';
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      await initDashboardShell('REPORTS');
+
+      // ── Load Criteria Readiness ──
+      try {
+        const snapshot = await api.getDigitalTwinSnapshot();
+        if (snapshot && snapshot.criteria) {
+          snapshot.criteria.forEach(c => {
+            const el = document.getElementById(`rpt-${c.code.toLowerCase()}-pct`);
+            if (el) countUp(el, Math.round(c.readiness_pct), 1000, '%');
+            const bar = el?.parentElement?.querySelector('.progress-fill');
+            if (bar) bar.style.width = `${c.readiness_pct}%`;
+          });
+        }
+      } catch { }
+
+      // ── Load Requirements Table ──
+      const reqTbody = document.getElementById('rpt-requirements-tbody');
+      const criterionIds = ['c3', 'c5', 'c6'];
+      let allReqs = [];
+
+      for (const cid of criterionIds) {
+        try {
+          const reqs = await api.listRequirements(cid);
+          if (Array.isArray(reqs)) allReqs = allReqs.concat(reqs);
+        } catch { }
+      }
+
+      document.getElementById('rpt-req-count').textContent = `${allReqs.length} Requirements`;
+
+      allReqs.forEach(r => {
+        const statusClass = r.status === 'PASS' ? 'chip--pass' : r.status === 'FAIL' ? 'chip--fail' : 'chip--warning';
+        const evalDate = r.evaluated_at ? new Date(r.evaluated_at).toLocaleDateString() : '—';
+        reqTbody.innerHTML += `
+          <tr>
+            <td class="mono">${r.code || r.id}</td>
+            <td>${r.title}</td>
+            <td class="mono">${r.score ?? '—'} / ${r.max_score ?? '—'}</td>
+            <td><span class="chip ${statusClass}">${r.status}</span></td>
+            <td>${evalDate}</td>
+          </tr>`;
+      });
+
+      // ── Load Documents Table ──
+      const docTbody = document.getElementById('rpt-documents-tbody');
+      try {
+        const docs = await api.listDocuments();
+        document.getElementById('rpt-doc-count').textContent = `${docs.length} Documents`;
+        docTbody.innerHTML = '';
+        docs.forEach(d => {
+          const fname = d.original_filename || d.file_name || d.name || d.title || 'Evidence Document';
+          const ext = fname.split('.').pop().toUpperCase() || 'PDF';
+          const dept = d.department || 'Computer Science and Engineering';
+          const dateStr = d.created_at ? new Date(d.created_at).toLocaleDateString() : 'Recent';
+          docTbody.innerHTML += `
+            <tr>
+              <td><strong>${fname}</strong></td>
+              <td><span class="chip chip--info">${d.criterion_code || 'Criterion Evidence'}</span></td>
+              <td class="mono">${ext}</td>
+              <td>${d.uploaded_by || 'Admin / Faculty'}</td>
+              <td>${dateStr}</td>
+            </tr>`;
+        });
+      } catch { }
+
+      // ── Refresh Gaps Handler (HOD/Admin) ──
+      document.getElementById('btn-refresh-gaps')?.addEventListener('click', async () => {
+        try {
+          toast('Running deterministic gap analysis across department requirements...', 'info');
+          const res = await api.generateGaps();
+          toastSuccess('Department gap analysis refreshed.');
+          setTimeout(() => location.reload(), 800);
+        } catch (err) {
+          toastError('Gap refresh failed: ' + (err.message || 'Access Denied'));
+        }
+      });
+
+      // ── Load Action Plans ──
+      const gapTbody = document.getElementById('rpt-gaps-tbody');
+      try {
+        let gaps = [];
+        try {
+          gaps = await api.listGaps();
+        } catch {
+          // Fallback: try action-plans endpoint directly
+          try {
+            const resp = await fetch('http://localhost:8000/api/v1/action-plans');
+            if (resp.ok) gaps = await resp.json();
+          } catch { }
+        }
+        if (!Array.isArray(gaps)) gaps = [];
+        const openCount = gaps.filter(g => g.status !== 'CLOSED' && g.status !== 'RESOLVED').length;
+        document.getElementById('rpt-gap-count').textContent = `${openCount} Open`;
+        gaps.forEach(g => {
+          const prioClass = g.priority === 'HIGH' ? 'chip--fail' : g.priority === 'MEDIUM' ? 'chip--warning' : 'chip--info';
+          const statusClass = g.status === 'OPEN' ? 'chip--warning' : g.status === 'IN_PROGRESS' ? 'chip--info' : 'chip--pass';
+          gapTbody.innerHTML += `
+            <tr>
+              <td><span class="chip chip--info">${g.criterion_code}</span></td>
+              <td>${g.title}</td>
+              <td>${g.assigned_to}</td>
+              <td><span class="chip ${prioClass}">${g.priority}</span></td>
+              <td><span class="chip ${statusClass}">${g.status}</span></td>
+              <td class="mono">${g.target_date || '—'}</td>
+            </tr>`;
+        });
+      } catch { }
+
+      // ── Export Buttons ──
+      document.getElementById('btn-export-excel')?.addEventListener('click', async () => {
+        try {
+          toast('Generating Self-Assessment Report Excel archive...', 'info');
+          const blob = await api.downloadExcelReport();
+          const u = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = u;
+          a.download = 'NBA_SAR_Tier1_Report_2024.xlsx';
+          document.body.appendChild(a);
+          a.click();
+          a.remove();
+          setTimeout(() => URL.revokeObjectURL(u), 1000);
+          toastSuccess('Excel report downloaded successfully.');
+        } catch {
+          toastError('Failed to generate Excel report.');
+        }
+      });
+
+      document.getElementById('btn-export-pdf')?.addEventListener('click', async () => {
+        try {
+          toast('Generating Self-Assessment Executive Summary PDF...', 'info');
+          const blob = await api.downloadPdfReport();
+          const u = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = u;
+          a.download = 'NBA_Readiness_Summary_2024.pdf';
+          document.body.appendChild(a);
+          a.click();
+          a.remove();
+          setTimeout(() => URL.revokeObjectURL(u), 1000);
+          toastSuccess('PDF summary report downloaded successfully.');
+        } catch {
+          toastError('Failed to generate PDF report.');
+        }
+      });
+    });
+  </script>
+</body>
+
+</html>

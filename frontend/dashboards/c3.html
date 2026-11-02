@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Criterion 3: Outcome-Based Assessment — AI-NBA Readiness</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
+
+  <!-- Project CSS -->
+  <link rel="stylesheet" href="../css/base.css">
+  <link rel="stylesheet" href="../css/components.css">
+  <link rel="stylesheet" href="../css/dashboard.css">
+</head>
+<body class="dashboard-layout">
+
+  <!-- Custom Cursor & Toast Container -->
+  <div id="cursor-dot"  aria-hidden="true"></div>
+  <div id="cursor-ring" aria-hidden="true"></div>
+  <div id="toast-container" role="log" aria-live="polite"></div>
+
+  <!-- Shared Sidebar Container -->
+  <aside class="sidebar" id="dashboard-sidebar"></aside>
+
+  <!-- Shared Topbar Container -->
+  <header class="topbar" id="dashboard-topbar"></header>
+
+  <!-- Command Palette Modal -->
+  <div id="command-palette-backdrop">
+    <div class="command-palette-box">
+      <div class="command-palette-header">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/>
+        </svg>
+        <input type="text" id="cmd-palette-input" class="command-palette-input" placeholder="Type a command or jump to page..." autofocus>
+      </div>
+      <ul class="command-palette-list" id="cmd-palette-list"></ul>
+    </div>
+  </div>
+
+  <!-- ══════════════════ MAIN CONTENT ══════════════════ -->
+  <main class="dashboard-main">
+    <div class="dashboard-content">
+
+      <!-- Header Card with Readiness Ring -->
+      <section class="criterion-header-card">
+        <div class="crit-meta">
+          <div class="chip chip--info" style="margin-bottom:var(--space-2);">Tier I UG (2026 Manual) • 120 Marks</div>
+          <h1>Criterion 3: Outcome-Based Assessment</h1>
+          <p>"Did students actually learn what we said they would learn?"</p>
+        </div>
+
+        <div class="readiness-ring-widget">
+          <div class="ring-svg-wrap">
+            <svg viewBox="0 0 60 60">
+              <circle class="ring-bg" cx="30" cy="30" r="26"/>
+              <circle class="ring-progress" id="c3-ring-progress" cx="30" cy="30" r="26"/>
+            </svg>
+            <div class="ring-val-label" id="c3-ring-pct">--%</div>
+          </div>
+          <div>
+            <div style="font-family:var(--font-mono);font-size:var(--text-xs);color:var(--text-muted);text-transform:uppercase;">Criterion Readiness</div>
+            <div style="font-size:var(--text-lg);font-weight:700;" id="c3-score-text">-- / 120 Marks</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Dashboard Tabs -->
+      <nav class="dash-tabs" role="tablist">
+        <button class="dash-tab-btn active" data-tab="tab-requirements">Requirements & Evaluation</button>
+        <button class="dash-tab-btn" data-tab="tab-attainment">CO Attainment & Matrix</button>
+        <button class="dash-tab-btn" data-tab="tab-curriculum">Marks & Attendance</button>
+        <button class="dash-tab-btn" data-tab="tab-evidence">Evidence Documents</button>
+        <button class="dash-tab-btn" data-tab="tab-ai">AI Advisory & RAG</button>
+      </nav>
+
+      <!-- ── TAB 1: REQUIREMENTS & EVALUATION ── -->
+      <div class="tab-pane active" id="tab-requirements">
+        <div class="requirements-card">
+          <div style="padding:var(--space-5);border-bottom:1px solid var(--glass-border);display:flex;justify-content:space-between;align-items:center;">
+            <div>
+              <h3 style="font-size:var(--text-lg);font-weight:700;">Criterion 3 Requirements (3.1 - 3.8)</h3>
+              <p style="font-size:var(--text-xs);color:var(--text-muted);">Deterministic rule verification against Tier-I 2026 manual specifications.</p>
+            </div>
+            <div style="display:flex;gap:var(--space-3);" data-require-role="HOD ADMIN">
+              <button class="btn btn--primary btn--sm" id="btn-eval-all-c3">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polygon points="5 3 19 12 5 21 5 3"/>
+                </svg>
+                <span>Evaluate All C3</span>
+              </button>
+            </div>
+          </div>
+
+          <table class="req-table">
+            <thead>
+              <tr>
+                <th style="width: 80px;">CODE</th>
+                <th>REQUIREMENT TITLE</th>
+                <th style="width: 100px;">MAX MARKS</th>
+                <th style="width: 140px;">STATUS</th>
+                <th style="width: 180px; text-align: right;">ACTION</th>
+              </tr>
+            </thead>
+            <tbody id="c3-reqs-tbody">
+              <tr><td colspan="5" style="text-align:center;padding:2rem;">Loading requirements...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ── TAB 2: CO ATTAINMENT & MATRIX ── -->
+      <div class="tab-pane" id="tab-attainment" style="display:none;">
+        <!-- Subject Selector & Filter Bar -->
+        <div class="glass-sm" style="padding:var(--space-4);margin-bottom:var(--space-6);display:flex;align-items:center;gap:var(--space-4);">
+          <label for="c3-subject-select" style="font-weight:600;font-size:var(--text-sm);">Select Subject:</label>
+          <select id="c3-subject-select" class="form-control" style="max-width:320px;"></select>
+          <div style="margin-left:auto;display:flex;gap:var(--space-3);" data-require-role="HOD ADMIN FACULTY">
+            <button class="btn btn--outline btn--sm" id="btn-add-co">+ Add Course Outcome</button>
+          </div>
+        </div>
+
+        <div class="dash-grid-2">
+          <!-- CO Attainment Bar Chart -->
+          <div class="chart-card">
+            <div class="chart-card-header">
+              <h3>CO Attainment vs Target Threshold (65%)</h3>
+              <span class="chip chip--info">Target: 65%</span>
+            </div>
+            <div style="position:relative;height:280px;">
+              <canvas id="c3-attainment-chart"></canvas>
+            </div>
+          </div>
+
+          <!-- Weak CO Callout Card -->
+          <div class="chart-card" id="weak-co-alert-card" style="border-left: 4px solid var(--warning);">
+            <div class="chart-card-header">
+              <h3>Identified Weak COs & Remedial Plan</h3>
+              <span class="chip chip--warning" id="weak-co-count-chip">1 Weak CO</span>
+            </div>
+            <div id="weak-co-details-content">
+              <p style="font-size:var(--text-sm);color:var(--text-secondary);margin-bottom:var(--space-4);">
+                CO2 (Algorithm Complexity Analysis) attained <strong>54.2%</strong>, below the required 65% benchmark.
+              </p>
+              <div class="glass" style="padding:var(--space-4);margin-bottom:var(--space-4);">
+                <div style="font-size:var(--text-xs);color:var(--text-muted);margin-bottom:2px;">RECOMMENDED ACTION:</div>
+                <div style="font-size:var(--text-sm);font-weight:600;">Conduct 3 tutorial sessions on Big-O analysis & re-assess.</div>
+              </div>
+              <button class="btn btn--primary btn--sm" id="btn-create-gap-action" data-require-role="HOD ADMIN">
+                Create Corrective Action Item
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Heatmap Matrix: CO to PO / PSO Mapping -->
+        <div class="chart-card" style="margin-top:var(--space-6);">
+          <div class="chart-card-header">
+            <h3>CO - PO & PSO Articulation Matrix (1: Slight, 2: Moderate, 3: Substantial)</h3>
+          </div>
+          <div style="overflow-x:auto;">
+            <table class="heatmap-table" id="c3-matrix-table">
+              <thead>
+                <tr>
+                  <th>CO</th>
+                  <th>PO1</th><th>PO2</th><th>PO3</th><th>PO4</th><th>PO5</th><th>PO6</th>
+                  <th>PO7</th><th>PO8</th><th>PO9</th><th>PO10</th><th>PO11</th><th>PO12</th>
+                  <th>PSO1</th><th>PSO2</th>
+                </tr>
+              </thead>
+              <tbody id="c3-matrix-tbody">
+                <!-- Populated dynamically -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── TAB 3: CURRICULUM, MARKS & ATTENDANCE ── -->
+      <div class="tab-pane" id="tab-curriculum" style="display:none;">
+        <div class="requirements-card">
+          <div style="padding:var(--space-5);border-bottom:1px solid var(--glass-border);display:flex;justify-content:space-between;align-items:center;">
+            <h3>Enrolled Students & Continuous Assessment Marks</h3>
+            <button class="btn btn--primary btn--sm" id="btn-record-mark" data-require-role="HOD ADMIN FACULTY">+ Record Mark</button>
+          </div>
+          <table class="req-table">
+            <thead>
+              <tr>
+                <th>STUDENT USN / ROLL</th>
+                <th>NAME</th>
+                <th>CIE MARKS (/50)</th>
+                <th>ATTENDANCE %</th>
+                <th>MICRO-PROJECT</th>
+              </tr>
+            </thead>
+            <tbody id="c3-students-tbody">
+              <tr>
+                <td class="mono">1MS21CS001</td>
+                <td>Aarav Sharma</td>
+                <td class="mono">42 / 50</td>
+                <td><span class="chip chip--pass">92%</span></td>
+                <td>Completed (Rubric: 18/20)</td>
+              </tr>
+              <tr>
+                <td class="mono">1MS21CS002</td>
+                <td>Bhavna Reddy</td>
+                <td class="mono">34 / 50</td>
+                <td><span class="chip chip--warning">74%</span></td>
+                <td>Completed (Rubric: 15/20)</td>
+              </tr>
+              <tr>
+                <td class="mono">1MS21CS003</td>
+                <td>Chetan Patel</td>
+                <td class="mono">46 / 50</td>
+                <td><span class="chip chip--pass">95%</span></td>
+                <td>Completed (Rubric: 19/20)</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ── TAB 4: EVIDENCE DOCUMENTS ── -->
+      <div class="tab-pane" id="tab-evidence" style="display:none;">
+        <div class="requirements-card">
+          <div style="padding:var(--space-5);border-bottom:1px solid var(--glass-border);display:flex;justify-content:space-between;align-items:center;">
+            <div>
+              <h3>Accreditation Evidence Repository (Criterion 3)</h3>
+              <p style="font-size:var(--text-xs);color:var(--text-muted);">Multipart uploads stored with SHA-256 integrity and chunked for pgvector RAG.</p>
+            </div>
+            <button class="btn btn--primary btn--sm" id="btn-upload-evidence">+ Upload Evidence Document</button>
+          </div>
+          <table class="req-table">
+            <thead>
+              <tr>
+                <th>DOCUMENT NAME</th>
+                <th>REQUIREMENT</th>
+                <th>VERSION</th>
+                <th>UPLOADED DATE</th>
+                <th style="text-align:right;">ACTION</th>
+              </tr>
+            </thead>
+            <tbody id="c3-evidence-tbody">
+              <tr><td colspan="5" style="text-align:center;padding:2rem;">Loading evidence...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ── TAB 5: AI ADVISORY & RAG ── -->
+      <div class="tab-pane" id="tab-ai" style="display:none;">
+        <div class="dash-grid-2">
+          <!-- RAG Search Card -->
+          <div class="chart-card">
+            <div class="chart-card-header">
+              <h3>Evidence Semantic Search (RAG)</h3>
+              <span class="advisory-badge">Advisory Only</span>
+            </div>
+            <div style="display:flex;gap:var(--space-2);margin-bottom:var(--space-4);">
+              <input type="text" id="rag-query-input" class="form-control" placeholder="Ask about C3 compliance, CO rubrics, lab conduct...">
+              <button class="btn btn--primary btn--sm" id="btn-rag-search">Search</button>
+            </div>
+            <div id="rag-results-container" style="max-height:300px;overflow-y:auto;display:flex;flex-direction:column;gap:var(--space-3);">
+              <div style="font-size:var(--text-xs);color:var(--text-muted);text-align:center;padding:2rem;">
+                Enter a question to search verified document passages.
+              </div>
+            </div>
+          </div>
+
+          <!-- AI Assessment Agent Trigger Card -->
+          <div class="chart-card">
+            <div class="chart-card-header">
+              <h3>Assessment AI Agent Review</h3>
+              <span class="advisory-badge">Advisory Only</span>
+            </div>
+            <p style="font-size:var(--text-sm);color:var(--text-secondary);margin-bottom:var(--space-4);">
+              Triggers the specialized Assessment Agent to audit CO-PO coverage and identify qualitative documentation gaps.
+            </p>
+            <div class="alert alert--info" style="margin-bottom:var(--space-4);">
+              <small>AI findings never alter deterministic compliance scores.</small>
+            </div>
+            <button class="btn btn--primary btn--sm" id="btn-trigger-ai-agent" data-require-role="HOD ADMIN">
+              Run AI Advisory Review
+            </button>
+            <div id="ai-agent-output" style="margin-top:var(--space-4);font-size:var(--text-xs);color:var(--text-secondary);line-height:1.6;"></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Evaluation History Drawer -->
+  <div class="drawer-backdrop" id="history-drawer-backdrop">
+    <div class="drawer-panel">
+      <div class="drawer-header">
+        <h3 id="history-drawer-title">Evaluation History</h3>
+        <button class="btn btn--ghost btn--sm" id="history-drawer-close">&times;</button>
+      </div>
+      <div class="drawer-body" id="history-drawer-content">
+        <div style="text-align:center;color:var(--text-muted);">Loading history...</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Document Upload Modal -->
+  <div class="drawer-backdrop" id="upload-modal-backdrop">
+    <div class="drawer-panel">
+      <div class="drawer-header">
+        <h3>Upload Evidence Document</h3>
+        <button class="btn btn--ghost btn--sm" id="upload-modal-close">&times;</button>
+      </div>
+      <div class="drawer-body">
+        <form id="upload-evidence-form">
+          <div class="form-group">
+            <label for="doc-title">Document Title</label>
+            <input type="text" id="doc-title" class="form-control" required placeholder="e.g. Course File 2024-25">
+          </div>
+          <div class="form-group">
+            <label for="doc-file">File (PDF, XLSX, DOCX)</label>
+            <input type="file" id="doc-file" class="form-control" required accept=".pdf,.xlsx,.docx,.csv">
+          </div>
+          <button type="submit" class="btn btn--primary btn--lg" style="width:100%;margin-top:var(--space-4);">
+            Upload to pgvector RAG
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Criterion 3 Logic Module -->
+  <script type="module" src="../js/dash/c3.js"></script>
+</body>
+</html>
+

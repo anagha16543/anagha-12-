@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Account Pending — AI-NBA Readiness System</title>
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/auth.css">
+</head>
+<body>
+
+  <div id="cursor-dot"  aria-hidden="true"></div>
+  <div id="cursor-ring" aria-hidden="true"></div>
+  <div id="toast-container" role="log" aria-live="polite"></div>
+
+  <!-- Ambient background -->
+  <div style="position:fixed;inset:0;background:radial-gradient(ellipse 80% 60% at 50% 0%,rgba(168,85,247,0.1) 0%,transparent 70%),radial-gradient(ellipse 60% 40% at 20% 100%,rgba(0, 245, 160,0.05) 0%,transparent 70%);pointer-events:none;"></div>
+
+  <main class="pending-page" role="main">
+
+    <div class="pending-icon" aria-hidden="true">⏳</div>
+
+    <div class="glass pending-card">
+      <h2>Account Pending Approval</h2>
+      <p>
+        Your faculty registration has been submitted successfully.
+        An HOD or Administrator will review and approve your account.
+        You'll be able to sign in once approved.
+      </p>
+
+      <ul class="pending-steps" aria-label="What happens next">
+        <li class="pending-step">
+          <span class="pending-step-num" aria-hidden="true">1</span>
+          <span>Your registration is queued for HOD review</span>
+        </li>
+        <li class="pending-step">
+          <span class="pending-step-num" aria-hidden="true">2</span>
+          <span>The HOD approves your account and grants FACULTY role</span>
+        </li>
+        <li class="pending-step">
+          <span class="pending-step-num" aria-hidden="true">3</span>
+          <span>Sign in and start contributing to your department's readiness</span>
+        </li>
+      </ul>
+
+      <div style="display:flex;flex-direction:column;gap:var(--space-3);">
+        <a href="login.html" class="btn btn--primary btn--lg" data-magnetic>
+          Go to Login
+        </a>
+        <a href="index.html" class="btn btn--ghost">
+          ← Back to Home
+        </a>
+      </div>
+    </div>
+
+    <p style="margin-top:var(--space-8);font-size:var(--text-xs);color:var(--text-muted);text-align:center;">
+      If you're not redirected within 24 hours, contact your HOD or administrator.
+    </p>
+
+  </main>
+
+  <script type="module">
+    import { initCursor } from './js/ui.js';
+    import { store } from './js/store.js';
+    initCursor();
+
+    // If somehow logged in, redirect
+    if (store.isLoggedIn()) {
+      window.location.href = 'dashboards/c3.html';
+    }
+  </script>
+</body>
+</html>
+

@@ -1,0 +1,169 @@
+/* ============================================================
+   TOKENS.CSS — Design System Custom Properties
+   AI-NBA Readiness System
+   ============================================================ */
+
+:root {
+  /* ── Palette (Black with Aurora theme) ─────────────── */
+  --ink:          #000000;
+  --ink-900:      #05070A;
+  --ink-800:      #0B0E14;
+  --ink-700:      #121620;
+  --ink-600:      #1A202C;
+  --ink-500:      #263042;
+
+  --surface-100:  rgba(255,255,255,0.035);
+  --surface-200:  rgba(255,255,255,0.065);
+  --surface-300:  rgba(255,255,255,0.10);
+  --surface-400:  rgba(255,255,255,0.14);
+
+  --text-primary:   #F0F4FF;
+  --text-secondary: #94A3B8;
+  --text-muted:     #64748B;
+
+  /* ── Aurora & Accent ─────────────────────────────────── */
+  --aurora:       #00F5A0;
+  --aurora-dim:   #00C982;
+  --cyan:         #00F5A0;
+  --cyan-dim:     #00C982;
+  --violet:       #8B5CF6;
+  --violet-dim:   #6D3FDB;
+  --fuchsia:      #D946EF;
+
+  --accent-gradient: linear-gradient(135deg, var(--cyan) 0%, var(--violet) 100%);
+  --accent-gradient-h: linear-gradient(90deg, var(--cyan) 0%, var(--violet) 100%);
+
+  /* ── Status colours ──────────────────────────────────── */
+  --pass:         #10B981;
+  --pass-bg:      rgba(16,185,129,0.12);
+  --pass-border:  rgba(16,185,129,0.35);
+
+  --warning:      #F59E0B;
+  --warning-bg:   rgba(245,158,11,0.12);
+  --warning-border: rgba(245,158,11,0.35);
+
+  --fail:         #EF4444;
+  --fail-bg:      rgba(239,68,68,0.12);
+  --fail-border:  rgba(239,68,68,0.35);
+
+  --na:           #64748B;
+  --na-bg:        rgba(100,116,139,0.12);
+  --na-border:    rgba(100,116,139,0.35);
+
+  --nrc:          #A855F7;
+  --nrc-bg:       rgba(168,85,247,0.12);
+  --nrc-border:   rgba(168,85,247,0.35);
+
+  /* ── Criterion accent colours ────────────────────────── */
+  --c3-accent:    #00F5A0;
+  --c3-glow:      rgba(0,245,160,0.28);
+  --c5-accent:    #8B5CF6;
+  --c5-glow:      rgba(139,92,246,0.25);
+  --c6-accent:    #D946EF;
+  --c6-glow:      rgba(217,70,239,0.25);
+
+  /* ── Typography ──────────────────────────────────────── */
+  --font-heading: 'Space Grotesk', system-ui, sans-serif;
+  --font-body:    'Inter', system-ui, sans-serif;
+  --font-mono:    'JetBrains Mono', 'Fira Code', monospace;
+
+  --text-xs:   0.75rem;
+  --text-sm:   0.875rem;
+  --text-base: 1rem;
+  --text-lg:   1.125rem;
+  --text-xl:   1.25rem;
+  --text-2xl:  1.5rem;
+  --text-3xl:  1.875rem;
+  --text-4xl:  2.25rem;
+  --text-5xl:  3rem;
+  --text-6xl:  3.75rem;
+  --text-7xl:  4.5rem;
+
+  --leading-tight:  1.2;
+  --leading-normal: 1.5;
+  --leading-relaxed:1.7;
+
+  /* ── Spacing ─────────────────────────────────────────── */
+  --space-1:  0.25rem;
+  --space-2:  0.5rem;
+  --space-3:  0.75rem;
+  --space-4:  1rem;
+  --space-5:  1.25rem;
+  --space-6:  1.5rem;
+  --space-8:  2rem;
+  --space-10: 2.5rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+  --space-20: 5rem;
+  --space-24: 6rem;
+  --space-32: 8rem;
+
+  /* ── Border radius ───────────────────────────────────── */
+  --radius-sm:  0.375rem;
+  --radius-md:  0.75rem;
+  --radius-lg:  1rem;
+  --radius-xl:  1.5rem;
+  --radius-2xl: 2rem;
+  --radius-full: 9999px;
+
+  /* ── Shadows ─────────────────────────────────────────── */
+  --shadow-sm:  0 1px 3px rgba(0,0,0,0.4);
+  --shadow-md:  0 4px 16px rgba(0,0,0,0.5);
+  --shadow-lg:  0 8px 32px rgba(0,0,0,0.6);
+  --shadow-xl:  0 16px 64px rgba(0,0,0,0.7);
+  --shadow-cyan:   0 0 24px rgba(0,245,160,0.35), 0 0 64px rgba(0,245,160,0.12);
+  --shadow-violet: 0 0 24px rgba(139,92,246,0.3), 0 0 64px rgba(139,92,246,0.1);
+
+  /* ── Glass ───────────────────────────────────────────── */
+  --glass-bg:     rgba(10, 14, 18, 0.75);
+  --glass-border: rgba(0, 245, 160, 0.12);
+  --glass-blur:   blur(20px);
+
+  /* ── Transitions ─────────────────────────────────────── */
+  --ease-out-expo:  cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-out-back:  cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-in-out:    cubic-bezier(0.4, 0, 0.2, 1);
+  --dur-fast:   150ms;
+  --dur-normal: 300ms;
+  --dur-slow:   600ms;
+  --dur-slower: 900ms;
+
+  /* ── Z-index ─────────────────────────────────────────── */
+  --z-base:    0;
+  --z-above:   10;
+  --z-dropdown:100;
+  --z-sticky:  200;
+  --z-overlay: 300;
+  --z-modal:   400;
+  --z-toast:   500;
+  --z-cursor:  9999;
+
+  /* ── Layout ──────────────────────────────────────────── */
+  --sidebar-width:     260px;
+  --sidebar-collapsed: 72px;
+  --topbar-height:     64px;
+  --max-content:       1280px;
+}
+
+/* ── Light theme ─────────────────────────────────────────── */
+[data-theme="light"] {
+  --ink:          #F8FAFF;
+  --ink-900:      #EFF2F9;
+  --ink-800:      #E4E9F4;
+  --ink-700:      #CDD5E8;
+  --ink-600:      #B0BDDA;
+  --ink-500:      #8496BE;
+
+  --surface-100:  rgba(0,0,0,0.03);
+  --surface-200:  rgba(0,0,0,0.05);
+  --surface-300:  rgba(0,0,0,0.08);
+  --surface-400:  rgba(0,0,0,0.11);
+
+  --text-primary:   #0D1322;
+  --text-secondary: #3D4F70;
+  --text-muted:     #7B8BAB;
+
+  --glass-bg:     rgba(240,244,255,0.7);
+  --glass-border: rgba(0,0,0,0.08);
+}
+

@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign In — AI-NBA Readiness System</title>
+  <meta name="description" content="Sign in to the AI-driven NBA Accreditation Readiness System.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/auth.css">
+</head>
+<body class="auth-page">
+
+  <!-- Custom cursor -->
+  <div id="cursor-dot"  aria-hidden="true"></div>
+  <div id="cursor-ring" aria-hidden="true"></div>
+
+  <!-- Toast container -->
+  <div id="toast-container" role="log" aria-live="polite"></div>
+
+  <!-- Back to home -->
+  <a href="index.html" class="back-link" aria-label="Back to home">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <path d="M19 12H5M12 5l-7 7 7 7"/>
+    </svg>
+    Home
+  </a>
+
+  <!-- ══════════════════ LEFT PANEL ══════════════════ -->
+  <aside class="auth-left" aria-hidden="true">
+
+    <!-- Animated floating stat cards -->
+    <div class="auth-float-cards">
+      <div class="auth-float-card">
+        <div class="fc-label">C5.1 — SFR</div>
+        <div class="fc-value" style="color:var(--pass)">15.4 → PASS ✓</div>
+      </div>
+      <div class="auth-float-card">
+        <div class="fc-label">C3.7 — CO Attainment</div>
+        <div class="fc-value" style="color:var(--warning)">61% → WARNING ⚠</div>
+      </div>
+      <div class="auth-float-card">
+        <div class="fc-label">Overall Readiness</div>
+        <div class="fc-value" style="color:var(--cyan)">74%</div>
+      </div>
+    </div>
+
+    <div class="auth-left-content">
+      <div class="auth-brand">
+        <svg class="auth-brand-icon" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="lg1" x1="0" y1="0" x2="48" y2="48" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stop-color="#00F5A0"/>
+              <stop offset="100%" stop-color="#8B5CF6"/>
+            </linearGradient>
+          </defs>
+          <rect width="48" height="48" rx="12" fill="url(#lg1)" opacity="0.15"/>
+          <path d="M14 34V24l10-8 10 8v10M20 34v-8h8v8" stroke="url(#lg1)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="24" cy="14" r="3" stroke="url(#lg1)" stroke-width="2"/>
+        </svg>
+        <span class="auth-brand-name">NBA Readiness</span>
+      </div>
+
+      <h2 class="auth-tagline">
+        Your department.<br>
+        <span>Digitally twinned.</span><br>
+        Accreditation-ready.
+      </h2>
+
+      <p style="color:var(--text-secondary);font-size:var(--text-sm);line-height:1.7;">
+        AI-driven compliance intelligence for NBA Tier I (2026 Edition).
+        Deterministic rules. Advisory AI. Auditable reports.
+      </p>
+
+      <ul class="auth-features" aria-label="Platform features">
+        <li class="auth-feature">
+          <div class="auth-feature-icon">⚡</div>
+          <div>
+            <strong style="color:var(--text-primary);display:block;margin-bottom:2px;">Deterministic Compliance Engine</strong>
+            Rules-based evaluation for C3, C4, C5 & C6 — no guesswork.
+          </div>
+        </li>
+        <li class="auth-feature">
+          <div class="auth-feature-icon">🤖</div>
+          <div>
+            <strong style="color:var(--text-primary);display:block;margin-bottom:2px;">8 Specialized AI Agents</strong>
+            Advisory intelligence grounded in your uploaded evidence.
+          </div>
+        </li>
+        <li class="auth-feature">
+          <div class="auth-feature-icon">📊</div>
+          <div>
+            <strong style="color:var(--text-primary);display:block;margin-bottom:2px;">Real-time Digital Twin</strong>
+            Live readiness snapshot with gap analysis and corrective actions.
+          </div>
+        </li>
+      </ul>
+    </div>
+  </aside>
+
+  <!-- ══════════════════ RIGHT PANEL (FORM) ══════════════════ -->
+  <main class="auth-right">
+    <div class="auth-form-wrap">
+
+      <!-- Mobile brand -->
+      <div class="auth-mobile-brand">
+        <svg class="auth-brand-icon" viewBox="0 0 48 48" fill="none">
+          <defs>
+            <linearGradient id="lg2" x1="0" y1="0" x2="48" y2="48" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stop-color="#00F5A0"/>
+              <stop offset="100%" stop-color="#8B5CF6"/>
+            </linearGradient>
+          </defs>
+          <rect width="48" height="48" rx="12" fill="url(#lg2)" opacity="0.15"/>
+          <path d="M14 34V24l10-8 10 8v10M20 34v-8h8v8" stroke="url(#lg2)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <span class="auth-brand-name">NBA Readiness</span>
+      </div>
+
+      <header class="auth-form-header">
+        <div class="badge">Secure Access Portal</div>
+        <h1>Welcome back</h1>
+        <p>Sign in with your Admin, HOD, or Faculty credentials</p>
+      </header>
+
+      <!-- Role Selector Tabs -->
+      <div style="display:grid;grid-template-columns:repeat(3, 1fr);gap:var(--space-2);margin-bottom:var(--space-6);">
+        <button type="button" class="btn btn--ghost btn--sm role-quick-btn" data-email="admin@college.edu" data-pw="password123" data-dest="/dashboards/admin.html" style="font-size:11px;padding:6px 8px;border-color:var(--glass-border);">
+          👑 <strong>Admin</strong>
+        </button>
+        <button type="button" class="btn btn--ghost btn--sm role-quick-btn" data-email="hod@college.edu" data-pw="password123" data-dest="/dashboards/reports.html" style="font-size:11px;padding:6px 8px;border-color:var(--glass-border);">
+          🎓 <strong>HOD</strong>
+        </button>
+        <button type="button" class="btn btn--ghost btn--sm role-quick-btn" data-email="faculty@college.edu" data-pw="password123" data-dest="/dashboards/c3.html" style="font-size:11px;padding:6px 8px;border-color:var(--glass-border);">
+          👩‍🏫 <strong>Faculty</strong>
+        </button>
+      </div>
+
+      <!-- Global message area -->
+      <div id="auth-message" class="alert" role="alert" aria-live="assertive"></div>
+
+      <form id="login-form" class="auth-form" novalidate autocomplete="on">
+
+        <!-- Email -->
+        <div class="auth-field form-group--float">
+          <input
+            type="email"
+            id="email"
+            name="email"
+            class="form-control"
+            placeholder=" "
+            autocomplete="email"
+            inputmode="email"
+            required
+            aria-required="true"
+            aria-describedby="email-error"
+          >
+          <label for="email">Email address</label>
+          <div id="email-error" class="form-error" role="alert"></div>
+        </div>
+
+        <!-- Password -->
+        <div class="auth-field form-group--float">
+          <div class="input-wrapper">
+            <input
+              type="password"
+              id="password"
+              name="password"
+              class="form-control"
+              placeholder=" "
+              autocomplete="current-password"
+              required
+              aria-required="true"
+              aria-describedby="password-error"
+            >
+            <label for="password">Password</label>
+            <button type="button" class="toggle-pw" aria-label="Toggle password visibility" id="toggle-pw">
+              <svg id="pw-icon-show" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                <circle cx="12" cy="12" r="3"/>
+              </svg>
+              <svg id="pw-icon-hide" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none">
+                <path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19M1 1l22 22"/>
+              </svg>
+            </button>
+          </div>
+          <div id="password-error" class="form-error" role="alert"></div>
+        </div>
+
+        <!-- Submit -->
+        <div class="auth-submit">
+          <button type="submit" id="login-btn" class="btn btn--primary btn--lg" data-magnetic>
+            <span id="login-btn-text">Sign In</span>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M5 12h14M12 5l7 7-7 7"/>
+            </svg>
+          </button>
+        </div>
+
+      </form>
+
+      <div class="auth-footer">
+        Don't have an account?
+        <a href="register.html">Register as Faculty</a>
+      </div>
+
+      <!-- Demo credentials hint -->
+      <div style="margin-top:var(--space-8);padding:var(--space-4);background:var(--surface-100);border:1px solid var(--glass-border);border-radius:var(--radius-md);">
+        <p style="font-size:var(--text-xs);color:var(--text-muted);margin-bottom:var(--space-3);text-transform:uppercase;letter-spacing:0.06em;font-weight:600;">Demo Credentials</p>
+        <div style="display:flex;flex-direction:column;gap:var(--space-2);">
+          <button class="demo-cred" data-email="admin@college.edu" data-pw="password123" style="
+            text-align:left;background:var(--surface-100);border:1px solid var(--glass-border);
+            border-radius:var(--radius-sm);padding:var(--space-2) var(--space-3);cursor:pointer;
+            font-size:var(--text-xs);color:var(--text-secondary);transition:all var(--dur-fast);">
+            🔑 <strong style="color:var(--text-primary)">Admin</strong> — admin@college.edu / password123
+          </button>
+          <button class="demo-cred" data-email="hod@college.edu" data-pw="password123" style="
+            text-align:left;background:var(--surface-100);border:1px solid var(--glass-border);
+            border-radius:var(--radius-sm);padding:var(--space-2) var(--space-3);cursor:pointer;
+            font-size:var(--text-xs);color:var(--text-secondary);transition:all var(--dur-fast);">
+            🎓 <strong style="color:var(--text-primary)">HOD</strong> — hod@college.edu / password123
+          </button>
+          <button class="demo-cred" data-email="faculty@college.edu" data-pw="password123" style="
+            text-align:left;background:var(--surface-100);border:1px solid var(--glass-border);
+            border-radius:var(--radius-sm);padding:var(--space-2) var(--space-3);cursor:pointer;
+            font-size:var(--text-xs);color:var(--text-secondary);transition:all var(--dur-fast);">
+            👩‍🏫 <strong style="color:var(--text-primary)">Faculty</strong> — faculty@college.edu / password123
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+<script type="module">
+import { CONFIG }           from './js/config.js';
+import { initCursor }       from './js/ui.js';
+import { toast, toastError, setFieldError, clearFieldError, bindFloatingLabel, setButtonLoading, getParam } from './js/ui.js';
+import { store }            from './js/store.js';
+import { login, friendlyAuthError } from './js/auth.js';
+import { ApiError }         from './js/api.js';
+
+// ── Init ─────────────────────────────────────────────────────
+initCursor();
+
+// Check session state on load
+const roleParam = (getParam('role') || '').toLowerCase();
+if (roleParam) {
+  store.clearSession();
+} else if (store.isLoggedIn()) {
+  const currentRole = store.getTopRole();
+  const currentUser = store.getUser();
+  const dest = CONFIG.DEFAULT_REDIRECT[currentRole] || '/dashboards/c3.html';
+  // Notify user they have an active session instead of auto-bouncing
+  showMessage(`Active session as <strong>${currentUser?.email || ''}</strong> (${currentRole}). <a href="${dest}" style="color:var(--cyan);text-decoration:underline;font-weight:600;">Go to ${currentRole} Dashboard &rarr;</a>`, 'info');
+}
+
+// ── Floating labels ───────────────────────────────────────────
+document.querySelectorAll('.auth-field .form-control').forEach(bindFloatingLabel);
+
+// ── Password toggle ───────────────────────────────────────────
+const pwInput    = document.getElementById('password');
+const toggleBtn  = document.getElementById('toggle-pw');
+const iconShow   = document.getElementById('pw-icon-show');
+const iconHide   = document.getElementById('pw-icon-hide');
+
+toggleBtn.addEventListener('click', () => {
+  const isHidden = pwInput.type === 'password';
+  pwInput.type   = isHidden ? 'text' : 'password';
+  iconShow.style.display = isHidden ? 'none' : '';
+  iconHide.style.display = isHidden ? '' : 'none';
+  toggleBtn.setAttribute('aria-label', isHidden ? 'Hide password' : 'Show password');
+});
+
+// ── Form validation ───────────────────────────────────────────
+const emailInput = document.getElementById('email');
+const msgEl      = document.getElementById('auth-message');
+
+function showMessage(text, type = 'error') {
+  msgEl.className = `alert alert--${type} visible`;
+  msgEl.innerHTML = `
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0">
+      ${type === 'error'
+        ? '<path d="M12 9v4m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>'
+        : '<circle cx="12" cy="12" r="10"/><path d="M12 8v4m0 4h.01"/>'}
+    </svg>
+    <span>${text}</span>
+  `;
+}
+
+function clearMessage() {
+  msgEl.className = 'alert';
+  msgEl.innerHTML = '';
+}
+
+function validateEmail(val) {
+  if (!val) return 'Email is required.';
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val)) return 'Enter a valid email address.';
+  return null;
+}
+
+function validatePassword(val) {
+  if (!val) return 'Password is required.';
+  return null;
+}
+
+emailInput.addEventListener('blur', () => {
+  const err = validateEmail(emailInput.value.trim());
+  if (err) setFieldError(emailInput, err);
+  else clearFieldError(emailInput);
+});
+
+// ── Login form submit ─────────────────────────────────────────
+document.getElementById('login-form').addEventListener('submit', async e => {
+  e.preventDefault();
+  clearMessage();
+
+  const email    = emailInput.value.trim();
+  const password = pwInput.value;
+
+  // Client-side validation
+  let hasError = false;
+  const emailErr = validateEmail(email);
+  const pwErr    = validatePassword(password);
+
+  if (emailErr) { setFieldError(emailInput, emailErr); hasError = true; }
+  else clearFieldError(emailInput);
+
+  if (pwErr) { setFieldError(pwInput, pwErr); hasError = true; }
+  else clearFieldError(pwInput);
+
+  if (hasError) return;
+
+  const btn     = document.getElementById('login-btn');
+  const restore = setButtonLoading(btn, 'Signing in…');
+
+  try {
+    const rawRedirect = getParam('redirect');
+    const redirect = (rawRedirect && !rawRedirect.includes('c3.html')) ? rawRedirect : null;
+    await login(email, password, redirect);
+    // navigation happens inside login()
+  } catch (err) {
+    restore();
+    const msg = friendlyAuthError(err);
+
+    if (err.message?.toLowerCase().includes('pending')) {
+      showMessage(msg, 'warning');
+    } else {
+      showMessage(msg, 'error');
+    }
+  }
+});
+
+// ── Demo credential & Quick Role buttons ───────────────────────
+function applyCredentials(email, pw, autoSubmit = false) {
+  emailInput.value = email;
+  pwInput.value = pw;
+  emailInput.classList.add('has-value');
+  pwInput.classList.add('has-value');
+  clearMessage();
+  clearFieldError(emailInput);
+  clearFieldError(pwInput);
+
+  if (autoSubmit) {
+    // Quick 1-click sign in
+    document.getElementById('login-form').requestSubmit();
+  }
+}
+
+// Top role tabs: 1-click instant login directly to role destination
+document.querySelectorAll('.role-quick-btn').forEach(btn => {
+  btn.addEventListener('mouseenter', () => { btn.style.borderColor = 'rgba(0, 245, 160,0.6)'; btn.style.background = 'var(--surface-200)'; });
+  btn.addEventListener('mouseleave', () => { btn.style.borderColor = 'var(--glass-border)'; btn.style.background = 'var(--surface-100)'; });
+  btn.addEventListener('click', async () => {
+    store.clearSession();
+    emailInput.value = btn.dataset.email;
+    pwInput.value = btn.dataset.pw;
+    emailInput.classList.add('has-value');
+    pwInput.classList.add('has-value');
+    clearMessage();
+
+    const restore = setButtonLoading(btn, 'Signing in…');
+    try {
+      await login(btn.dataset.email, btn.dataset.pw, btn.dataset.dest);
+    } catch (err) {
+      restore();
+      showMessage(friendlyAuthError(err), 'error');
+    }
+  });
+});
+
+// Bottom demo credentials: fill inputs
+document.querySelectorAll('.demo-cred').forEach(btn => {
+  btn.addEventListener('mouseenter', () => { btn.style.borderColor = 'rgba(0, 245, 160,0.4)'; btn.style.background = 'var(--surface-200)'; });
+  btn.addEventListener('mouseleave', () => { btn.style.borderColor = 'var(--glass-border)'; btn.style.background = 'var(--surface-100)'; });
+  btn.addEventListener('click', () => {
+    applyCredentials(btn.dataset.email, btn.dataset.pw, false);
+  });
+});
+
+// Auto-login role if provided in URL (e.g. login.html?role=admin)
+if (roleParam === 'admin') {
+  login('admin@college.edu', 'password123', '/dashboards/admin.html');
+} else if (roleParam === 'hod') {
+  login('hod@college.edu', 'password123', '/dashboards/reports.html');
+} else if (roleParam === 'faculty') {
+  login('faculty@college.edu', 'password123', '/dashboards/c3.html');
+}
+
+// ── Keyboard shortcut: Enter submits ─────────────────────────
+document.addEventListener('keydown', e => {
+  if (e.key === 'Enter' && document.activeElement?.tagName !== 'BUTTON') {
+    document.getElementById('login-form').requestSubmit();
+  }
+});
+</script>
+</body>
+</html>
+

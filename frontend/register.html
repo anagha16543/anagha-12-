@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Faculty Registration — AI-NBA Readiness System</title>
+  <meta name="description" content="Register as faculty for the AI-NBA Accreditation Readiness System.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/auth.css">
+</head>
+<body class="auth-page">
+
+  <div id="cursor-dot"  aria-hidden="true"></div>
+  <div id="cursor-ring" aria-hidden="true"></div>
+  <div id="toast-container" role="log" aria-live="polite"></div>
+
+  <a href="index.html" class="back-link" aria-label="Back to home">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <path d="M19 12H5M12 5l-7 7 7 7"/>
+    </svg>
+    Home
+  </a>
+
+  <!-- ═══ LEFT PANEL ═══ -->
+  <aside class="auth-left" aria-hidden="true">
+    <div class="auth-float-cards">
+      <div class="auth-float-card">
+        <div class="fc-label">NBA Tier I 2026</div>
+        <div class="fc-value" style="color:var(--cyan)">4 Criteria</div>
+      </div>
+      <div class="auth-float-card">
+        <div class="fc-label">AI Agents</div>
+        <div class="fc-value" style="color:var(--violet)">8 Specialists</div>
+      </div>
+      <div class="auth-float-card">
+        <div class="fc-label">Evidence RAG</div>
+        <div class="fc-value" style="color:var(--pass)">pgvector ✓</div>
+      </div>
+    </div>
+
+    <div class="auth-left-content">
+      <div class="auth-brand">
+        <svg class="auth-brand-icon" viewBox="0 0 48 48" fill="none">
+          <defs>
+            <linearGradient id="lg-reg" x1="0" y1="0" x2="48" y2="48" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stop-color="#00F5A0"/>
+              <stop offset="100%" stop-color="#8B5CF6"/>
+            </linearGradient>
+          </defs>
+          <rect width="48" height="48" rx="12" fill="url(#lg-reg)" opacity="0.15"/>
+          <path d="M14 34V24l10-8 10 8v10M20 34v-8h8v8" stroke="url(#lg-reg)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="24" cy="14" r="3" stroke="url(#lg-reg)" stroke-width="2"/>
+        </svg>
+        <span class="auth-brand-name">NBA Readiness</span>
+      </div>
+
+      <h2 class="auth-tagline">
+        Join your department's<br>
+        <span>accreditation journey.</span>
+      </h2>
+
+      <p style="color:var(--text-secondary);font-size:var(--text-sm);line-height:1.7;margin-bottom:var(--space-6);">
+        Faculty accounts are reviewed and approved by the HOD before access is granted.
+        You'll be notified once your account is active.
+      </p>
+
+      <div class="glass-sm" style="padding:var(--space-4);">
+        <div style="display:flex;align-items:center;gap:var(--space-3);margin-bottom:var(--space-3);">
+          <div style="width:32px;height:32px;border-radius:50%;background:var(--nrc-bg);border:1px solid var(--nrc-border);display:flex;align-items:center;justify-content:center;font-size:14px;">⏳</div>
+          <div>
+            <div style="font-size:var(--text-sm);font-weight:600;color:var(--text-primary);">Registration Process</div>
+            <div style="font-size:var(--text-xs);color:var(--text-muted);">3 quick steps</div>
+          </div>
+        </div>
+        <ol style="list-style:none;display:flex;flex-direction:column;gap:var(--space-2);">
+          <li style="font-size:var(--text-xs);color:var(--text-secondary);display:flex;align-items:center;gap:var(--space-2);">
+            <span style="color:var(--cyan);font-weight:700;font-family:var(--font-mono)">01</span> Fill in your faculty details
+          </li>
+          <li style="font-size:var(--text-xs);color:var(--text-secondary);display:flex;align-items:center;gap:var(--space-2);">
+            <span style="color:var(--cyan);font-weight:700;font-family:var(--font-mono)">02</span> HOD reviews and approves
+          </li>
+          <li style="font-size:var(--text-xs);color:var(--text-secondary);display:flex;align-items:center;gap:var(--space-2);">
+            <span style="color:var(--cyan);font-weight:700;font-family:var(--font-mono)">03</span> Sign in with full access
+          </li>
+        </ol>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ═══ RIGHT PANEL (FORM) ═══ -->
+  <main class="auth-right">
+    <div class="auth-form-wrap">
+
+      <div class="auth-mobile-brand">
+        <svg class="auth-brand-icon" viewBox="0 0 48 48" fill="none">
+          <defs>
+            <linearGradient id="lg-rm" x1="0" y1="0" x2="48" y2="48" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stop-color="#00F5A0"/>
+              <stop offset="100%" stop-color="#8B5CF6"/>
+            </linearGradient>
+          </defs>
+          <rect width="48" height="48" rx="12" fill="url(#lg-rm)" opacity="0.15"/>
+          <path d="M14 34V24l10-8 10 8v10M20 34v-8h8v8" stroke="url(#lg-rm)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <span class="auth-brand-name">NBA Readiness</span>
+      </div>
+
+      <header class="auth-form-header">
+        <div class="badge">Faculty Registration</div>
+        <h1>Create account</h1>
+        <p>Register to access the NBA Readiness platform</p>
+      </header>
+
+      <!-- Role Guidance Callout -->
+      <div style="margin-bottom:var(--space-5);padding:var(--space-3) var(--space-4);background:rgba(0, 245, 160, 0.06);border:1px solid rgba(0, 245, 160, 0.25);border-radius:var(--radius-md);font-size:var(--text-xs);line-height:1.6;">
+        <div style="font-weight:600;color:var(--cyan);margin-bottom:4px;display:flex;align-items:center;gap:6px;">
+          <span>👑 Admin or 🎓 HOD Access</span>
+        </div>
+        <p style="color:var(--text-secondary);margin:0 0 6px 0;">
+          Only faculty members self-register here. Administrator and HOD roles are centrally provisioned for institutional governance and security.
+        </p>
+        <div style="display:flex;gap:var(--space-2);flex-wrap:wrap;">
+          <a href="login.html?role=admin" class="btn btn--ghost btn--sm" style="font-size:11px;padding:3px 8px;border-color:rgba(0,245,160,0.3);color:var(--cyan);">
+            Sign in as Admin &rarr;
+          </a>
+          <a href="login.html?role=hod" class="btn btn--ghost btn--sm" style="font-size:11px;padding:3px 8px;border-color:rgba(0,245,160,0.3);color:var(--cyan);">
+            Sign in as HOD &rarr;
+          </a>
+        </div>
+      </div>
+
+      <!-- Global message -->
+      <div id="auth-message" class="alert" role="alert" aria-live="assertive"></div>
+
+      <form id="register-form" class="auth-form" novalidate autocomplete="off">
+
+        <!-- Row: Full name & Faculty ID -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:var(--space-4);">
+          <div class="auth-field form-group--float">
+            <input type="text" id="full_name" name="full_name" class="form-control" placeholder=" "
+              autocomplete="name" required aria-required="true">
+            <label for="full_name">Full Name</label>
+            <div class="form-error" id="full_name-error" role="alert"></div>
+          </div>
+          <div class="auth-field form-group--float">
+            <input type="text" id="faculty_id" name="faculty_id" class="form-control" placeholder=" "
+              required aria-required="true" pattern="[A-Za-z0-9\-_]+" autocomplete="off">
+            <label for="faculty_id">Faculty ID</label>
+            <div class="form-error" id="faculty_id-error" role="alert"></div>
+          </div>
+        </div>
+
+        <!-- Email -->
+        <div class="auth-field form-group--float">
+          <input type="email" id="email" name="email" class="form-control" placeholder=" "
+            autocomplete="email" inputmode="email" required aria-required="true">
+          <label for="email">Institutional Email</label>
+          <div class="form-error" id="email-error" role="alert"></div>
+        </div>
+
+        <!-- Designation & Department -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:var(--space-4);">
+          <div class="auth-field form-group--float">
+            <select id="designation" name="designation" class="form-control has-value" required aria-required="true">
+              <option value="" disabled selected></option>
+              <option>Professor</option>
+              <option>Associate Professor</option>
+              <option>Assistant Professor</option>
+              <option>Lecturer</option>
+              <option>Senior Lecturer</option>
+              <option>Visiting Faculty</option>
+            </select>
+            <label for="designation">Designation</label>
+            <div class="form-error" id="designation-error" role="alert"></div>
+          </div>
+          <div class="auth-field form-group--float">
+            <select id="department" name="department" class="form-control has-value" required aria-required="true">
+              <option value="" disabled selected></option>
+              <option>Computer Science and Engineering</option>
+              <option>Electronics and Communication Engineering</option>
+              <option>Mechanical Engineering</option>
+              <option>Civil Engineering</option>
+              <option>Electrical Engineering</option>
+              <option>Information Technology</option>
+              <option>Chemical Engineering</option>
+              <option>Biotechnology</option>
+            </select>
+            <label for="department">Department</label>
+            <div class="form-error" id="department-error" role="alert"></div>
+          </div>
+        </div>
+
+        <!-- Contact (optional) -->
+        <div class="auth-field form-group--float">
+          <input type="tel" id="contact_number" name="contact_number" class="form-control" placeholder=" "
+            autocomplete="tel" inputmode="tel">
+          <label for="contact_number">Contact Number <span style="color:var(--text-muted);font-size:0.8em">(optional)</span></label>
+        </div>
+
+        <!-- Password -->
+        <div class="auth-field form-group--float">
+          <div class="input-wrapper">
+            <input type="password" id="password" name="password" class="form-control" placeholder=" "
+              autocomplete="new-password" required aria-required="true" minlength="8">
+            <label for="password">Password</label>
+            <button type="button" class="toggle-pw" id="toggle-pw" aria-label="Toggle password visibility">
+              <svg id="pw-show" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                <circle cx="12" cy="12" r="3"/>
+              </svg>
+              <svg id="pw-hide" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none">
+                <path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19M1 1l22 22"/>
+              </svg>
+            </button>
+          </div>
+          <div class="pw-strength" aria-hidden="true">
+            <div class="pw-strength-bar" id="pw-strength-bar"></div>
+          </div>
+          <div class="form-error" id="password-error" role="alert"></div>
+          <div class="form-hint" id="pw-hint">Min. 8 characters with letters and numbers</div>
+        </div>
+
+        <!-- Confirm password -->
+        <div class="auth-field form-group--float">
+          <div class="input-wrapper">
+            <input type="password" id="confirm_password" name="confirm_password" class="form-control" placeholder=" "
+              autocomplete="new-password" required aria-required="true">
+            <label for="confirm_password">Confirm Password</label>
+            <button type="button" class="toggle-pw" id="toggle-cpw" aria-label="Toggle password visibility">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                <circle cx="12" cy="12" r="3"/>
+              </svg>
+            </button>
+          </div>
+          <div class="form-error" id="confirm_password-error" role="alert"></div>
+        </div>
+
+        <!-- Submit -->
+        <div class="auth-submit" style="margin-top:var(--space-2);">
+          <button type="submit" id="register-btn" class="btn btn--primary btn--lg" data-magnetic>
+            <span>Create Account</span>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M5 12h14M12 5l7 7-7 7"/>
+            </svg>
+          </button>
+        </div>
+
+      </form>
+
+      <div class="auth-footer">
+        Already have an account? <a href="login.html">Sign in</a>
+      </div>
+    </div>
+  </main>
+
+<script type="module">
+import { initCursor, toastError, setFieldError, clearFieldError, bindFloatingLabel, setButtonLoading } from './js/ui.js';
+import { store }    from './js/store.js';
+import { CONFIG }   from './js/config.js';
+import { register, friendlyAuthError } from './js/auth.js';
+
+initCursor();
+
+// If already logged in, redirect to role's dashboard
+if (store.isLoggedIn()) {
+  const dest = CONFIG.DEFAULT_REDIRECT[store.getTopRole()] || 'dashboards/c3.html';
+  window.location.href = dest;
+}
+
+// Floating labels
+document.querySelectorAll('.auth-field .form-control').forEach(bindFloatingLabel);
+
+// ── Password toggle ───────────────────────────────────────────
+function setupToggle(btnId, inputId, showId, hideId) {
+  const btn   = document.getElementById(btnId);
+  const input = document.getElementById(inputId);
+  if (!btn) return;
+  btn.addEventListener('click', () => {
+    input.type = input.type === 'password' ? 'text' : 'password';
+    if (showId && hideId) {
+      document.getElementById(showId).style.display = input.type === 'password' ? '' : 'none';
+      document.getElementById(hideId).style.display = input.type === 'password' ? 'none' : '';
+    }
+  });
+}
+setupToggle('toggle-pw',  'password',         'pw-show', 'pw-hide');
+setupToggle('toggle-cpw', 'confirm_password', null, null);
+
+// ── Password strength ─────────────────────────────────────────
+const pwInput  = document.getElementById('password');
+const strengthBar = document.getElementById('pw-strength-bar');
+
+pwInput.addEventListener('input', () => {
+  const v = pwInput.value;
+  let score = 0;
+  if (v.length >= 8) score++;
+  if (/[A-Z]/.test(v)) score++;
+  if (/[0-9]/.test(v)) score++;
+  if (/[^A-Za-z0-9]/.test(v)) score++;
+  strengthBar.setAttribute('data-strength', score);
+});
+
+// ── Validation helpers ────────────────────────────────────────
+const fields = {
+  full_name:        { required: true, minLen: 2, label: 'Full name' },
+  faculty_id:       { required: true, minLen: 2, label: 'Faculty ID', pattern: /^[A-Za-z0-9\-_]+$/, patternMsg: 'Only letters, numbers, hyphens and underscores.' },
+  email:            { required: true, email: true, label: 'Email' },
+  designation:      { required: true, label: 'Designation' },
+  department:       { required: true, label: 'Department' },
+  password:         { required: true, minLen: 8, label: 'Password' },
+  confirm_password: { required: true, label: 'Confirm password' },
+};
+
+function validateField(id, value) {
+  const rules = fields[id];
+  if (!rules) return null;
+  if (rules.required && !value.trim()) return `${rules.label} is required.`;
+  if (rules.minLen && value.trim().length < rules.minLen) return `${rules.label} must be at least ${rules.minLen} characters.`;
+  if (rules.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) return 'Enter a valid email address.';
+  if (rules.pattern && !rules.pattern.test(value.trim())) return rules.patternMsg;
+  return null;
+}
+
+// Live validation on blur
+Object.keys(fields).forEach(id => {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.addEventListener('blur', () => {
+    const err = validateField(id, el.value);
+    const errEl = document.getElementById(`${id}-error`);
+    if (err) { el.classList.add('error'); if (errEl) { errEl.textContent = err; errEl.classList.add('visible'); } }
+    else { el.classList.remove('error'); if (errEl) errEl.classList.remove('visible'); }
+  });
+});
+
+// ── Message area ──────────────────────────────────────────────
+const msgEl = document.getElementById('auth-message');
+function showMessage(text, type = 'error') {
+  msgEl.className = `alert alert--${type} visible`;
+  msgEl.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0">
+    <path d="M12 9v4m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
+  </svg><span>${text}</span>`;
+}
+
+// ── Form submit ───────────────────────────────────────────────
+document.getElementById('register-form').addEventListener('submit', async e => {
+  e.preventDefault();
+  msgEl.className = 'alert';
+
+  let hasError = false;
+  const data = {};
+
+  Object.keys(fields).forEach(id => {
+    const el = document.getElementById(id);
+    const val = el ? el.value : '';
+    data[id] = val;
+    const err = validateField(id, val);
+    const errEl = document.getElementById(`${id}-error`);
+    if (err) {
+      el?.classList.add('error');
+      if (errEl) { errEl.textContent = err; errEl.classList.add('visible'); }
+      hasError = true;
+    } else {
+      el?.classList.remove('error');
+      if (errEl) errEl.classList.remove('visible');
+    }
+  });
+
+  if (data.password !== data.confirm_password) {
+    const el = document.getElementById('confirm_password');
+    const errEl = document.getElementById('confirm_password-error');
+    el?.classList.add('error');
+    if (errEl) { errEl.textContent = 'Passwords do not match.'; errEl.classList.add('visible'); }
+    hasError = true;
+  }
+
+  if (hasError) return;
+
+  const btn     = document.getElementById('register-btn');
+  const restore = setButtonLoading(btn, 'Creating account…');
+
+  try {
+    const payload = {
+      email:          data.email.trim().toLowerCase(),
+      password:       data.password,
+      faculty_id:     data.faculty_id.trim(),
+      full_name:      data.full_name.trim(),
+      designation:    data.designation,
+      department:     data.department,
+      contact_number: data.contact_number || undefined,
+    };
+    await register(payload);
+    // navigation happens inside register()
+  } catch (err) {
+    restore();
+    showMessage(friendlyAuthError(err), 'error');
+  }
+});
+</script>
+</body>
+</html>
+

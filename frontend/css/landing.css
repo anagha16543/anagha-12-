@@ -1,0 +1,865 @@
+/* ============================================================
+   LANDING.CSS — Cinematic Scroll Landing Page Styles
+   AI-NBA Readiness System
+   ============================================================ */
+
+/* ── Landing Navigation ──────────────────────────────────── */
+.landing-nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 72px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 var(--space-8);
+  z-index: var(--z-sticky);
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--glass-border);
+  transition: all var(--dur-normal) ease;
+}
+
+.landing-nav.scrolled {
+  background: rgba(0, 0, 0, 0.92);
+  height: 64px;
+  box-shadow: var(--shadow-md);
+}
+
+.landing-nav-brand {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: var(--text-lg);
+  color: var(--text-primary);
+  text-decoration: none;
+}
+
+.landing-nav-brand svg {
+  width: 32px;
+  height: 32px;
+}
+
+.landing-nav-links {
+  display: flex;
+  align-items: center;
+  gap: var(--space-6);
+  list-style: none;
+}
+
+.landing-nav-links a {
+  color: var(--text-secondary);
+  font-size: var(--text-sm);
+  font-weight: 500;
+  transition: color var(--dur-fast);
+}
+
+.landing-nav-links a:hover {
+  color: var(--cyan);
+}
+
+.landing-nav-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+@media (max-width: 768px) {
+  .landing-nav-links { display: none; }
+  .landing-nav { padding: 0 var(--space-4); }
+}
+
+/* ── Section Base ────────────────────────────────────────── */
+.landing-section {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: var(--space-24) var(--space-6);
+  overflow: hidden;
+}
+
+.section-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 0.3rem 0.85rem;
+  background: rgba(0, 245, 160, 0.08);
+  border: 1px solid rgba(0, 245, 160, 0.25);
+  border-radius: var(--radius-full);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--cyan);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: var(--space-4);
+}
+
+.section-title {
+  text-align: center;
+  max-width: 800px;
+  margin-bottom: var(--space-4);
+}
+
+.section-subtitle {
+  text-align: center;
+  max-width: 640px;
+  font-size: var(--text-lg);
+  color: var(--text-secondary);
+  margin-bottom: var(--space-12);
+}
+
+/* ── 1. HERO SECTION ─────────────────────────────────────── */
+#hero {
+  min-height: 100vh;
+  padding-top: calc(72px + var(--space-16));
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  position: relative;
+}
+
+.hero-bg-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.hero-spotlight {
+  position: absolute;
+  top: -20%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 70vw;
+  height: 70vh;
+  background: radial-gradient(circle, rgba(0, 245, 160, 0.16) 0%, rgba(139, 92, 246, 0.08) 50%, transparent 80%);
+  filter: blur(80px);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.hero-content {
+  position: relative;
+  z-index: 2;
+  max-width: 900px;
+}
+
+.hero-title {
+  font-size: clamp(2.8rem, 6.5vw, 5.2rem);
+  font-weight: 700;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  margin-bottom: var(--space-6);
+}
+
+/* ── Skiper 58 TextRoll Effect ───────────────────────────── */
+.text-roll {
+  position: relative;
+  display: inline-block;
+  overflow: hidden;
+  line-height: 1.15;
+  cursor: pointer;
+  padding: 0.06em 0;
+  user-select: none;
+  vertical-align: top;
+  transition: filter var(--dur-normal) var(--ease-out-expo);
+}
+
+.text-roll:hover {
+  filter: drop-shadow(0 0 18px rgba(0, 245, 160, 0.4));
+}
+
+.text-roll.gradient-text:hover {
+  filter: drop-shadow(0 0 24px rgba(139, 92, 246, 0.5));
+}
+
+.text-roll-row,
+.text-roll-overlay {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  white-space: pre;
+}
+
+.text-roll-overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.text-roll-char {
+  display: inline-block;
+  transform: translateY(0%);
+  transition: transform 0.38s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: transform;
+}
+
+.text-roll-char-in {
+  display: inline-block;
+  transform: translateY(100%);
+  transition: transform 0.38s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: transform;
+}
+
+/* Hover & programmatic roll states */
+.text-roll:hover .text-roll-char,
+.text-roll:focus-visible .text-roll-char,
+.text-roll.is-rolled .text-roll-char {
+  transform: translateY(-100%);
+}
+
+.text-roll:hover .text-roll-char-in,
+.text-roll:focus-visible .text-roll-char-in,
+.text-roll.is-rolled .text-roll-char-in {
+  transform: translateY(0%);
+}
+
+/* Gradient support for TextRoll characters */
+.text-roll.gradient-text .text-roll-char,
+.text-roll.gradient-text .text-roll-char-in {
+  background: var(--accent-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.hero-desc {
+  font-size: clamp(1.1rem, 2vw, 1.35rem);
+  color: var(--text-secondary);
+  max-width: 680px;
+  margin: 0 auto var(--space-10);
+  line-height: 1.7;
+}
+
+.hero-ctas {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+}
+
+.hero-metrics-pill {
+  margin-top: var(--space-12);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-6);
+  padding: var(--space-3) var(--space-6);
+  background: var(--surface-100);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-full);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--text-secondary);
+}
+
+.hero-metrics-pill span {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.hero-metrics-pill .dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+/* ── 2. THE PROBLEM (Chaos Cards) ────────────────────────── */
+#problem {
+  position: relative;
+  background: radial-gradient(circle at center, rgba(239, 68, 68, 0.06) 0%, transparent 70%);
+}
+
+.problem-container {
+  position: relative;
+  width: 100%;
+  max-width: 1000px;
+  height: 480px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  perspective: 1000px;
+}
+
+.chaos-center-badge {
+  position: absolute;
+  z-index: 10;
+  background: rgba(239, 68, 68, 0.15);
+  border: 1px solid var(--fail-border);
+  backdrop-filter: blur(20px);
+  padding: var(--space-4) var(--space-8);
+  border-radius: var(--radius-2xl);
+  font-family: var(--font-heading);
+  font-size: clamp(1.5rem, 3vw, 2.2rem);
+  font-weight: 700;
+  color: #fff;
+  box-shadow: 0 0 50px rgba(239, 68, 68, 0.3);
+  text-align: center;
+}
+
+.chaos-card {
+  position: absolute;
+  padding: var(--space-4) var(--space-5);
+  background: var(--ink-800);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  width: 220px;
+  pointer-events: none;
+}
+
+.chaos-card .chaos-icon {
+  font-size: 1.5rem;
+}
+
+/* ── 3. THE LOOP (Horizontal Scroll) ─────────────────────── */
+#loop-section {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  padding-left: 0;
+  padding-right: 0;
+  align-items: flex-start;
+}
+
+#loop-section .section-tag,
+#loop-section .section-title,
+#loop-section .section-subtitle {
+  align-self: center;
+}
+
+.loop-horizontal-wrapper {
+  display: flex;
+  gap: var(--space-8);
+  padding: var(--space-12) 8vw;
+  width: max-content;
+  align-self: flex-start;
+  will-change: transform;
+}
+
+.loop-step-card {
+  width: 320px;
+  padding: var(--space-8);
+  background: var(--ink-800);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-xl);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  box-shadow: var(--shadow-lg);
+  transition: border-color var(--dur-normal);
+}
+
+.loop-step-card:hover {
+  border-color: var(--cyan);
+}
+
+.loop-step-num {
+  font-family: var(--font-mono);
+  font-size: var(--text-3xl);
+  font-weight: 700;
+  color: var(--cyan);
+  opacity: 0.8;
+}
+
+.loop-step-icon {
+  width: 56px;
+  height: 56px;
+  background: var(--surface-200);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-lg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.75rem;
+}
+
+.loop-step-title {
+  font-size: var(--text-xl);
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.loop-step-desc {
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+/* ── 4. DIGITAL TWIN (Snap to Graph) ─────────────────────── */
+#digital-twin-reveal {
+  position: relative;
+  text-align: center;
+}
+
+.twin-graph-preview {
+  position: relative;
+  width: 100%;
+  max-width: 900px;
+  height: 420px;
+  margin: 0 auto;
+  border-radius: var(--radius-2xl);
+  background: radial-gradient(ellipse at center, rgba(0, 245, 160, 0.08) 0%, rgba(8, 10, 14, 0.95) 70%);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--shadow-cyan);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.twin-node {
+  position: absolute;
+  padding: var(--space-2) var(--space-4);
+  background: var(--ink-800);
+  border: 1px solid var(--cyan-dim);
+  border-radius: var(--radius-md);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--text-primary);
+  box-shadow: 0 0 15px rgba(0, 245, 160, 0.25);
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.twin-center-hub {
+  z-index: 5;
+  padding: var(--space-5) var(--space-8);
+  background: linear-gradient(135deg, rgba(0, 245, 160, 0.2), rgba(139, 92, 246, 0.2));
+  border: 2px solid var(--cyan);
+  border-radius: var(--radius-xl);
+  box-shadow: 0 0 40px rgba(0, 245, 160, 0.4);
+}
+
+.twin-center-hub h3 {
+  font-size: var(--text-xl);
+  background: var(--accent-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ── 5. COMPLIANCE ENGINE DEMO STRIP ─────────────────────── */
+#compliance-demo {
+  position: relative;
+  background: radial-gradient(circle at center, rgba(139, 92, 246, 0.06) 0%, transparent 70%);
+}
+
+.compliance-strip {
+  width: 100%;
+  max-width: 860px;
+  background: var(--ink-800);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  box-shadow: var(--shadow-xl);
+}
+
+.strip-header {
+  padding: var(--space-4) var(--space-6);
+  background: var(--surface-200);
+  border-bottom: 1px solid var(--glass-border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--text-secondary);
+}
+
+.strip-rows {
+  display: flex;
+  flex-direction: column;
+}
+
+.strip-row {
+  display: grid;
+  grid-template-columns: 80px 2fr 1.2fr 140px;
+  align-items: center;
+  gap: var(--space-4);
+  padding: var(--space-4) var(--space-6);
+  border-bottom: 1px solid var(--surface-200);
+  font-size: var(--text-sm);
+  transition: background var(--dur-fast);
+}
+
+.strip-row:last-child {
+  border-bottom: none;
+}
+
+.strip-row:hover {
+  background: var(--surface-100);
+}
+
+.strip-code {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  color: var(--cyan);
+}
+
+.strip-check {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+}
+
+/* ── 7. AI ADVISORY SECTION ──────────────────────────────── */
+#ai-advisory {
+  position: relative;
+}
+
+.ai-agents-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: var(--space-6);
+  width: 100%;
+  max-width: 1100px;
+  margin-bottom: var(--space-10);
+}
+
+.ai-agent-card {
+  padding: var(--space-6);
+  background: var(--ink-800);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-xl);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  transition: transform var(--dur-normal) var(--ease-out-back), border-color var(--dur-normal);
+}
+
+.ai-agent-card:hover {
+  transform: translateY(-6px);
+  border-color: var(--violet);
+}
+
+.agent-icon {
+  width: 44px;
+  height: 44px;
+  background: rgba(139, 92, 246, 0.15);
+  border: 1px solid var(--nrc-border);
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+}
+
+.agent-name {
+  font-size: var(--text-lg);
+  font-weight: 600;
+}
+
+.agent-role {
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+.ai-disclaimer-banner {
+  max-width: 800px;
+  padding: var(--space-4) var(--space-6);
+  background: rgba(168, 85, 247, 0.08);
+  border: 1px solid var(--nrc-border);
+  border-radius: var(--radius-lg);
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+}
+
+.ai-disclaimer-banner strong {
+  color: var(--nrc);
+}
+
+/* ── 8. VIRTUAL NBA INSPECTION TEASER ─────────────────────── */
+#virtual-inspection {
+  position: relative;
+  text-align: center;
+}
+
+.inspection-gauge-wrap {
+  position: relative;
+  width: 240px;
+  height: 240px;
+  margin: 0 auto var(--space-8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.inspection-gauge-svg {
+  transform: rotate(-90deg);
+  width: 100%;
+  height: 100%;
+}
+
+.gauge-circle-bg {
+  fill: none;
+  stroke: var(--surface-300);
+  stroke-width: 14;
+}
+
+.gauge-circle-val {
+  fill: none;
+  stroke: url(#cyan-violet-grad);
+  stroke-width: 14;
+  stroke-linecap: round;
+  stroke-dasharray: 628;
+  stroke-dashoffset: 628;
+  transition: stroke-dashoffset 2s var(--ease-out-expo);
+}
+
+.gauge-text {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.gauge-pct {
+  font-family: var(--font-heading);
+  font-size: 3.5rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.gauge-label {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--cyan);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+/* ── 9. CTA & FOOTER ─────────────────────────────────────── */
+#final-cta {
+  padding: var(--space-20) var(--space-6);
+  text-align: center;
+  background: radial-gradient(ellipse at center bottom, rgba(0, 245, 160, 0.14) 0%, transparent 60%);
+}
+
+.landing-footer {
+  padding: var(--space-12) var(--space-8) var(--space-8);
+  border-top: 1px solid var(--glass-border);
+  background: var(--ink-900);
+  font-size: var(--text-sm);
+  color: var(--text-muted);
+}
+
+.footer-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-6);
+  margin-bottom: var(--space-8);
+}
+
+.footer-attribution {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+  text-align: center;
+  padding-top: var(--space-6);
+  border-top: 1px solid var(--surface-200);
+}
+
+.footer-attribution a {
+  color: var(--cyan);
+  text-decoration: underline;
+}
+
+
+
+/* ============================================================
+   SKIPER 47 — PERSPECTIVE COVERFLOW CAROUSEL (8 ADVISORY AGENTS)
+   Ported from https://skiper-ui.com/registry/skiper47.json
+   ============================================================ */
+.skiper47-wrapper {
+  position: relative;
+  width: 100%;
+  max-width: 1200px;
+  margin: var(--space-6) auto var(--space-8);
+  padding: 0 var(--space-4);
+  overflow: visible;
+}
+
+.skiper47-carousel {
+  width: 100%;
+  padding-top: 35px !important;
+  padding-bottom: 55px !important;
+  overflow: visible !important;
+}
+
+.skiper47-slide {
+  width: 350px !important;
+  height: 390px !important;
+  border-radius: var(--radius-2xl);
+  background: var(--ink-800);
+  border: 1px solid var(--glass-border);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
+  transition: transform 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease, opacity 0.4s ease;
+  user-select: none;
+  overflow: hidden;
+  opacity: 0.6;
+  filter: brightness(0.8);
+  transform-style: preserve-3d;
+}
+
+.skiper47-slide.swiper-slide-active {
+  opacity: 1;
+  filter: brightness(1);
+  border-color: var(--slide-accent, var(--cyan));
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.7), 0 0 35px var(--slide-glow, rgba(0, 245, 160, 0.3));
+}
+
+@media (max-width: 640px) {
+  .skiper47-slide {
+    width: 280px !important;
+    height: 370px !important;
+  }
+}
+
+.skiper47-card-inner {
+  height: 100%;
+  padding: var(--space-6);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  background: linear-gradient(165deg, rgba(255, 255, 255, 0.03) 0%, rgba(0, 0, 0, 0.35) 100%);
+  position: relative;
+}
+
+.skiper47-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  font-size: 11px;
+  font-family: var(--font-mono);
+  font-weight: 600;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--glass-border);
+  color: var(--slide-accent, var(--cyan));
+}
+
+.skiper47-badge-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--slide-accent, var(--cyan));
+  box-shadow: 0 0 8px var(--slide-accent, var(--cyan));
+}
+
+.skiper47-icon-wrap {
+  width: 52px;
+  height: 52px;
+  border-radius: var(--radius-lg);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--glass-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: var(--space-4) 0;
+  color: var(--slide-accent, var(--cyan));
+}
+
+.skiper47-title {
+  font-size: var(--text-lg);
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: var(--space-2);
+}
+
+.skiper47-desc {
+  font-size: var(--text-xs);
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+.skiper47-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--glass-border);
+  font-size: 11px;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+}
+
+/* Controls */
+.skiper47-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-4);
+  margin-top: var(--space-2);
+}
+
+.skiper47-btn {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--ink-700);
+  border: 1px solid var(--glass-border);
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all var(--dur-fast);
+}
+
+.skiper47-btn:hover {
+  background: var(--ink-600);
+  border-color: var(--cyan);
+  color: var(--cyan);
+  transform: scale(1.08);
+}
+
+.skiper47-pagination {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: auto !important;
+}
+
+.skiper47-pagination .swiper-pagination-bullet {
+  width: 8px;
+  height: 8px;
+  background: var(--text-muted);
+  opacity: 0.4;
+  border-radius: 4px;
+  transition: all var(--dur-normal);
+}
+
+.skiper47-pagination .swiper-pagination-bullet-active {
+  width: 24px;
+  background: var(--cyan);
+  opacity: 1;
+  box-shadow: 0 0 10px rgba(0, 245, 160, 0.5);
+}

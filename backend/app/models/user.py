@@ -32,6 +32,7 @@ class UserRoleName(str, enum.Enum):
     ADMIN = "ADMIN"
     HOD = "HOD"
     FACULTY = "FACULTY"
+    STUDENT = "STUDENT"
 
 
 # Many-to-many relationship table between User and Role
