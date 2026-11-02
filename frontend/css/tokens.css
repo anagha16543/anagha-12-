@@ -26,12 +26,17 @@
   --aurora-dim:   #00C982;
   --cyan:         #00F5A0;
   --cyan-dim:     #00C982;
+  --lime:         #CCFF00;
+  --lime-glow:    0 0 28px rgba(204, 255, 0, 0.45);
+  --lime-dim:     #A5CC00;
+  --lime-bg:      rgba(204, 255, 0, 0.08);
+  --lime-border:  rgba(204, 255, 0, 0.35);
   --violet:       #8B5CF6;
   --violet-dim:   #6D3FDB;
   --fuchsia:      #D946EF;
 
-  --accent-gradient: linear-gradient(135deg, var(--cyan) 0%, var(--violet) 100%);
-  --accent-gradient-h: linear-gradient(90deg, var(--cyan) 0%, var(--violet) 100%);
+  --accent-gradient: linear-gradient(135deg, var(--lime) 0%, var(--aurora) 50%, var(--violet) 100%);
+  --accent-gradient-h: linear-gradient(90deg, var(--lime) 0%, var(--aurora) 50%, var(--violet) 100%);
 
   /* ── Status colours ──────────────────────────────────── */
   --pass:         #10B981;
