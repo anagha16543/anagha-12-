@@ -27,18 +27,34 @@ This system keeps a live digital copy of the department (a "digital twin") and c
 
 # 2. Start the system
 
-You need Python 3.11+ and PostgreSQL 14+ with the **pgvector** extension (macOS: `brew install postgresql@17 pgvector && brew services start postgresql@17`, then `createdb nba_readiness`). No Docker is needed.
+**What you need (all operating systems):** Python 3.12 or newer, and PostgreSQL 14 or newer with the **pgvector** extension. No Docker is needed.
 
-First time only:
+### Windows (recommended path)
 
-```bash
-./start.sh setup
+1. Install **Python** from python.org. Tick *Add python.exe to PATH*.
+2. Install **PostgreSQL** from postgresql.org (the EDB installer). Remember the `postgres` password you choose. Add its `bin` folder (for example `C:\Program Files\PostgreSQL\17\bin`) to PATH so `psql` works.
+3. Add **pgvector**. This is the one tricky step on Windows, because the PostgreSQL installer does not include it. Pick one:
+   - **Easiest: a hosted free Postgres that already has pgvector** (Neon or Supabase). Create a database, copy its connection string into `DATABASE_URL` in `backend\.env`, done. Nothing to install.
+   - **Local:** follow the "Windows" build steps in the pgvector README (https://github.com/pgvector/pgvector#windows). It needs Visual Studio Build Tools.
+4. Create the database: `createdb -U postgres nba_readiness` (skip when using a hosted database).
+5. In the project folder, open PowerShell:
+
+```powershell
+.\start.ps1 setup
 ```
 
-Every other time:
+   (or double-click / run `start.bat setup`). If PowerShell blocks the script, run once: `Set-ExecutionPolicy -Scope CurrentUser RemoteSigned`.
+6. Next time, just run `.\start.ps1`. Three windows open (backend, AI service, website); close them to stop.
+
+If your `postgres` password is not `changeme`, edit `DATABASE_URL` in `backend\.env` after the first run creates it, then run the script again.
+
+### Mac or Linux
 
 ```bash
-./start.sh
+brew install postgresql@17 pgvector && brew services start postgresql@17   # Mac
+createdb nba_readiness
+./start.sh setup      # first time
+./start.sh            # after that
 ```
 
 Then open **http://127.0.0.1:5500** in your browser.
@@ -352,7 +368,7 @@ Each run is stored as evaluation history, so you can compare today with last mon
 
 # 11. A complete 30-minute walkthrough
 
-1. Run `./start.sh setup`. Open http://127.0.0.1:5500.
+1. Run `.\\start.ps1 setup` (Windows) or `./start.sh setup` (Mac/Linux). Open http://127.0.0.1:5500.
 2. Sign in as **HOD**. Open **Inspection** and run it. Note the score and the findings.
 3. Open **Criterion 5**, Evaluate 5.1, 5.2, 5.3. Read the marks and reasons.
 4. Open **Criterion 3 → CO Attainment**. Spot the weak COs. Approve the attainment method.
