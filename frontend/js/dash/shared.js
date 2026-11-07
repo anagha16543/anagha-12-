@@ -215,8 +215,8 @@ function _renderSidebar(activeCode, user) {
         <svg width="28" height="28" viewBox="0 0 48 48" fill="none">
           <defs>
             <linearGradient id="sb-grad" x1="0" y1="0" x2="48" y2="48" gradientUnits="userSpaceOnUse">
-              <stop offset="0%" stop-color="#00F5A0"/>
-              <stop offset="100%" stop-color="#8B5CF6"/>
+              <stop offset="0%" stop-color="#35E0FF"/>
+              <stop offset="100%" stop-color="#7C5CFF"/>
             </linearGradient>
           </defs>
           <rect width="48" height="48" rx="10" fill="url(#sb-grad)" opacity="0.2"/>
@@ -288,26 +288,26 @@ function _renderRoleContextBanner(activeCode, user) {
   `;
 
   if (isAdmin) {
-    banner.style.borderLeft = '4px solid var(--violet, #8B5CF6)';
+    banner.style.borderLeft = '4px solid var(--violet, #7C5CFF)';
     banner.innerHTML = `
       <div style="display:flex;align-items:center;gap:10px;">
         <span style="font-size:20px;">👑</span>
         <div>
-          <div style="font-size:13px;font-weight:700;color:var(--violet,#8B5CF6);">ADMINISTRATOR MODE &bull; Institutional Macro View</div>
+          <div style="font-size:13px;font-weight:700;color:var(--violet,#7C5CFF);">ADMINISTRATOR MODE &bull; Institutional Macro View</div>
           <div style="font-size:12px;color:var(--text-secondary);">Viewing Criterion ${activeCode} across all departments. Full institutional audit and override privileges active.</div>
         </div>
       </div>
-      <a href="/dashboards/admin.html" class="btn btn--sm btn--primary" style="background:var(--violet,#8B5CF6);color:#fff;border-color:var(--violet,#8B5CF6);white-space:nowrap;">
+      <a href="/dashboards/admin.html" class="btn btn--sm btn--primary" style="background:var(--violet,#7C5CFF);color:#fff;border-color:var(--violet,#7C5CFF);white-space:nowrap;">
         &larr; Return to Administrator Dashboard
       </a>
     `;
   } else if (isHod) {
-    banner.style.borderLeft = '4px solid var(--cyan, #00F5A0)';
+    banner.style.borderLeft = '4px solid var(--cyan, #35E0FF)';
     banner.innerHTML = `
       <div style="display:flex;align-items:center;gap:10px;">
         <span style="font-size:20px;">🎓</span>
         <div>
-          <div style="font-size:13px;font-weight:700;color:var(--cyan,#00F5A0);">HOD REVIEW MODE &bull; Department of CSE</div>
+          <div style="font-size:13px;font-weight:700;color:var(--cyan,#35E0FF);">HOD REVIEW MODE &bull; Department of CSE</div>
           <div style="font-size:12px;color:var(--text-secondary);">Verifying department-level Criterion ${activeCode} attainment and faculty submission compliance.</div>
         </div>
       </div>
@@ -316,16 +316,16 @@ function _renderRoleContextBanner(activeCode, user) {
       </a>
     `;
   } else {
-    banner.style.borderLeft = '4px solid var(--aurora, #CCFF00)';
+    banner.style.borderLeft = '4px solid var(--aurora, #CCFF3D)';
     banner.innerHTML = `
       <div style="display:flex;align-items:center;gap:10px;">
         <span style="font-size:20px;">👩‍🏫</span>
         <div>
-          <div style="font-size:13px;font-weight:700;color:var(--aurora,#CCFF00);">FACULTY VIEW &bull; Department Data (Read-Only)</div>
+          <div style="font-size:13px;font-weight:700;color:var(--aurora,#CCFF3D);">FACULTY VIEW &bull; Department Data (Read-Only)</div>
           <div style="font-size:12px;color:var(--text-secondary);">To enter assessment marks, add qualifications, or submit research contributions, open your personal workspace.</div>
         </div>
       </div>
-      <a href="/dashboards/faculty.html" class="btn btn--sm btn--primary" style="background:var(--aurora,#CCFF00);color:#000;border-color:var(--aurora,#CCFF00);font-weight:700;white-space:nowrap;">
+      <a href="/dashboards/faculty.html" class="btn btn--sm btn--primary" style="background:var(--aurora,#CCFF3D);color:#000;border-color:var(--aurora,#CCFF3D);font-weight:700;white-space:nowrap;">
         &larr; Go to My Faculty Dashboard
       </a>
     `;
@@ -411,7 +411,7 @@ function _renderTopbar(activeCode, user) {
 
   const roleIcon = isAdmin ? '👑' : isHod ? '🎓' : '👩‍🏫';
   const roleLabel = isAdmin ? 'ADMINISTRATOR' : isHod ? 'HEAD OF DEPARTMENT' : 'FACULTY';
-  const roleColor = isAdmin ? 'var(--violet, #8B5CF6)' : isHod ? 'var(--cyan, #00F5A0)' : 'var(--aurora, #CCFF00)';
+  const roleColor = isAdmin ? 'var(--violet, #7C5CFF)' : isHod ? 'var(--cyan, #35E0FF)' : 'var(--aurora, #CCFF3D)';
 
   // Build switcher options tailored to role
   let switcherOptions = '';
@@ -482,6 +482,7 @@ function _renderTopbar(activeCode, user) {
             <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
             <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
           </svg>
+          <span id="notif-badge" style="display:none;position:absolute;top:-4px;right:-4px;min-width:16px;height:16px;padding:0 4px;border-radius:8px;background:var(--fail,#ef4444);color:#fff;font-size:10px;font-weight:700;line-height:16px;text-align:center;"></span>
         </button>
         <div class="notification-menu" id="notification-dropdown">
           <div class="notif-header">
@@ -560,44 +561,57 @@ function _setupNotifications() {
   const dropdown = document.getElementById('notification-dropdown');
   const listContainer = document.getElementById('notif-items-container');
   const markAllBtn = document.getElementById('mark-all-read-btn');
+  const badge = document.getElementById('notif-badge');
+  const esc = (t) => String(t ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 
-  bellBtn?.addEventListener('click', async (e) => {
+  // The API replies { unread_count, total_count, notifications: [...] }
+  const unpack = (res) => Array.isArray(res)
+    ? { items: res, unread: res.filter(n => !n.is_read).length }
+    : { items: res?.notifications || [], unread: res?.unread_count ?? 0 };
+
+  function paintBadge(unread) {
+    if (!badge) return;
+    badge.style.display = unread > 0 ? 'block' : 'none';
+    badge.textContent = unread > 99 ? '99+' : String(unread);
+  }
+
+  async function load() {
+    try {
+      const { items, unread } = unpack(await api.listNotifications());
+      paintBadge(unread);
+      if (!items.length) {
+        listContainer.innerHTML = '<div style="padding:1rem;color:var(--text-muted);text-align:center;">You have no notifications yet.</div>';
+        return;
+      }
+      listContainer.innerHTML = items.map(n => `
+        <div class="notif-item ${n.is_read ? '' : 'unread'}" data-id="${esc(n.id)}" data-link="${esc(n.link_url || '')}" style="cursor:pointer;">
+          <div class="notif-title">${esc(n.title)}</div>
+          <div class="notif-msg">${esc(n.message)}</div>
+          <div style="font-size:10px;color:var(--text-muted);margin-top:2px;">${n.created_at ? new Date(n.created_at).toLocaleString() : ''}</div>
+        </div>`).join('');
+      listContainer.querySelectorAll('.notif-item').forEach(item => {
+        item.addEventListener('click', async () => {
+          try {
+            if (item.classList.contains('unread')) {
+              await api.markNotificationRead(item.dataset.id);
+              item.classList.remove('unread');
+              const left = listContainer.querySelectorAll('.notif-item.unread').length;
+              paintBadge(left);
+            }
+          } catch (err) { toastError(`Could not mark as read: ${err.message || err}`); }
+          const link = item.dataset.link;
+          if (link && link.startsWith('/dashboards/')) window.location.href = link;
+        });
+      });
+    } catch (err) {
+      listContainer.innerHTML = `<div style="padding:1rem;color:var(--fail);text-align:center;">Could not load notifications: ${esc(err.message || err)}</div>`;
+    }
+  }
+
+  bellBtn?.addEventListener('click', (e) => {
     e.stopPropagation();
     dropdown?.classList.toggle('open');
-
-    if (dropdown?.classList.contains('open')) {
-      try {
-        const notifs = await api.listNotifications();
-        if (!notifs || notifs.length === 0) {
-          listContainer.innerHTML = '<div style="padding:1rem;color:var(--text-muted);text-align:center;">No new notifications</div>';
-          return;
-        }
-
-        listContainer.innerHTML = notifs.map(n => `
-          <div class="notif-item ${n.is_read ? '' : 'unread'}" data-id="${n.id}">
-            <div class="notif-title">${n.title}</div>
-            <div class="notif-msg">${n.message}</div>
-          </div>
-        `).join('');
-
-        listContainer.querySelectorAll('.notif-item').forEach(item => {
-          item.addEventListener('click', async () => {
-            const id = item.dataset.id;
-            try {
-              await api.markNotificationRead(id);
-              item.classList.remove('unread');
-            } catch {}
-          });
-        });
-      } catch (err) {
-        listContainer.innerHTML = `
-          <div class="notif-item unread">
-            <div class="notif-title">C3.7 CO Attainment Complete</div>
-            <div class="notif-msg">Direct attainment calculations verified.</div>
-          </div>
-        `;
-      }
-    }
+    if (dropdown?.classList.contains('open')) load();
   });
 
   markAllBtn?.addEventListener('click', async (e) => {
@@ -605,15 +619,21 @@ function _setupNotifications() {
     try {
       await api.markAllNotificationsRead();
       listContainer?.querySelectorAll('.notif-item').forEach(i => i.classList.remove('unread'));
+      paintBadge(0);
       toastSuccess('All marked as read');
-    } catch {}
+    } catch (err) { toastError(`Could not mark all as read: ${err.message || err}`); }
   });
 
   document.addEventListener('click', (e) => {
-    if (!dropdown?.contains(e.target) && e.target !== bellBtn) {
-      dropdown?.classList.remove('open');
-    }
+    if (!dropdown?.contains(e.target) && !bellBtn?.contains(e.target)) dropdown?.classList.remove('open');
   });
+
+  // Show the unread count on the bell right away, then refresh every minute.
+  const refreshBadge = async () => {
+    try { paintBadge(unpack(await api.listNotifications()).unread); } catch { /* badge stays as is */ }
+  };
+  refreshBadge();
+  setInterval(refreshBadge, 60000);
 }
 
 /**

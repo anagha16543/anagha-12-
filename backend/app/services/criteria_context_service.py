@@ -181,14 +181,20 @@ def get_c5_context(
             .filter(FacultyQualification.faculty_profile_id.in_(faculty_ids), FacultyQualification.is_deleted.is_(False))
             .all()
         )
+        # One count per PERSON, using their highest qualification (PhD beats Master's).
+        highest: dict = {}
         for q in quals:
             degree_lower = (q.degree or "").lower()
             if "ph.d" in degree_lower or "phd" in degree_lower or "doctor" in degree_lower:
-                phd_count += 1
-                pg_or_phd_count += 1
-            elif "m.tech" in degree_lower or "mtech" in degree_lower or "m.e" in degree_lower or "ms" in degree_lower or "master" in degree_lower:
-                mtech_count += 1
-                pg_or_phd_count += 1
+                highest[q.faculty_profile_id] = "phd"
+            elif highest.get(q.faculty_profile_id) != "phd" and (
+                "m.tech" in degree_lower or "mtech" in degree_lower or "m.e" in degree_lower
+                or "ms" in degree_lower or "master" in degree_lower
+            ):
+                highest[q.faculty_profile_id] = "master"
+        phd_count = sum(1 for v in highest.values() if v == "phd")
+        mtech_count = sum(1 for v in highest.values() if v == "master")
+        pg_or_phd_count = phd_count + mtech_count
 
     # Cadre breakdown by designation
     professors = 0

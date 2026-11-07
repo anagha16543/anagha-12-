@@ -183,3 +183,64 @@ class TestEvidenceLinkPermission:
         url = f"/api/v1/documents/requirements/{req.id}/evidence"
         assert db_client.post(url, json={"document_id": doc_id}, headers=second_faculty_headers).status_code == 403
         assert db_client.post(url, json={"document_id": doc_id}, headers=faculty_headers).status_code == 201
+
+
+class TestActionAssignmentNotification:
+    def test_assigning_action_notifies_assignee(
+        self, db_client, db_session, nba_year, hod_headers, active_faculty_user
+    ):
+        from app.models.phase4 import NBARequirement
+        from app.models.phase5 import Notification
+
+        req = _req(db_session, "REQ_3_1")
+        gap = db_client.post(
+            "/api/v1/gaps",
+            json={
+                "requirement_id": str(req.id), "criterion_id": str(req.criterion_id),
+                "academic_year_id": str(nba_year.id), "department": DEPT,
+                "title": "Gap", "description": "A test gap", "severity": "HIGH",
+            },
+            headers=hod_headers,
+        )
+        assert gap.status_code in (200, 201), gap.text
+        res = db_client.post(
+            f"/api/v1/gaps/{gap.json()['id']}/actions",
+            json={"title": "Fix it", "description": "Do the work", "priority": "HIGH",
+                  "assigned_to_user_id": str(active_faculty_user.id)},
+            headers=hod_headers,
+        )
+        assert res.status_code in (200, 201), res.text
+        notes = db_session.query(Notification).filter(Notification.user_id == active_faculty_user.id).all()
+        assert [n.title for n in notes] == ["New Corrective Action Assigned"]
+
+
+class TestFacultyQualificationCountsPeopleNotDegrees:
+    def test_phd_with_mtech_counts_once_as_phd(self, db_session, nba_year):
+        from app.models.faculty import FacultyProfile
+        from app.models.faculty_data import FacultyQualification
+        from app.models.user import User, UserAccountStatus
+        from app.services.criteria_context_service import get_c5_context
+
+        user = User(email="dual@example.com", hashed_password="x", status=UserAccountStatus.ACTIVE.value)
+        db_session.add(user)
+        db_session.flush()
+        fp = FacultyProfile(user_id=user.id, faculty_id="D1", full_name="Dr Dual", designation="Professor", department=DEPT)
+        db_session.add(fp)
+        db_session.flush()
+        for degree in ("Ph.D", "M.Tech"):
+            db_session.add(FacultyQualification(faculty_profile_id=fp.id, degree=degree, field_of_study="CS",
+                                                institution="X", university="Y", year_of_passing=2010))
+        db_session.commit()
+        ctx = get_c5_context(db_session, DEPT, nba_year.id)
+        assert (ctx["X"], ctx["Y"]) == (1, 0)
+
+
+class TestFilenameCleaningIsOsIndependent:
+    def test_windows_and_unix_paths_reduce_to_the_file_name(self):
+        from app.services.storage_service import sanitize_original_filename as clean
+
+        assert clean(r"C:\Users\Anagha Rao\Desktop\3.1 Course File (final).pdf") == "3.1 Course File (final).pdf"
+        assert clean(r"..\..\windows\system32\evil.pdf") == "evil.pdf"
+        assert clean("../../etc/passwd.pdf") == "passwd.pdf"
+        assert clean("report 2026-27.docx") == "report 2026-27.docx"
+        assert clean("..") == "unnamed_file"

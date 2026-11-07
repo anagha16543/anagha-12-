@@ -292,6 +292,11 @@ def call_agent(request: AgentAnalysisRequest) -> AgentAnalysisResponse:
         logger.warning(
             "AgentClient: HTTP %d from %s", exc.response.status_code, url
         )
+        if exc.response.status_code == 503:
+            return _unavailable_response(
+                request,
+                "The AI service has no API key. Set GROQ_API_KEY in ai-service/.env and restart the AI service.",
+            )
         return _unavailable_response(
             request,
             f"AI service returned HTTP {exc.response.status_code}.",

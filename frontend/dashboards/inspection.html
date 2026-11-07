@@ -39,27 +39,34 @@
       <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));gap:var(--space-6);margin-bottom:var(--space-8);">
         <div class="chart-card">
           <div style="font-size:var(--text-xs);color:var(--text-muted);text-transform:uppercase;">Overall Readiness</div>
-          <div style="font-size:2.5rem;font-weight:700;color:var(--cyan);margin:var(--space-2) 0;" id="sim-overall-pct">74%</div>
+          <div style="font-size:2.5rem;font-weight:700;color:var(--cyan);margin:var(--space-2) 0;" id="sim-overall-pct">--</div>
           <div style="font-size:11px;color:var(--text-muted);">* Internal readiness indicator, not an official NBA score</div>
         </div>
 
         <div class="chart-card">
           <div style="font-size:var(--text-xs);color:var(--text-muted);text-transform:uppercase;">Requirements Passed</div>
-          <div style="font-size:2.5rem;font-weight:700;color:var(--pass);margin:var(--space-2) 0;" id="sim-pass-count">82</div>
+          <div style="font-size:2.5rem;font-weight:700;color:var(--pass);margin:var(--space-2) 0;" id="sim-pass-count">--</div>
           <span class="chip chip--pass">PASS</span>
         </div>
 
         <div class="chart-card">
           <div style="font-size:var(--text-xs);color:var(--text-muted);text-transform:uppercase;">Threshold Warnings</div>
-          <div style="font-size:2.5rem;font-weight:700;color:var(--warning);margin:var(--space-2) 0;" id="sim-warning-count">14</div>
+          <div style="font-size:2.5rem;font-weight:700;color:var(--warning);margin:var(--space-2) 0;" id="sim-warning-count">--</div>
           <span class="chip chip--warning">WARNING</span>
         </div>
 
         <div class="chart-card">
           <div style="font-size:var(--text-xs);color:var(--text-muted);text-transform:uppercase;">Critical Deficiencies</div>
-          <div style="font-size:2.5rem;font-weight:700;color:var(--fail);margin:var(--space-2) 0;" id="sim-fail-count">7</div>
+          <div style="font-size:2.5rem;font-weight:700;color:var(--fail);margin:var(--space-2) 0;" id="sim-fail-count">--</div>
           <span class="chip chip--fail">FAIL</span>
         </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(180px, 1fr));gap:var(--space-4);margin-bottom:var(--space-8);">
+        <div class="chart-card"><div style="font-size:var(--text-xs);color:var(--text-muted);text-transform:uppercase;">Needs more input</div><div style="font-size:1.8rem;font-weight:700;margin-top:6px;" id="sim-nrc-count">--</div></div>
+        <div class="chart-card"><div style="font-size:var(--text-xs);color:var(--text-muted);text-transform:uppercase;">Missing evidence</div><div style="font-size:1.8rem;font-weight:700;margin-top:6px;" id="sim-missing-evidence">--</div></div>
+        <div class="chart-card"><div style="font-size:var(--text-xs);color:var(--text-muted);text-transform:uppercase;">Pending actions</div><div style="font-size:1.8rem;font-weight:700;margin-top:6px;" id="sim-pending-actions">--</div></div>
+        <div class="chart-card"><div style="font-size:var(--text-xs);color:var(--text-muted);text-transform:uppercase;">Overdue actions</div><div style="font-size:1.8rem;font-weight:700;margin-top:6px;" id="sim-overdue-actions">--</div></div>
       </div>
 
       <!-- Live Simulation Terminal / Progress Log -->
@@ -74,13 +81,23 @@
         </div>
       </div>
 
+      <div class="chart-card" id="sim-findings-card" style="margin-top:var(--space-6);display:none;">
+        <div class="chart-card-header"><h3>Findings to fix</h3><span class="chip chip--info" id="sim-findings-count"></span></div>
+        <div style="overflow-x:auto;">
+          <table class="data-table">
+            <thead><tr><th>Criterion</th><th>Requirement</th><th>Status</th><th>Marks</th><th>Issue</th><th>What to do</th></tr></thead>
+            <tbody id="sim-findings-tbody"></tbody>
+          </table>
+        </div>
+        <p id="sim-disclaimer" style="font-size:12px;color:var(--text-muted);margin-top:var(--space-4);"></p>
+      </div>
     </div>
   </main>
 
   <script type="module">
     import { initDashboardShell } from '../js/dash/shared.js';
     import { api } from '../js/api.js';
-    import { toast, toastSuccess, toastError, countUp } from '../js/ui.js';
+    import { toast, toastSuccess, toastError, countUp, statusChip } from '../js/ui.js';
 
     document.addEventListener('DOMContentLoaded', async () => {
       await initDashboardShell('INSPECTION');
@@ -97,48 +114,60 @@
         log.scrollTop = log.scrollHeight;
       }
 
+      const esc = (t) => String(t ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+      const label = (c) => c.replace('CRITERION_', 'Criterion ');
+      const num = (n) => (Number(n) % 1 ? Number(n).toFixed(1) : String(Number(n)));
+      const setNum = (id, v, suffix = '') => { const el = document.getElementById(id); if (el) countUp(el, Number(v), 900, suffix); };
+
       runBtn?.addEventListener('click', async () => {
         chip.className = 'chip chip--warning';
         chip.textContent = 'AUDITING...';
         runBtn.disabled = true;
-
-        addLog('Connecting to Digital Twin Compliance Engine...', 'var(--cyan)');
-        await new Promise(r => setTimeout(r, 450));
-
-        addLog('Auditing Criterion 3: Outcome-Based Assessment (3.1 - 3.8)...');
-        await new Promise(r => setTimeout(r, 450));
-        addLog('-> C3.7 CO Attainment verified: 93.8 / 120 marks awarded (PASS)', 'var(--pass)');
-
-        addLog('Auditing Criterion 4: Students Performance (4.1 - 4.7)...');
-        await new Promise(r => setTimeout(r, 450));
-        addLog('-> C4 Enrolment & Success rate verified (78 / 120 marks awarded)', 'var(--warning)');
-
-        addLog('Auditing Criterion 5: Faculty Information & SFR (5.1 - 5.5)...');
-        await new Promise(r => setTimeout(r, 450));
-        addLog('-> C5.1 SFR calculated: 17.2:1. FQI evaluated: 21.5 / 25 marks (PASS)', 'var(--pass)');
-
-        addLog('Auditing Criterion 6: Faculty Contributions & R&D (6.1 & 6.2)...');
-        await new Promise(r => setTimeout(r, 450));
-        addLog('-> C6 Publications and patents evaluated (88.8 / 120 marks awarded)', 'var(--pass)');
+        addLog('Reading your department records and evaluating every Criterion 3-6 requirement...', 'var(--cyan)');
 
         try {
           const res = await api.runVirtualInspection();
-          addLog(`Server audit verified: ${res.summary}`, 'var(--cyan)');
-          addLog(`Accreditation Status: ${res.status} (${res.readiness_score} / ${res.max_score} marks)`, 'var(--pass)');
+
+          res.criteria.forEach((c) => {
+            const colour = c.failed ? 'var(--fail)' : (c.warning || c.needs_clarification) ? 'var(--warning)' : 'var(--pass)';
+            addLog(`${label(c.criterion_code)} ${c.name}: ${c.passed} pass, ${c.warning} warning, ${c.failed} fail, ${c.needs_clarification} need input — ${num(c.marks_attained)} / ${num(c.max_marks)} marks`, colour);
+          });
+          addLog(res.summary, 'var(--cyan)');
+          addLog(`Overall status: ${res.status.replace(/_/g, ' ')} (${num(res.readiness_score)} / ${num(res.max_score)} marks)`, res.failed ? 'var(--warning)' : 'var(--pass)');
+
+          setNum('sim-overall-pct', Math.round(res.readiness_percentage), '%');
+          setNum('sim-pass-count', res.passed);
+          setNum('sim-warning-count', res.warning);
+          setNum('sim-fail-count', res.failed);
+          setNum('sim-nrc-count', res.needs_clarification);
+          setNum('sim-missing-evidence', res.missing_evidence);
+          setNum('sim-pending-actions', res.pending_actions);
+          setNum('sim-overdue-actions', res.overdue_actions);
+
+          document.getElementById('sim-findings-tbody').innerHTML = res.findings.length
+            ? res.findings.map((f) => `<tr>
+                <td>${esc(label(f.criterion_code))}</td>
+                <td><div style="font-weight:600;">${esc(f.title)}</div><div class="mono" style="font-size:12px;color:var(--text-muted);">${esc(f.requirement_code.replace(/^REQ_/, '').replace(/_/g, '.'))}${f.has_evidence ? '' : ' · no evidence linked'}</div></td>
+                <td>${statusChip(f.status)}</td>
+                <td class="mono">${num(f.marks_attained)} / ${num(f.max_marks)}</td>
+                <td style="font-size:13px;max-width:340px;">${esc(f.issue)}</td>
+                <td style="font-size:13px;">${esc(f.recommended_action)}</td></tr>`).join('')
+            : '<tr><td colspan="6" style="text-align:center;padding:2rem;">No open findings. Every requirement passes.</td></tr>';
+          document.getElementById('sim-findings-count').textContent = `${res.findings.length} to review`;
+          document.getElementById('sim-disclaimer').textContent = res.disclaimer;
+          document.getElementById('sim-findings-card').style.display = 'block';
+
+          chip.className = 'chip chip--pass';
+          chip.textContent = 'COMPLETED';
+          toastSuccess(`Inspection complete: ${Math.round(res.readiness_percentage)}% internal readiness.`);
         } catch (err) {
-          addLog(`Audit completed in local engine mode.`, 'var(--cyan)');
+          addLog(`Inspection failed: ${err.message || err}`, 'var(--fail)');
+          chip.className = 'chip chip--fail';
+          chip.textContent = 'FAILED';
+          toastError(`Inspection failed: ${err.message || err}`);
+        } finally {
+          runBtn.disabled = false;
         }
-
-        chip.className = 'chip chip--pass';
-        chip.textContent = 'COMPLETED';
-        runBtn.disabled = false;
-
-        countUp(document.getElementById('sim-overall-pct'), 87, 1200, '%');
-        countUp(document.getElementById('sim-pass-count'), 86, 1000);
-        countUp(document.getElementById('sim-warning-count'), 11, 1000);
-        countUp(document.getElementById('sim-fail-count'), 3, 1000);
-
-        toastSuccess('Simulated audit complete! Overall readiness evaluated at 87%.');
       });
     });
   </script>

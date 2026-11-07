@@ -106,6 +106,8 @@ class Settings(BaseSettings):
     # Phase 4 — AI Service Integration
     # ------------------------------------------------------------------ #
     AI_SERVICE_BASE_URL: str = "http://localhost:8001"
+    # Route Criteria 3-6 (and inspection/report) to the AI service. Off by default so tests stay offline.
+    AI_ENABLE_ALL_CRITERIA: bool = False
     AI_SERVICE_TIMEOUT_SECONDS: float = 30.0
     AI_SERVICE_API_KEY: Optional[str] = None
 

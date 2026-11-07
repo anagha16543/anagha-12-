@@ -184,19 +184,28 @@ export function initScrollProgress() {
 // ══════════════════════════════════════════════════════════════
 
 export function initThemeToggle(buttonSelector = '[data-theme-toggle]') {
-  const btn = document.querySelector(buttonSelector);
-  if (!btn) return;
-
   _applyTheme(store.getTheme());
+  const refresh = () => document.querySelectorAll(buttonSelector)
+    .forEach(b => {
+      const t = store.getTheme();
+      const label = `Switch to ${t === 'dark' ? 'light' : 'dark'} mode`;
+      if (b.getAttribute('aria-label') !== label) _updateToggleIcon(b, t);
+    });
+  refresh();
 
-  btn.addEventListener('click', () => {
-    const next = store.getTheme() === 'dark' ? 'light' : 'dark';
-    store.setTheme(next);
-    _applyTheme(next);
-    _updateToggleIcon(btn, next);
-  });
-
-  _updateToggleIcon(btn, store.getTheme());
+  // Delegated listener: works for buttons the dashboard shell adds later.
+  if (!window.__themeToggleBound) {
+    window.__themeToggleBound = true;
+    document.addEventListener('click', (e) => {
+      const btn = e.target.closest(buttonSelector);
+      if (!btn) return;
+      const next = store.getTheme() === 'dark' ? 'light' : 'dark';
+      store.setTheme(next);
+      _applyTheme(next);
+      refresh();
+    });
+    new MutationObserver(refresh).observe(document.body, { childList: true, subtree: true });
+  }
 }
 
 function _applyTheme(theme) {

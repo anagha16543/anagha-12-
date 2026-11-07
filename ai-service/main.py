@@ -115,7 +115,7 @@ def analyze_criterion3(request: CriterionRequest):
         )
     except Exception as error:
         raise HTTPException(
-            status_code=500,
+            status_code=503 if "GROQ_API_KEY" in str(error) else 500,
             detail=f"AI analysis failed: {str(error)}"
         )
 
@@ -142,7 +142,7 @@ def analyze_criterion4(request: CriterionRequest):
         }
     except Exception as error:
         raise HTTPException(
-            status_code=500,
+            status_code=503 if "GROQ_API_KEY" in str(error) else 500,
             detail=f"Criterion 4 AI analysis failed: {str(error)}"
         )
 
@@ -168,7 +168,7 @@ def analyze_criterion5(request: CriterionRequest):
         }
     except Exception as error:
         raise HTTPException(
-            status_code=500,
+            status_code=503 if "GROQ_API_KEY" in str(error) else 500,
             detail=f"Criterion 5 AI analysis failed: {str(error)}"
         )
 
@@ -194,7 +194,7 @@ def analyze_criterion6(request: CriterionRequest):
         }
     except Exception as error:
         raise HTTPException(
-            status_code=500,
+            status_code=503 if "GROQ_API_KEY" in str(error) else 500,
             detail=f"Criterion 6 AI analysis failed: {str(error)}"
         )
 
@@ -217,7 +217,7 @@ def analyze_compliance_endpoint(request: CriterionRequest):
         }
     except Exception as error:
         raise HTTPException(
-            status_code=500,
+            status_code=503 if "GROQ_API_KEY" in str(error) else 500,
             detail=f"Compliance analysis failed: {str(error)}"
         )
 
@@ -240,7 +240,7 @@ def analyze_inspection_endpoint(request: CriterionRequest):
         }
     except Exception as error:
         raise HTTPException(
-            status_code=500,
+            status_code=503 if "GROQ_API_KEY" in str(error) else 500,
             detail=f"Inspection readiness analysis failed: {str(error)}"
         )
 
@@ -263,7 +263,7 @@ def generate_report_endpoint(request: CriterionRequest):
         }
     except Exception as error:
         raise HTTPException(
-            status_code=500,
+            status_code=503 if "GROQ_API_KEY" in str(error) else 500,
             detail=f"Report generation failed: {str(error)}"
         )
 
@@ -290,7 +290,7 @@ def document_query_endpoint(request: DocumentQueryRequest):
         return result
     except Exception as error:
         raise HTTPException(
-            status_code=500,
+            status_code=503 if "GROQ_API_KEY" in str(error) else 500,
             detail=f"Document query failed: {str(error)}"
         )
 
@@ -315,6 +315,6 @@ def entity_extraction_endpoint(request: EntityExtractionRequest):
         }
     except Exception as error:
         raise HTTPException(
-            status_code=500,
+            status_code=503 if "GROQ_API_KEY" in str(error) else 500,
             detail=f"Entity extraction failed: {str(error)}"
         )

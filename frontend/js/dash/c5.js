@@ -7,17 +7,12 @@ import { initDashboardShell } from './shared.js';
 import { api } from '../api.js';
 import { countUp, statusChip, toast, toastSuccess, toastError } from '../ui.js';
 import { isHodOrAdmin } from '../guard.js';
+import { initCriterionPanel, mountAiReview } from './criteria-common.js';
+import { mountC5Extras } from './criteria-extras.js';
 
 let _criterionId = null;
 let _requirements = [];
 
-const FALLBACK_C5_REQS = [
-  { id: 'req-c5-1', code: 'C5.1', title: 'Student-Faculty Ratio (SFR)', description: 'SFR computed across UG programs (Benchmark: 15.0 - 25.0)', max_score: 30, status: 'PASS' },
-  { id: 'req-c5-2', code: 'C5.2', title: 'Faculty Qualification Index (FQI)', description: 'FQI = 2.5 * (10X + 4Y) / RF based on regular Ph.D faculty', max_score: 25, status: 'PASS' },
-  { id: 'req-c5-3', code: 'C5.3', title: 'Faculty Cadre Proportion', description: 'Cadre ratio: Professors : Associate Professors : Assistant Professors', max_score: 25, status: 'PASS' },
-  { id: 'req-c5-4', code: 'C5.4', title: 'Visiting / Adjunct Faculty', description: 'Visiting faculty provisions delivering >= 50 contact hours per year', max_score: 10, status: 'PASS' },
-  { id: 'req-c5-5', code: 'C5.5', title: 'Faculty Retention Rate', description: 'Percentage of faculty retained over previous 3 academic years', max_score: 10, status: 'WARNING' },
-];
 
 document.addEventListener('DOMContentLoaded', async () => {
   // 1. Initialize Dashboard Shell
@@ -27,7 +22,9 @@ document.addEventListener('DOMContentLoaded', async () => {
   _setupTabs();
 
   // 3. Load C5 Data
-  await _loadCriterionData();
+  await initCriterionPanel({ code: 'C5', prefix: 'c5' });
+  mountAiReview({ prefix: 'c5', label: 'Faculty Information', reqCode: 'REQ_5_1', task: 'Review faculty strength, qualifications and cadre for Criterion 5' });
+  mountC5Extras();
 
   // 4. Render Faculty Roster Cards
   _renderFacultyRoster();
@@ -55,94 +52,7 @@ function _setupTabs() {
   });
 }
 
-async function _loadCriterionData() {
-  try {
-    const analytics = await api.getCriterionAnalytics('C5');
-    if (analytics) {
-      const pct = analytics.readiness_pct || 82;
-      const ring = document.getElementById('c5-ring-progress');
-      const label = document.getElementById('c5-ring-pct');
-      const score = document.getElementById('c5-score-text');
 
-      if (ring) {
-        const offset = 163.3 - (163.3 * (pct / 100));
-        ring.style.strokeDashoffset = offset;
-      }
-      if (label) countUp(label, pct, 1200, '%');
-      if (score) score.textContent = `${analytics.marks_attained || 81} / 100 Marks`;
-    }
-
-    const criteria = await api.listCriteria();
-    const c5 = (criteria || []).find(c => c.code === 'C5') || criteria[2];
-    if (c5 && c5.id) {
-      _criterionId = c5.id;
-      const reqs = await api.listRequirements(c5.id);
-      _requirements = (reqs && reqs.length) ? reqs : FALLBACK_C5_REQS;
-    } else {
-      _requirements = FALLBACK_C5_REQS;
-    }
-  } catch (err) {
-    console.warn('Using C5 fallback requirements:', err);
-    _requirements = FALLBACK_C5_REQS;
-
-    const ring = document.getElementById('c5-ring-progress');
-    const label = document.getElementById('c5-ring-pct');
-    const score = document.getElementById('c5-score-text');
-    if (ring) ring.style.strokeDashoffset = '29.4'; // ~82%
-    if (label) label.textContent = '82%';
-    if (score) score.textContent = '81 / 100 Marks';
-  }
-
-  _renderRequirementsTable(_requirements);
-}
-
-function _renderRequirementsTable(reqs) {
-  const tbody = document.getElementById('c5-reqs-tbody');
-  if (!tbody) return;
-
-  const canEval = isHodOrAdmin();
-
-  tbody.innerHTML = reqs.map(r => `
-    <tr id="req-row-${r.id}">
-      <td class="mono" style="font-weight:700;color:var(--violet);">${r.code}</td>
-      <td>
-        <div style="font-weight:600;color:var(--text-primary);">${r.title}</div>
-        <div style="font-size:12px;color:var(--text-muted);">${r.description || ''}</div>
-      </td>
-      <td class="mono">${r.max_score || 25}m</td>
-      <td id="status-cell-${r.id}">${statusChip(r.status || 'PASS')}</td>
-      <td style="text-align:right;">
-        ${canEval ? `
-          <button class="btn btn--outline btn--sm btn-eval-c5-req" data-id="${r.id}">Evaluate</button>
-        ` : ''}
-      </td>
-    </tr>
-  `).join('');
-
-  tbody.querySelectorAll('.btn-eval-c5-req').forEach(btn => {
-    btn.addEventListener('click', async () => {
-      const id = btn.dataset.id;
-      const row = document.getElementById(`req-row-${id}`);
-      row?.classList.add('evaluating-row');
-      try {
-        const res = await api.evaluateRequirement(id, { department: 'Computer Science and Engineering' });
-        const cell = document.getElementById(`status-cell-${id}`);
-        if (cell && res) cell.innerHTML = statusChip(res.status || 'PASS');
-        toastSuccess('Evaluation completed.');
-      } catch {
-        const cell = document.getElementById(`status-cell-${id}`);
-        if (cell) cell.innerHTML = statusChip('PASS');
-        toastSuccess('Evaluated: PASS.');
-      } finally {
-        setTimeout(() => row?.classList.remove('evaluating-row'), 600);
-      }
-    });
-  });
-
-  document.getElementById('btn-eval-all-c5')?.addEventListener('click', () => {
-    toastSuccess('Evaluated all Criterion 5 metrics against Tier-I 2026 rules.');
-  });
-}
 
 function _renderFacultyRoster() {
   const grid = document.getElementById('faculty-cards-grid');

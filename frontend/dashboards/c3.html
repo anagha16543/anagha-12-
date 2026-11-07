@@ -80,7 +80,7 @@
       <!-- ── TAB 1: REQUIREMENTS & EVALUATION ── -->
       <div class="tab-pane active" id="tab-requirements">
         <div class="requirements-card">
-          <div style="padding:var(--space-5);border-bottom:1px solid var(--glass-border);display:flex;justify-content:space-between;align-items:center;">
+          <div style="padding:var(--space-5);border-bottom: 1px solid var(--glass-border);display:flex;justify-content:space-between;align-items:center;">
             <div>
               <h3 style="font-size:var(--text-lg);font-weight:700;">Criterion 3 Requirements (3.1 - 3.8)</h3>
               <p style="font-size:var(--text-xs);color:var(--text-muted);">Deterministic rule verification against Tier-I 2026 manual specifications.</p>
@@ -92,6 +92,7 @@
                 </svg>
                 <span>Evaluate All C3</span>
               </button>
+            <a href="inspection.html" class="btn btn--outline btn--sm" style="margin-left:8px;">Run Virtual Inspection &rarr;</a>
             </div>
           </div>
 
@@ -100,7 +101,7 @@
               <tr>
                 <th style="width: 80px;">CODE</th>
                 <th>REQUIREMENT TITLE</th>
-                <th style="width: 100px;">MAX MARKS</th>
+                <th style="width: 100px;">MARKS</th>
                 <th style="width: 140px;">STATUS</th>
                 <th style="width: 180px; text-align: right;">ACTION</th>
               </tr>
@@ -112,77 +113,58 @@
         </div>
       </div>
 
-      <!-- ── TAB 2: CO ATTAINMENT & MATRIX ── -->
+      <!-- ── TAB 2: CO ATTAINMENT & MATRIX (live) ── -->
       <div class="tab-pane" id="tab-attainment" style="display:none;">
-        <!-- Subject Selector & Filter Bar -->
-        <div class="glass-sm" style="padding:var(--space-4);margin-bottom:var(--space-6);display:flex;align-items:center;gap:var(--space-4);">
-          <label for="c3-subject-select" style="font-weight:600;font-size:var(--text-sm);">Select Subject:</label>
-          <select id="c3-subject-select" class="form-control" style="max-width:320px;"></select>
-          <div style="margin-left:auto;display:flex;gap:var(--space-3);" data-require-role="HOD ADMIN FACULTY">
-            <button class="btn btn--outline btn--sm" id="btn-add-co">+ Add Course Outcome</button>
+        <div class="chart-card" id="att-method-card" style="margin-bottom:var(--space-6);">
+          <div class="chart-card-header">
+            <h3>How attainment is calculated</h3>
+            <span class="chip chip--info" id="att-approval-chip">Loading…</span>
           </div>
+          <p id="att-method-text" style="font-size:var(--text-sm);color:var(--text-secondary);line-height:1.6;">Loading…</p>
+          <div style="display:flex;gap:var(--space-6);flex-wrap:wrap;margin:var(--space-4) 0;">
+            <div><div style="font-size:var(--text-xs);color:var(--text-muted);">3.7 CO attainment score</div><div class="mono" style="font-size:1.6rem;font-weight:700;" id="att-co-score">--</div></div>
+            <div><div style="font-size:var(--text-xs);color:var(--text-muted);">3.8 PO / PSO attainment score</div><div class="mono" style="font-size:1.6rem;font-weight:700;" id="att-po-score">--</div></div>
+          </div>
+          <div data-require-role="HOD ADMIN">
+            <button class="btn btn--primary btn--sm" id="btn-approve-attainment">Approve attainment method</button>
+            <span id="att-approve-note" style="font-size:12px;color:var(--text-muted);margin-left:var(--space-3);">Until approved, 3.7 and 3.8 stay at "Needs clarification".</span>
+          </div>
+        </div>
+
+        <div class="requirements-card" style="margin-bottom:var(--space-6);">
+          <div style="padding:var(--space-5);border-bottom: 1px solid var(--glass-border);"><h3 style="font-size:var(--text-lg);font-weight:700;">Course outcome attainment by course</h3></div>
+          <div style="overflow-x:auto;">
+            <table class="req-table">
+              <thead><tr><th>Course</th><th>Students meeting target</th><th>Attainment</th><th>Level</th><th>Course outcomes</th></tr></thead>
+              <tbody id="att-courses-tbody"><tr><td colspan="5" style="text-align:center;padding:2rem;">Loading…</td></tr></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="chart-card" id="weak-co-alert-card" style="border-left: 4px solid var(--warning);margin-bottom:var(--space-6);">
+          <div class="chart-card-header"><h3>Weak course outcomes and what to do</h3><span class="chip chip--warning" id="weak-co-count-chip">--</span></div>
+          <div id="weak-co-details-content" style="font-size:var(--text-sm);color:var(--text-secondary);">Loading…</div>
         </div>
 
         <div class="dash-grid-2">
-          <!-- CO Attainment Bar Chart -->
           <div class="chart-card">
-            <div class="chart-card-header">
-              <h3>CO Attainment vs Target Threshold (65%)</h3>
-              <span class="chip chip--info">Target: 65%</span>
-            </div>
-            <div style="position:relative;height:280px;">
-              <canvas id="c3-attainment-chart"></canvas>
-            </div>
+            <div class="chart-card-header"><h3>Program outcome (PO) levels</h3></div>
+            <table class="req-table"><thead><tr><th>PO</th><th>Average level</th><th>Mapped COs</th></tr></thead><tbody id="att-po-tbody"></tbody></table>
           </div>
-
-          <!-- Weak CO Callout Card -->
-          <div class="chart-card" id="weak-co-alert-card" style="border-left: 4px solid var(--warning);">
-            <div class="chart-card-header">
-              <h3>Identified Weak COs & Remedial Plan</h3>
-              <span class="chip chip--warning" id="weak-co-count-chip">1 Weak CO</span>
-            </div>
-            <div id="weak-co-details-content">
-              <p style="font-size:var(--text-sm);color:var(--text-secondary);margin-bottom:var(--space-4);">
-                CO2 (Algorithm Complexity Analysis) attained <strong>54.2%</strong>, below the required 65% benchmark.
-              </p>
-              <div class="glass" style="padding:var(--space-4);margin-bottom:var(--space-4);">
-                <div style="font-size:var(--text-xs);color:var(--text-muted);margin-bottom:2px;">RECOMMENDED ACTION:</div>
-                <div style="font-size:var(--text-sm);font-weight:600;">Conduct 3 tutorial sessions on Big-O analysis & re-assess.</div>
-              </div>
-              <button class="btn btn--primary btn--sm" id="btn-create-gap-action" data-require-role="HOD ADMIN">
-                Create Corrective Action Item
-              </button>
-            </div>
+          <div class="chart-card">
+            <div class="chart-card-header"><h3>Program specific outcome (PSO) levels</h3></div>
+            <table class="req-table"><thead><tr><th>PSO</th><th>Average level</th><th>Mapped COs</th></tr></thead><tbody id="att-pso-tbody"></tbody></table>
           </div>
         </div>
-
-        <!-- Heatmap Matrix: CO to PO / PSO Mapping -->
-        <div class="chart-card" style="margin-top:var(--space-6);">
-          <div class="chart-card-header">
-            <h3>CO - PO & PSO Articulation Matrix (1: Slight, 2: Moderate, 3: Substantial)</h3>
-          </div>
-          <div style="overflow-x:auto;">
-            <table class="heatmap-table" id="c3-matrix-table">
-              <thead>
-                <tr>
-                  <th>CO</th>
-                  <th>PO1</th><th>PO2</th><th>PO3</th><th>PO4</th><th>PO5</th><th>PO6</th>
-                  <th>PO7</th><th>PO8</th><th>PO9</th><th>PO10</th><th>PO11</th><th>PO12</th>
-                  <th>PSO1</th><th>PSO2</th>
-                </tr>
-              </thead>
-              <tbody id="c3-matrix-tbody">
-                <!-- Populated dynamically -->
-              </tbody>
-            </table>
-          </div>
+        <div style="margin-top:var(--space-4);" data-require-role="HOD ADMIN FACULTY">
+          <button class="btn btn--outline btn--sm" id="btn-add-co">+ Add Course Outcome</button>
         </div>
       </div>
 
       <!-- ── TAB 3: CURRICULUM, MARKS & ATTENDANCE ── -->
       <div class="tab-pane" id="tab-curriculum" style="display:none;">
         <div class="requirements-card">
-          <div style="padding:var(--space-5);border-bottom:1px solid var(--glass-border);display:flex;justify-content:space-between;align-items:center;">
+          <div style="padding:var(--space-5);border-bottom: 1px solid var(--glass-border);display:flex;justify-content:space-between;align-items:center;">
             <h3>Enrolled Students & Continuous Assessment Marks</h3>
             <button class="btn btn--primary btn--sm" id="btn-record-mark" data-require-role="HOD ADMIN FACULTY">+ Record Mark</button>
           </div>
@@ -226,7 +208,7 @@
       <!-- ── TAB 4: EVIDENCE DOCUMENTS ── -->
       <div class="tab-pane" id="tab-evidence" style="display:none;">
         <div class="requirements-card">
-          <div style="padding:var(--space-5);border-bottom:1px solid var(--glass-border);display:flex;justify-content:space-between;align-items:center;">
+          <div style="padding:var(--space-5);border-bottom: 1px solid var(--glass-border);display:flex;justify-content:space-between;align-items:center;">
             <div>
               <h3>Accreditation Evidence Repository (Criterion 3)</h3>
               <p style="font-size:var(--text-xs);color:var(--text-muted);">Multipart uploads stored with SHA-256 integrity and chunked for pgvector RAG.</p>
@@ -329,11 +311,15 @@
             <input type="text" id="doc-title" class="form-control" required placeholder="e.g. Course File 2024-25">
           </div>
           <div class="form-group">
-            <label for="doc-file">File (PDF, XLSX, DOCX)</label>
-            <input type="file" id="doc-file" class="form-control" required accept=".pdf,.xlsx,.docx,.csv">
+            <label for="doc-file">File (PDF, DOCX, XLSX, CSV, TXT, PNG, JPEG)</label>
+            <input type="file" id="doc-file" class="form-control" required accept=".pdf,.docx,.xlsx,.csv,.txt,.png,.jpg,.jpeg">
+          </div>
+          <div class="form-group">
+            <label for="doc-req">This document proves requirement</label>
+            <select id="doc-req" class="form-control"><option value="">Do not link yet</option></select>
           </div>
           <button type="submit" class="btn btn--primary btn--lg" style="width:100%;margin-top:var(--space-4);">
-            Upload to pgvector RAG
+            Upload evidence
           </button>
         </form>
       </div>
@@ -341,9 +327,9 @@
   </div>
 
   <!-- Evidence Download & Workflow Next Steps Modal -->
-  <div id="next-steps-modal-backdrop" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);backdrop-filter:blur(6px);z-index:9999;align-items:center;justify-content:center;padding:var(--space-4);">
-    <div style="background:var(--surface-50);border:1px solid var(--glass-border);border-radius:var(--radius-lg);max-width:640px;width:100%;box-shadow:var(--shadow-xl);overflow:hidden;">
-      <div style="padding:var(--space-5);border-bottom:1px solid var(--glass-border);display:flex;justify-content:space-between;align-items:center;">
+  <div id="next-steps-modal-backdrop" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:9999;align-items:center;justify-content:center;padding:var(--space-4);">
+    <div style="background:var(--surface-100);border: 1px solid var(--glass-border);border-radius:var(--radius-lg);max-width:640px;width:100%;overflow:hidden;">
+      <div style="padding:var(--space-5);border-bottom: 1px solid var(--glass-border);display:flex;justify-content:space-between;align-items:center;">
         <div style="display:flex;align-items:center;gap:var(--space-3);">
           <div style="width:36px;height:36px;border-radius:50%;background:rgba(34,197,94,0.15);display:flex;align-items:center;justify-content:center;color:var(--pass);">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
@@ -362,7 +348,7 @@
 
       <div style="padding:var(--space-6);display:flex;flex-direction:column;gap:var(--space-5);">
         <!-- File status banner -->
-        <div style="background:rgba(59,130,246,0.08);border:1px solid rgba(59,130,246,0.25);border-radius:var(--radius-md);padding:var(--space-4);display:flex;justify-content:space-between;align-items:center;">
+        <div style="background:rgba(59,130,246,0.08);border: 1px solid rgba(59,130,246,0.25);border-radius:var(--radius-md);padding:var(--space-4);display:flex;justify-content:space-between;align-items:center;">
           <div>
             <div style="font-size:var(--text-xs);color:var(--cyan);font-weight:600;text-transform:uppercase;">Criterion 3 Assessment Evidence</div>
             <div style="font-size:var(--text-sm);color:var(--text-primary);font-weight:600;margin-top:2px;">Course Outcomes &amp; Continuous Assessment Package</div>
@@ -378,7 +364,7 @@
           
           <div style="display:flex;flex-direction:column;gap:var(--space-3);">
             <!-- Step 1 -->
-            <div style="display:flex;gap:var(--space-3);padding:var(--space-3);border-radius:var(--radius-sm);background:rgba(255,255,255,0.02);border:1px solid var(--glass-border);">
+            <div style="display:flex;gap:var(--space-3);padding:var(--space-3);border-radius:var(--radius-sm);background:rgba(255,255,255,0.02);border: 1px solid var(--glass-border);">
               <div style="width:24px;height:24px;border-radius:50%;background:rgba(34,197,94,0.2);color:var(--pass);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;">✓</div>
               <div style="flex:1;">
                 <div style="font-size:var(--text-sm);font-weight:600;color:var(--text-primary);">Step 1: Course Evidence Document Stored</div>
@@ -387,7 +373,7 @@
             </div>
 
             <!-- Step 2 -->
-            <div style="display:flex;gap:var(--space-3);padding:var(--space-3);border-radius:var(--radius-sm);background:rgba(255,255,255,0.02);border:1px solid var(--glass-border);">
+            <div style="display:flex;gap:var(--space-3);padding:var(--space-3);border-radius:var(--radius-sm);background:rgba(255,255,255,0.02);border: 1px solid var(--glass-border);">
               <div style="width:24px;height:24px;border-radius:50%;background:rgba(59,130,246,0.2);color:var(--cyan);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;">2</div>
               <div style="flex:1;">
                 <div style="font-size:var(--text-sm);font-weight:600;color:var(--text-primary);">Step 2: Evaluate CO Attainment &amp; Articulation Matrix</div>
@@ -399,7 +385,7 @@
             </div>
 
             <!-- Step 3 -->
-            <div style="display:flex;gap:var(--space-3);padding:var(--space-3);border-radius:var(--radius-sm);background:rgba(255,255,255,0.02);border:1px solid var(--glass-border);">
+            <div style="display:flex;gap:var(--space-3);padding:var(--space-3);border-radius:var(--radius-sm);background:rgba(255,255,255,0.02);border: 1px solid var(--glass-border);">
               <div style="width:24px;height:24px;border-radius:50%;background:rgba(168,85,247,0.2);color:var(--violet);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;">3</div>
               <div style="flex:1;">
                 <div style="font-size:var(--text-sm);font-weight:600;color:var(--text-primary);">Step 3: Run AI Advisory Review &amp; Batch Evaluation</div>
@@ -411,20 +397,20 @@
             </div>
 
             <!-- Step 4 -->
-            <div style="display:flex;gap:var(--space-3);padding:var(--space-3);border-radius:var(--radius-sm);background:rgba(255,255,255,0.02);border:1px solid var(--glass-border);">
+            <div style="display:flex;gap:var(--space-3);padding:var(--space-3);border-radius:var(--radius-sm);background:rgba(255,255,255,0.02);border: 1px solid var(--glass-border);">
               <div style="width:24px;height:24px;border-radius:50%;background:rgba(245,158,11,0.2);color:var(--warning);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;">4</div>
               <div style="flex:1;">
                 <div style="font-size:var(--text-sm);font-weight:600;color:var(--text-primary);">Step 4: HOD Department Verification &amp; SAR Ledger Lock</div>
                 <div style="font-size:var(--text-xs);color:var(--text-muted);margin-top:2px;">Head of Department reviews submission in Pending Approvals queue and locks score into institutional accreditation record.</div>
                 <div style="margin-top:8px;">
-                  <a href="hod.html#tab-pending-approvals" class="btn btn--ghost btn--sm" style="color:var(--warning);border:1px solid var(--warning);">Open HOD Approvals Queue &rarr;</a>
+                  <a href="hod.html#tab-pending-approvals" class="btn btn--ghost btn--sm" style="color:var(--warning);border: 1px solid var(--warning);">Open HOD Approvals Queue &rarr;</a>
                 </div>
               </div>
             </div>
           </div>
         </div>
 
-        <div style="display:flex;justify-content:flex-end;border-top:1px solid var(--glass-border);padding-top:var(--space-4);">
+        <div style="display:flex;justify-content:flex-end;border-top: 1px solid var(--glass-border);padding-top:var(--space-4);">
           <button id="next-steps-done-btn" class="btn btn--primary">Got it, proceed with accreditation</button>
         </div>
       </div>

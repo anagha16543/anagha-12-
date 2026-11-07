@@ -21,6 +21,7 @@ Security guarantees
 from __future__ import annotations
 
 import hashlib
+import re
 import logging
 import os
 import shutil
@@ -111,7 +112,9 @@ def sanitize_original_filename(name: str) -> str:
     Returns only the basename, replacing any problematic characters.
     """
     name = name.replace("\x00", "")
-    name = Path(name).name  # take only basename — blocks ../../../etc
+    # Take only the last path component, whether the client used / (Mac, Linux) or \ (Windows).
+    name = re.split(r"[\\/]", name)[-1].strip()
+    name = name if name not in (".", "..") else ""
     # Limit length
     if len(name) > 200:
         name = name[:200]

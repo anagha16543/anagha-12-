@@ -32,7 +32,17 @@ os.environ.setdefault(
     "DATABASE_URL",
     "postgresql+psycopg://testuser:testpass@localhost:5432/test_db",
 )
+# Force the values the tests rely on so a developer's own backend/.env can never change test results.
+for _key, _value in {
+    "INITIAL_ADMIN_EMAIL": "admin@example.com",
+    "INITIAL_HOD_EMAIL": "hod@example.com",
+    "INITIAL_ADMIN_PASSWORD": "AdminPassword123!",
+    "INITIAL_HOD_PASSWORD": "HODPassword123!",
+    "AI_ENABLE_ALL_CRITERIA": "false",
+}.items():
+    os.environ[_key] = _value
 os.environ.setdefault("APP_ENV", "testing")
+os.environ.setdefault("AI_ENABLE_ALL_CRITERIA", "false")
 os.environ.setdefault("DEBUG", "false")
 os.environ.setdefault("JWT_SECRET_KEY", "test-secret-key-for-running-automated-tests-safely-123456")
 os.environ.setdefault("INITIAL_ADMIN_PASSWORD", "AdminPassword123!")

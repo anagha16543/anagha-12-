@@ -45,7 +45,7 @@ def _tesseract_available() -> bool:
 TESSERACT_AVAILABLE = _tesseract_available()
 
 if TESSERACT_AVAILABLE:
-    logger.info("Tesseract executable found — OCR is available.")
+    logger.info("Tesseract executable found - OCR is available.")
 else:
     logger.warning(
         "Tesseract executable NOT found. OCR will be unavailable. "

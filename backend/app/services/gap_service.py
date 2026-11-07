@@ -334,6 +334,13 @@ class GapService:
 
         self.db.commit()
         self.db.refresh(action)
+
+        if action.assigned_to_user_id:
+            from app.services.notification_service import NotificationService
+
+            NotificationService(self.db).notify_action_assigned(
+                action.id, action.title, action.assigned_to_user_id
+            )
         return action
 
     def update_corrective_action(

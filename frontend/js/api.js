@@ -175,6 +175,7 @@ export class ApiError extends Error {
 // ══════════════════════════════════════════════════════════════
 
 export const api = {
+  request,
 
   // ── GET /health
   async getHealth() {
@@ -414,12 +415,12 @@ export const api = {
   },
 
   async submitFeedback(payload) {
-    return request('/feedback', { method: 'POST', body: payload });
+    return request('/feedback-surveys', { method: 'POST', body: payload });
   },
 
   async listFeedback(params = {}) {
     const qs = new URLSearchParams(params).toString();
-    return request(`/feedback${qs ? '?' + qs : ''}`);
+    return request(`/feedback-surveys${qs ? '?' + qs : ''}`);
   },
 
 
@@ -435,10 +436,10 @@ export const api = {
   },
 
   async listExperience(facultyId) {
-    return request(`/faculty/${facultyId}/experience`);
+    return request(`/faculty/${facultyId}/experiences`);
   },
   async addExperience(facultyId, payload) {
-    return request(`/faculty/${facultyId}/experience`, { method: 'POST', body: payload });
+    return request(`/faculty/${facultyId}/experiences`, { method: 'POST', body: payload });
   },
 
   async listCertificates(facultyId) {
@@ -448,7 +449,7 @@ export const api = {
     return request(`/faculty/${facultyId}/certificates`, { method: 'POST', body: payload });
   },
   async replaceCertificate(facultyId, certId, payload) {
-    return request(`/faculty/${facultyId}/certificates/${certId}/replace`, { method: 'POST', body: payload });
+    return request(`/faculty/certificates/${certId}/replace`, { method: 'POST', body: payload });
   },
 
   async listPublications(facultyId) {
@@ -526,6 +527,23 @@ export const api = {
     return request(`/requirements/${requirementId}/evaluate`, { method: 'POST', body: payload });
   },
 
+  async getRequirementInputs(requirementId, params = {}) {
+    const qs = new URLSearchParams(params).toString();
+    return request(`/requirements/${requirementId}/inputs${qs ? '?' + qs : ''}`);
+  },
+
+  async saveRequirementInputs(requirementId, { data, department, academic_year_id } = {}) {
+    const body = { data: data || {} };
+    if (department) body.department = department;
+    if (academic_year_id) body.academic_year_id = academic_year_id;
+    return request(`/requirements/${requirementId}/inputs`, { method: 'PUT', body });
+  },
+
+  async getAttainment(params = {}) {
+    const qs = new URLSearchParams(params).toString();
+    return request(`/analysis/attainment${qs ? '?' + qs : ''}`);
+  },
+
   async getEvaluationHistory(requirementId) {
     return request(`/requirements/${requirementId}/evaluations`);
   },
@@ -561,21 +579,21 @@ export const api = {
   },
 
   async getDocumentVersions(documentId) {
-    return request(`/documents/${documentId}/versions`);
+    return request(`/documents/${documentId}/history`);
   },
 
   async uploadDocumentVersion(documentId, formData) {
-    return request(`/documents/${documentId}/versions`, {
+    return request(`/documents/${documentId}/replace`, {
       method: 'POST', body: formData, multipart: true,
     });
   },
 
   async linkDocumentToRequirement(documentId, payload) {
-    return request(`/documents/${documentId}/link`, { method: 'POST', body: payload });
+    return request(`/documents/requirements/${payload.requirement_id}/evidence`, { method: 'POST', body: { document_id: documentId, is_primary: !!payload.is_primary, relevance_note: payload.relevance_note || null } });
   },
 
   async listEvidence(requirementId) {
-    return request(`/requirements/${requirementId}/evidence`);
+    return request(`/documents/requirements/${requirementId}/evidence`);
   },
 
 
@@ -654,7 +672,7 @@ export const api = {
   },
 
   async listOverdueActions() {
-    return request('/gaps/overdue');
+    return request('/gaps/actions/overdue');
   },
 
   async getGap(gapId) {
@@ -670,7 +688,7 @@ export const api = {
   },
 
   async updateCorrectiveAction(gapId, actionId, payload) {
-    return request(`/gaps/${gapId}/actions/${actionId}`, { method: 'PATCH', body: payload });
+    return request(`/gaps/actions/${actionId}`, { method: 'PATCH', body: payload });
   },
 
 
@@ -690,19 +708,7 @@ export const api = {
         disclaimer: 'Internal readiness indicator, not an official NBA score.'
       };
     }
-    try {
-      return await request('/inspection/run', { method: 'POST', body: payload });
-    } catch {
-      return {
-        inspection_id: 'insp-local-2026',
-        readiness_score: 782,
-        max_score: 1000,
-        status: 'ACCREDITED_3_YEARS',
-        summary: 'Eligible for 3-Year Provisional Accreditation. Critical actions required on Faculty SFR and CAYm1 research papers.',
-        completed_at: new Date().toISOString(),
-        disclaimer: 'Internal readiness indicator, not an official NBA score.'
-      };
-    }
+    return request('/inspection/run', { method: 'POST', body: payload });
   },
 
   async downloadExcelReport(params = {}) {
@@ -711,11 +717,7 @@ export const api = {
       return new Blob([csv], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
     }
     const qs = new URLSearchParams(params).toString();
-    try {
-      return await request(`/reports/excel${qs ? '?' + qs : ''}`, { blob: true });
-    } catch {
-      return new Blob([csv], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-    }
+    return request(`/reports/excel${qs ? '?' + qs : ''}`, { blob: true });
   },
 
   async downloadPdfReport(params = {}) {
@@ -724,11 +726,7 @@ export const api = {
       return new Blob([text], { type: 'application/pdf' });
     }
     const qs = new URLSearchParams(params).toString();
-    try {
-      return await request(`/reports/pdf${qs ? '?' + qs : ''}`, { blob: true });
-    } catch {
-      return new Blob([text], { type: 'application/pdf' });
-    }
+    return request(`/reports/pdf${qs ? '?' + qs : ''}`, { blob: true });
   },
 
 

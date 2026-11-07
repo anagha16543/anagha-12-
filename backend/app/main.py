@@ -27,6 +27,11 @@ from app.core.config import get_settings
 
 settings = get_settings()
 
+if settings.AI_ENABLE_ALL_CRITERIA:
+    from app.services.agent_client import enable_all_criteria_endpoints
+
+    enable_all_criteria_endpoints()
+
 # --------------------------------------------------------------------------- #
 # Application instance
 # --------------------------------------------------------------------------- #
