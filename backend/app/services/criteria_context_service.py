@@ -178,7 +178,7 @@ def get_c5_context(
     if faculty_ids:
         quals = (
             db.query(FacultyQualification)
-            .filter(FacultyQualification.faculty_id.in_(faculty_ids))
+            .filter(FacultyQualification.faculty_profile_id.in_(faculty_ids), FacultyQualification.is_deleted.is_(False))
             .all()
         )
         for q in quals:
@@ -255,13 +255,13 @@ def get_c6_context(
     if faculty_ids:
         pub_count = (
             db.query(FacultyPublication)
-            .filter(FacultyPublication.faculty_id.in_(faculty_ids))
+            .filter(FacultyPublication.faculty_profile_id.in_(faculty_ids), FacultyPublication.is_deleted.is_(False))
             .count()
         )
 
         patents = (
             db.query(FacultyPatent)
-            .filter(FacultyPatent.faculty_id.in_(faculty_ids))
+            .filter(FacultyPatent.faculty_profile_id.in_(faculty_ids), FacultyPatent.is_deleted.is_(False))
             .all()
         )
         for p in patents:
@@ -273,28 +273,31 @@ def get_c6_context(
 
         projects = (
             db.query(FacultyProject)
-            .filter(FacultyProject.faculty_id.in_(faculty_ids))
+            .filter(FacultyProject.faculty_profile_id.in_(faculty_ids), FacultyProject.is_deleted.is_(False))
             .all()
         )
         for prj in projects:
-            if prj.amount:
+            if prj.grant_amount:
                 # Assuming amount stored in raw currency; convert to Lakhs if > 1000
-                amt = float(prj.amount)
+                amt = float(prj.grant_amount)
                 sponsored_grant_lakhs += amt / 100000.0 if amt > 1000 else amt
 
         consultancies = (
             db.query(FacultyConsultancy)
-            .filter(FacultyConsultancy.faculty_id.in_(faculty_ids))
+            .filter(FacultyConsultancy.faculty_profile_id.in_(faculty_ids), FacultyConsultancy.is_deleted.is_(False))
             .all()
         )
         for c in consultancies:
-            if c.amount:
-                amt = float(c.amount)
+            if c.financial_outlay:
+                amt = float(c.financial_outlay)
                 consultancy_lakhs += amt / 100000.0 if amt > 1000 else amt
+
+    student_count = db.query(Student).filter(Student.department == department).count()
 
     return {
         "department": department,
         "academic_year_id": str(academic_year_id) if academic_year_id else None,
+        "S": student_count,
         "publication_count": pub_count,
         "patents_granted": patents_granted,
         "patents_published": patents_published,

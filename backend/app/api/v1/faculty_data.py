@@ -852,3 +852,27 @@ def delete_contribution(
     record.deleted_at = datetime.now(timezone.utc)
     record.updated_by = str(current_user.id)
     db.commit()
+
+
+@router.get("", summary="List faculty profiles (HOD / Admin)")
+def list_faculty(
+    department: str | None = None,
+    db: Session = Depends(get_db),
+    _: User = Depends(__import__("app.api.deps", fromlist=["require_roles"]).require_roles("HOD", "ADMIN")),
+):
+    from app.models.faculty import FacultyProfile
+
+    q = db.query(FacultyProfile)
+    if department:
+        q = q.filter(FacultyProfile.department == department)
+    return [
+        {
+            "id": str(f.id),
+            "faculty_id": f.faculty_id,
+            "user_id": str(f.user_id),
+            "full_name": f.full_name,
+            "designation": f.designation,
+            "department": f.department,
+        }
+        for f in q.order_by(FacultyProfile.full_name).all()
+    ]

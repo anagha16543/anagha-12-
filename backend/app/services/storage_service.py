@@ -37,10 +37,17 @@ logger = logging.getLogger(__name__)
 # Allowed MIME types and magic-byte signatures
 # ---------------------------------------------------------------------------
 
+DOCX_MIME = "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+XLSX_MIME = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+
 ALLOWED_MIME_TYPES = {
     "application/pdf",
     "image/png",
     "image/jpeg",
+    DOCX_MIME,
+    XLSX_MIME,
+    "text/csv",
+    "text/plain",
 }
 
 # Magic byte signatures for each allowed type
@@ -51,6 +58,39 @@ _MAGIC_BYTES: list[tuple[bytes, str]] = [
 ]
 
 MAX_FILE_SIZE_BYTES = 25 * 1024 * 1024  # 25 MB default
+
+
+def detect_mime(data: bytes, ext: str) -> Optional[str]:
+    """
+    Detect the real type from file content.
+
+    PDF/PNG/JPEG use magic bytes.  DOCX/XLSX are zip archives, so the archive's
+    own member list decides.  CSV/TXT have no signature: they must decode as
+    UTF-8 text and carry a matching extension.
+    """
+    mime = detect_mime_from_bytes(data[:16])
+    if mime:
+        return mime
+    if data[:4] == b"PK\x03\x04":
+        import io
+        import zipfile
+
+        try:
+            names = zipfile.ZipFile(io.BytesIO(data)).namelist()
+        except zipfile.BadZipFile:
+            return None
+        if any(n.startswith("word/") for n in names) and ext == ".docx":
+            return DOCX_MIME
+        if any(n.startswith("xl/") for n in names) and ext == ".xlsx":
+            return XLSX_MIME
+        return None
+    if ext in (".csv", ".txt"):
+        try:
+            data[:65536].decode("utf-8")
+        except UnicodeDecodeError:
+            return None
+        return "text/csv" if ext == ".csv" else "text/plain"
+    return None
 
 
 def detect_mime_from_bytes(header: bytes) -> Optional[str]:
@@ -159,7 +199,7 @@ def save_upload(
         raise ValidationError("Uploaded file is empty.")
 
     # Detect MIME from magic bytes
-    detected_mime = detect_mime_from_bytes(data[:16])
+    detected_mime = detect_mime(data, ext)
     if detected_mime is None or detected_mime not in ALLOWED_MIME_TYPES:
         raise MimeTypeError(
             f"File type not permitted. Detected MIME: {detected_mime!r}. "

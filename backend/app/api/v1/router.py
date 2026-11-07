@@ -20,6 +20,7 @@ from app.api.v1 import (
     faculty_data,
     gaps,
     health,
+    inspection,
     notifications,
     reports,
     requirements,
@@ -46,3 +47,4 @@ v1_router.include_router(reports.router)
 v1_router.include_router(notifications.router)
 v1_router.include_router(backups.router)
 v1_router.include_router(submissions.router)
+v1_router.include_router(inspection.router)

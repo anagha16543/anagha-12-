@@ -221,3 +221,87 @@ def trigger_ai_analysis(
         error=agent_response.error,
         ai_drives_compliance=False,   # ALWAYS False
     )
+
+
+# ---------------------------------------------------------------------------
+# CO / PO / PSO attainment (Criterion 3)
+# ---------------------------------------------------------------------------
+
+@router.get("/attainment", summary="CO, PO and PSO attainment with weak outcomes")
+def get_attainment(
+    department: str = "Computer Science and Engineering",
+    academic_year_id: Optional[uuid.UUID] = None,
+    target_percent: float = 60.0,
+    db: Session = Depends(get_db),
+    _: object = Depends(get_current_user),
+):
+    from app.services.attainment_service import compute_attainment
+    from app.services.evaluation_service import resolve_academic_year
+
+    year = resolve_academic_year(db, academic_year_id)
+    return compute_attainment(db, department, year.id, target_percent)
+
+
+# ---------------------------------------------------------------------------
+# At-risk students (Criterion 4)
+# ---------------------------------------------------------------------------
+
+@router.get("/at-risk-students", summary="Students who may need support (attendance / marks indicators)")
+def get_at_risk_students(
+    department: str = "Computer Science and Engineering",
+    academic_year_id: Optional[uuid.UUID] = None,
+    min_attendance: float = 75.0,
+    min_marks_percent: float = 40.0,
+    db: Session = Depends(get_db),
+    _: object = Depends(get_current_user),
+):
+    """
+    Deterministic indicators only: a student is listed when average attendance is
+    below `min_attendance` or overall marks are below `min_marks_percent`.
+    """
+    from sqlalchemy import func
+
+    from app.models.curriculum import AttendanceRecord, Student, StudentAssessmentMark
+    from app.services.evaluation_service import resolve_academic_year
+
+    year = resolve_academic_year(db, academic_year_id)
+    students = db.query(Student).filter(Student.department == department).all()
+    att = dict(
+        db.query(AttendanceRecord.student_id, func.avg(AttendanceRecord.attendance_percentage))
+        .filter(AttendanceRecord.academic_year_id == year.id)
+        .group_by(AttendanceRecord.student_id)
+        .all()
+    )
+    marks = {
+        sid: (got / mx * 100.0 if mx else None)
+        for sid, got, mx in db.query(
+            StudentAssessmentMark.student_id,
+            func.sum(StudentAssessmentMark.marks_obtained),
+            func.sum(StudentAssessmentMark.max_marks),
+        )
+        .group_by(StudentAssessmentMark.student_id)
+        .all()
+    }
+    flagged = []
+    for s in students:
+        a, m = att.get(s.id), marks.get(s.id)
+        reasons = []
+        if a is not None and a < min_attendance:
+            reasons.append(f"Average attendance {a:.1f}% is below {min_attendance:.0f}%")
+        if m is not None and m < min_marks_percent:
+            reasons.append(f"Overall marks {m:.1f}% are below {min_marks_percent:.0f}%")
+        if reasons:
+            flagged.append({
+                "usn": s.usn, "name": s.full_name, "semester": s.current_semester,
+                "average_attendance": round(a, 1) if a is not None else None,
+                "overall_marks_percent": round(m, 1) if m is not None else None,
+                "reasons": reasons,
+            })
+    flagged.sort(key=lambda r: (r["overall_marks_percent"] if r["overall_marks_percent"] is not None else 999))
+    return {
+        "department": department,
+        "total_students": len(students),
+        "at_risk_count": len(flagged),
+        "indicators": {"min_attendance": min_attendance, "min_marks_percent": min_marks_percent},
+        "students": flagged,
+    }

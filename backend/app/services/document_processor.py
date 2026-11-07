@@ -258,6 +258,63 @@ def extract_image(file_path: Path) -> ExtractionResult:
 # Dispatcher
 # ---------------------------------------------------------------------------
 
+def _single_page(text: str) -> ExtractionResult:
+    result = ExtractionResult()
+    method = "native" if text.strip() else "empty"
+    result.pages.append(PageExtraction(page_number=1, text=text, extraction_method=method))
+    result.total_pages = 1
+    result.native_pages = 1 if method == "native" else 0
+    result.empty_pages = 0 if method == "native" else 1
+    return result
+
+
+def extract_docx(file_path: Path) -> ExtractionResult:
+    """Extract paragraphs and table cells from a Word document."""
+    try:
+        from docx import Document as _Docx  # type: ignore
+
+        doc = _Docx(str(file_path))
+        parts = [p.text for p in doc.paragraphs if p.text.strip()]
+        for table in doc.tables:
+            for row in table.rows:
+                parts.append(" | ".join(c.text.strip() for c in row.cells))
+        return _single_page("\n".join(parts))
+    except Exception as exc:  # noqa: BLE001
+        result = ExtractionResult()
+        result.errors.append(f"DOCX extraction failed: {exc}")
+        return result
+
+
+def extract_xlsx(file_path: Path) -> ExtractionResult:
+    """Extract cell values from every sheet of an Excel workbook."""
+    try:
+        from openpyxl import load_workbook  # type: ignore
+
+        wb = load_workbook(str(file_path), read_only=True, data_only=True)
+        lines: list[str] = []
+        for ws in wb.worksheets:
+            lines.append(f"[Sheet] {ws.title}")
+            for row in ws.iter_rows(values_only=True):
+                cells = [str(c) for c in row if c is not None and str(c).strip()]
+                if cells:
+                    lines.append(" | ".join(cells))
+        return _single_page("\n".join(lines))
+    except Exception as exc:  # noqa: BLE001
+        result = ExtractionResult()
+        result.errors.append(f"XLSX extraction failed: {exc}")
+        return result
+
+
+def extract_text_file(file_path: Path) -> ExtractionResult:
+    """Read a CSV or plain-text file."""
+    try:
+        return _single_page(file_path.read_text(encoding="utf-8", errors="replace"))
+    except OSError as exc:
+        result = ExtractionResult()
+        result.errors.append(f"Text read failed: {exc}")
+        return result
+
+
 def process_document(file_path: Path, mime_type: str) -> ExtractionResult:
     """
     Process a document file and return an ExtractionResult.
@@ -270,6 +327,12 @@ def process_document(file_path: Path, mime_type: str) -> ExtractionResult:
         return extract_pdf(file_path)
     elif mime_type in ("image/png", "image/jpeg"):
         return extract_image(file_path)
+    elif mime_type.endswith("wordprocessingml.document"):
+        return extract_docx(file_path)
+    elif mime_type.endswith("spreadsheetml.sheet"):
+        return extract_xlsx(file_path)
+    elif mime_type in ("text/csv", "text/plain"):
+        return extract_text_file(file_path)
     else:
         result = ExtractionResult()
         result.errors.append(f"Unsupported MIME type for extraction: {mime_type}")

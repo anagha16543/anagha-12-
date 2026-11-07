@@ -73,7 +73,10 @@ from app.models.workflow import (
     WorkflowSubmission,
 )
 
+from app.models.inputs import RequirementInput  # noqa: F401
+
 __all__ = [
+    "RequirementInput",
     "Base",
     "User",
     "Role",

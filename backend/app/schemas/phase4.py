@@ -76,11 +76,15 @@ class NBARequirementCreate(BaseModel):
 
 class EvaluationTriggerRequest(BaseModel):
     """Body for triggering a deterministic evaluation."""
-    academic_year_id: uuid.UUID
-    department: str = Field(min_length=2, max_length=100)
+    academic_year_id: Optional[uuid.UUID] = Field(
+        default=None, description="Defaults to the active academic year."
+    )
+    department: str = Field(
+        default="Computer Science and Engineering", min_length=2, max_length=100
+    )
     context: dict[str, Any] = Field(
         default_factory=dict,
-        description="Structured backend data required by the evaluation rule.",
+        description="Optional overrides. Metrics are aggregated from stored records automatically.",
     )
     notes: Optional[str] = None
 
