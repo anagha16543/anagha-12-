@@ -146,3 +146,40 @@ class TestAttainment:
         assert course["attainment_percent"] == 40.0
         assert course["level"] == 0
         assert [w["co_code"] for w in result["weak_course_outcomes"]] == ["T1.CO1"]
+
+
+class TestKeywordSearchFallback:
+    def test_ranks_matching_document_first(self):
+        from app.services.rag_service import _keyword_score, _query_terms
+
+        terms = _query_terms("SDG zero hunger")
+        sdg = _keyword_score(terms, "Mapping to SDG 2 Zero Hunger for crop project", "sdg.docx")
+        other = _keyword_score(terms, "Question paper with Bloom levels", "paper.pdf")
+        assert sdg > other == 0.0
+
+    def test_stopwords_and_plurals_are_ignored(self):
+        from app.services.rag_service import _query_terms
+
+        assert _query_terms("What are the experiments") == ["experiment"]
+
+
+class TestEvidenceLinkPermission:
+    def _upload(self, client, headers, year):
+        import io
+
+        res = client.post(
+            f"/api/v1/documents/upload?academic_year_id={year.id}&department=CSE",
+            files={"file": ("notes.csv", io.BytesIO(b"a,b\n1,2\n"), "text/csv")},
+            headers=headers,
+        )
+        assert res.status_code in (200, 201), res.text
+        return res.json()["document_id"]
+
+    def test_uploader_can_link_but_other_faculty_cannot(
+        self, db_client, db_session, nba_year, faculty_headers, second_faculty_headers
+    ):
+        doc_id = self._upload(db_client, faculty_headers, nba_year)
+        req = _req(db_session, "REQ_3_1")
+        url = f"/api/v1/documents/requirements/{req.id}/evidence"
+        assert db_client.post(url, json={"document_id": doc_id}, headers=second_faculty_headers).status_code == 403
+        assert db_client.post(url, json={"document_id": doc_id}, headers=faculty_headers).status_code == 201

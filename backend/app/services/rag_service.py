@@ -275,6 +275,43 @@ class ChunkMatch:
     similarity_score: Optional[float]
 
 
+_STOPWORDS = {
+    "the", "a", "an", "of", "and", "or", "to", "in", "on", "for", "with", "is", "are", "what",
+    "do", "we", "have", "how", "which", "show", "me", "our", "by", "at", "be", "this", "that",
+}
+
+
+def _stem(word: str) -> str:
+    for suffix in ("ing", "es", "s", "ed"):
+        if len(word) > len(suffix) + 3 and word.endswith(suffix):
+            return word[: -len(suffix)]
+    return word
+
+
+def _query_terms(text: str) -> list[str]:
+    import re
+
+    words = re.findall(r"[a-z0-9]+", (text or "").lower())
+    return list(dict.fromkeys(_stem(w) for w in words if w not in _STOPWORDS and len(w) > 1))
+
+
+def _keyword_score(terms: list[str], content: str, filename: str) -> float:
+    if not terms:
+        return 0.0
+    import re
+
+    stems = [_stem(w) for w in re.findall(r"[a-z0-9]+", content.lower())]
+    name_stems = {_stem(w) for w in re.findall(r"[a-z0-9]+", filename.lower())}
+    score = 0.0
+    for t in terms:
+        hits = stems.count(t)
+        if hits:
+            score += 1.0 + min(hits, 5) * 0.2   # distinct-term coverage matters most
+        if t in name_stems:
+            score += 0.5
+    return score
+
+
 def retrieve_relevant_chunks(
     db: Session,
     query_text: str,
@@ -342,8 +379,26 @@ def retrieve_relevant_chunks(
         except Exception as exc:
             logger.debug("pgvector retrieval failed, falling back: %s", exc)
 
-    # Fallback: return most recent chunks (test / no-vector mode)
-    rows = q.order_by(DocumentChunk.created_at.desc()).limit(top_k).all()
+    # Fallback (no embeddings available): rank chunks by keyword relevance.
+    candidates = q.order_by(DocumentChunk.created_at.desc()).limit(2000).all()
+    terms = _query_terms(query_text)
+    scored = []
+    for chunk, doc in candidates:
+        score = _keyword_score(terms, chunk.content or "", doc.original_filename or "")
+        if score > 0:
+            scored.append((score, chunk, doc))
+    scored.sort(key=lambda t: t[0], reverse=True)
+    if not scored:
+        # nothing matched: return recent chunks, unranked, so callers still get context
+        return [
+            ChunkMatch(
+                chunk_id=str(c.id), document_id=str(d.id), document_name=d.original_filename,
+                page_number=c.page_number, section_heading=c.section_heading, content=c.content,
+                similarity_score=None,
+            )
+            for c, d in candidates[:top_k]
+        ]
+    best = scored[0][0]
     return [
         ChunkMatch(
             chunk_id=str(chunk.id),
@@ -352,7 +407,7 @@ def retrieve_relevant_chunks(
             page_number=chunk.page_number,
             section_heading=chunk.section_heading,
             content=chunk.content,
-            similarity_score=None,  # no ranking in fallback mode
+            similarity_score=round(score / best, 3),
         )
-        for chunk, doc in rows
+        for score, chunk, doc in scored[:top_k]
     ]

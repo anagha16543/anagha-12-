@@ -550,13 +550,13 @@ def replace_document(
     "/requirements/{requirement_id}/evidence",
     response_model=RequirementEvidenceOut,
     status_code=status.HTTP_201_CREATED,
-    summary="Link a document to a requirement as evidence",
+    summary="Link a document to a requirement as evidence (uploader, HOD or Admin)",
 )
 def link_evidence(
     requirement_id: uuid.UUID,
     body: RequirementEvidenceLinkIn,
     db: Session = Depends(get_db),
-    current_user: User = Depends(require_roles(UserRoleName.HOD.value, UserRoleName.ADMIN.value)),
+    current_user: User = Depends(get_current_user),
 ):
     """
     Associate an uploaded document with an NBA requirement.
@@ -572,6 +572,14 @@ def link_evidence(
     ).first()
     if not doc:
         raise HTTPException(status_code=404, detail="Document not found or deleted.")
+
+    role_names = {r.name for r in current_user.roles}
+    is_reviewer = bool(role_names & {UserRoleName.HOD.value, UserRoleName.ADMIN.value})
+    if not is_reviewer and doc.uploaded_by_user_id != current_user.id:
+        raise HTTPException(
+            status_code=403,
+            detail="Only the uploader, an HOD or an Admin can link this document to a requirement.",
+        )
 
     existing = (
         db.query(RequirementEvidence)
