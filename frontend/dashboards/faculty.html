@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Faculty Workspace — AI-NBA Readiness System</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
+  <link rel="stylesheet" href="../css/base.css">
+  <link rel="stylesheet" href="../css/components.css">
+  <link rel="stylesheet" href="../css/dashboard.css">
+</head>
+<body class="dashboard-layout">
+
+  <div id="cursor-dot"  aria-hidden="true"></div>
+  <div id="cursor-ring" aria-hidden="true"></div>
+  <div id="toast-container" role="log" aria-live="polite"></div>
+
+  <!-- Shared Sidebar & Topbar Containers -->
+  <aside class="sidebar" id="dashboard-sidebar"></aside>
+  <header class="topbar" id="dashboard-topbar"></header>
+
+  <!-- Command Palette Modal -->
+  <div id="command-palette-backdrop">
+    <div class="command-palette-box">
+      <div class="command-palette-header">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/>
+        </svg>
+        <input type="text" id="cmd-palette-input" class="command-palette-input" placeholder="Type a command or jump to page..." autofocus>
+      </div>
+      <ul class="command-palette-list" id="cmd-palette-list"></ul>
+    </div>
+  </div>
+
+  <!-- Course-Level Batch Attainment Evaluation Modal (C3) -->
+  <div id="marks-modal-backdrop" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);backdrop-filter:blur(6px);z-index:9999;align-items:center;justify-content:center;padding:var(--space-4);">
+    <div style="background:var(--surface-50);border:1px solid var(--glass-border);border-radius:var(--radius-lg);max-width:580px;width:100%;box-shadow:var(--shadow-xl);overflow:hidden;">
+      <div style="padding:var(--space-5);border-bottom:1px solid var(--glass-border);display:flex;justify-content:space-between;align-items:center;">
+        <div>
+          <h3 id="marks-modal-title" style="font-size:var(--text-lg);font-weight:700;">Course Cohort Attainment Evaluation</h3>
+          <p style="font-size:var(--text-xs);color:var(--text-muted);margin-top:2px;">Compute Course Outcome attainment across the entire batch (80% Direct + 20% Indirect).</p>
+        </div>
+        <button id="marks-modal-close-btn" class="btn btn--ghost btn--sm" style="font-size:18px;">&times;</button>
+      </div>
+      <form id="marks-entry-form" style="padding:var(--space-6);display:flex;flex-direction:column;gap:var(--space-4);">
+        <!-- Target Course & Cohort Size -->
+        <div style="display:grid;grid-template-columns:2fr 1fr;gap:var(--space-3);">
+          <div>
+            <label style="display:block;font-size:var(--text-xs);color:var(--text-secondary);margin-bottom:4px;">Target Course</label>
+            <input type="text" id="marks-course-code" class="form-control" readonly style="background:var(--surface-100);color:var(--text-primary);padding:8px;border-radius:var(--radius-sm);border:1px solid var(--glass-border);width:100%;font-weight:700;">
+          </div>
+          <div>
+            <label style="display:block;font-size:var(--text-xs);color:var(--text-secondary);margin-bottom:4px;">Total Class Size (N)</label>
+            <input type="number" id="marks-total-students" class="form-control" min="1" value="64" required style="background:var(--surface-100);color:var(--text-primary);padding:8px;border-radius:var(--radius-sm);border:1px solid var(--glass-border);width:100%;">
+          </div>
+        </div>
+
+        <!-- Target Benchmark Threshold -->
+        <div style="background:rgba(0,245,160,0.06);border:1px solid rgba(0,245,160,0.2);padding:var(--space-3);border-radius:var(--radius-sm);display:flex;justify-content:space-between;align-items:center;">
+          <div>
+            <div style="font-size:var(--text-xs);font-weight:700;color:var(--cyan);">NBA Target Benchmark</div>
+            <div style="font-size:11px;color:var(--text-muted);">Threshold score expected for a student to attain outcome</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:4px;">
+            <input type="number" id="marks-benchmark-pct" min="40" max="90" value="60" style="width:50px;background:var(--surface-100);color:var(--text-primary);padding:4px;border-radius:var(--radius-sm);border:1px solid var(--glass-border);text-align:center;font-weight:700;">
+            <span style="font-size:12px;color:var(--text-muted);">% Marks</span>
+          </div>
+        </div>
+
+        <!-- Cohort Assessment Inputs -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:var(--space-4);">
+          <!-- CIE Assessment -->
+          <div style="background:var(--surface-100);border:1px solid var(--glass-border);padding:var(--space-3);border-radius:var(--radius-sm);">
+            <div style="font-size:var(--text-xs);font-weight:700;color:var(--aurora);margin-bottom:6px;">1. Continuous Internal (CIE)</div>
+            <label style="display:block;font-size:11px;color:var(--text-secondary);margin-bottom:3px;">Students scoring &ge; Benchmark:</label>
+            <div style="display:flex;align-items:center;gap:6px;">
+              <input type="number" id="marks-cie-passed" class="form-control" min="0" max="64" value="52" required style="background:var(--surface-50);color:var(--text-primary);padding:6px;border-radius:var(--radius-sm);border:1px solid var(--glass-border);width:100%;">
+              <span style="font-size:11px;color:var(--text-muted);white-space:nowrap;" id="cie-pct-preview">/ 64 (81.3%)</span>
+            </div>
+          </div>
+
+          <!-- SEE Examination -->
+          <div style="background:var(--surface-100);border:1px solid var(--glass-border);padding:var(--space-3);border-radius:var(--radius-sm);">
+            <div style="font-size:var(--text-xs);font-weight:700;color:var(--cyan);margin-bottom:6px;">2. Semester End (SEE)</div>
+            <label style="display:block;font-size:11px;color:var(--text-secondary);margin-bottom:3px;">Students scoring &ge; Benchmark:</label>
+            <div style="display:flex;align-items:center;gap:6px;">
+              <input type="number" id="marks-see-passed" class="form-control" min="0" max="64" value="48" required style="background:var(--surface-50);color:var(--text-primary);padding:6px;border-radius:var(--radius-sm);border:1px solid var(--glass-border);width:100%;">
+              <span style="font-size:11px;color:var(--text-muted);white-space:nowrap;" id="see-pct-preview">/ 64 (75.0%)</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Indirect Survey & Excel Upload -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:var(--space-4);">
+          <div>
+            <label style="display:block;font-size:var(--text-xs);color:var(--text-secondary);margin-bottom:4px;">3. Course Exit Survey (Indirect)</label>
+            <div style="display:flex;align-items:center;gap:6px;">
+              <input type="number" id="marks-indirect-pct" class="form-control" min="0" max="100" value="84" style="background:var(--surface-100);color:var(--text-primary);padding:6px;border-radius:var(--radius-sm);border:1px solid var(--glass-border);width:100%;">
+              <span style="font-size:12px;color:var(--text-muted);">%</span>
+            </div>
+          </div>
+          <div>
+            <label style="display:block;font-size:var(--text-xs);color:var(--text-secondary);margin-bottom:4px;">Or Upload Batch Sheet (.xlsx)</label>
+            <input type="file" id="marks-batch-file" accept=".xlsx,.csv" class="form-control" style="background:var(--surface-100);color:var(--text-primary);padding:5px;border-radius:var(--radius-sm);border:1px solid var(--glass-border);width:100%;font-size:11px;">
+          </div>
+        </div>
+
+        <!-- Real-Time Computed Attainment Result Box -->
+        <div style="background:rgba(204,255,0,0.06);border:1px solid rgba(204,255,0,0.25);padding:var(--space-3) var(--space-4);border-radius:var(--radius-md);display:flex;justify-content:space-between;align-items:center;">
+          <div>
+            <div style="font-size:11px;color:var(--text-muted);text-transform:uppercase;font-family:var(--font-mono);">Computed Overall Attainment (C3.7)</div>
+            <div style="font-size:var(--text-md);font-weight:700;color:var(--aurora);" id="computed-attainment-summary">79.3% — Level 3 (Substantial Attainment)</div>
+            <div style="font-size:11px;color:var(--text-secondary);">Direct (80%) + Indirect (20%) &bull; 60% Target Benchmark</div>
+          </div>
+          <span class="chip chip--pass" id="attainment-level-chip">Level 3 ✓</span>
+        </div>
+
+        <div style="display:flex;justify-content:flex-end;gap:var(--space-3);margin-top:var(--space-1);">
+          <button type="button" id="marks-cancel-btn" class="btn btn--ghost">Cancel</button>
+          <button type="submit" class="btn btn--primary" id="btn-save-attainment">Save & Calculate Attainment</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Add Qualification Modal (C5) -->
+  <div id="qual-modal-backdrop" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);backdrop-filter:blur(6px);z-index:9999;align-items:center;justify-content:center;padding:var(--space-4);">
+    <div style="background:var(--surface-50);border:1px solid var(--glass-border);border-radius:var(--radius-lg);max-width:520px;width:100%;box-shadow:var(--shadow-xl);overflow:hidden;">
+      <div style="padding:var(--space-5);border-bottom:1px solid var(--glass-border);display:flex;justify-content:space-between;align-items:center;">
+        <h3 style="font-size:var(--text-lg);font-weight:700;">Add Qualification / FDP Credential</h3>
+        <button id="qual-modal-close-btn" class="btn btn--ghost btn--sm" style="font-size:18px;">&times;</button>
+      </div>
+      <form id="qual-form" style="padding:var(--space-6);display:flex;flex-direction:column;gap:var(--space-4);">
+        <div>
+          <label style="display:block;font-size:var(--text-xs);color:var(--text-secondary);margin-bottom:4px;">Degree / Credential Title</label>
+          <input type="text" id="qual-title" class="form-control" placeholder="e.g. Ph.D. in Computer Science or ATAL FDP" required style="width:100%;background:var(--surface-100);color:var(--text-primary);padding:8px;border-radius:var(--radius-sm);border:1px solid var(--glass-border);">
+        </div>
+        <div>
+          <label style="display:block;font-size:var(--text-xs);color:var(--text-secondary);margin-bottom:4px;">Issuing University / Organization</label>
+          <input type="text" id="qual-institution" class="form-control" placeholder="e.g. National Institute of Technology" required style="width:100%;background:var(--surface-100);color:var(--text-primary);padding:8px;border-radius:var(--radius-sm);border:1px solid var(--glass-border);">
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:var(--space-3);">
+          <div>
+            <label style="display:block;font-size:var(--text-xs);color:var(--text-secondary);margin-bottom:4px;">Year / Date</label>
+            <input type="text" id="qual-year" class="form-control" placeholder="e.g. 2024" required style="width:100%;background:var(--surface-100);color:var(--text-primary);padding:8px;border-radius:var(--radius-sm);border:1px solid var(--glass-border);">
+          </div>
+          <div>
+            <label style="display:block;font-size:var(--text-xs);color:var(--text-secondary);margin-bottom:4px;">FDP Contact Days (if applicable)</label>
+            <input type="number" id="qual-days" class="form-control" min="0" value="5" style="width:100%;background:var(--surface-100);color:var(--text-primary);padding:8px;border-radius:var(--radius-sm);border:1px solid var(--glass-border);">
+          </div>
+        </div>
+        <div>
+          <label style="display:block;font-size:var(--text-xs);color:var(--text-secondary);margin-bottom:4px;">Supporting Certificate File (PDF)</label>
+          <input type="file" id="qual-file" class="form-control" style="width:100%;background:var(--surface-100);color:var(--text-primary);padding:6px;border-radius:var(--radius-sm);border:1px solid var(--glass-border);">
+        </div>
+        <div style="display:flex;justify-content:flex-end;gap:var(--space-3);margin-top:var(--space-2);">
+          <button type="button" id="qual-cancel-btn" class="btn btn--ghost">Cancel</button>
+          <button type="submit" class="btn btn--primary">Submit for HOD Verification</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Add Publication / Contribution Modal (C6) -->
+  <div id="pub-modal-backdrop" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);backdrop-filter:blur(6px);z-index:9999;align-items:center;justify-content:center;padding:var(--space-4);">
+    <div style="background:var(--surface-50);border:1px solid var(--glass-border);border-radius:var(--radius-lg);max-width:540px;width:100%;box-shadow:var(--shadow-xl);overflow:hidden;">
+      <div style="padding:var(--space-5);border-bottom:1px solid var(--glass-border);display:flex;justify-content:space-between;align-items:center;">
+        <h3 style="font-size:var(--text-lg);font-weight:700;">Add Research Contribution (Criterion 6)</h3>
+        <button id="pub-modal-close-btn" class="btn btn--ghost btn--sm" style="font-size:18px;">&times;</button>
+      </div>
+      <form id="pub-form" style="padding:var(--space-6);display:flex;flex-direction:column;gap:var(--space-4);">
+        <div>
+          <label style="display:block;font-size:var(--text-xs);color:var(--text-secondary);margin-bottom:4px;">Contribution Type</label>
+          <select id="pub-type" class="form-control" style="width:100%;background:var(--surface-100);color:var(--text-primary);padding:8px;border-radius:var(--radius-sm);border:1px solid var(--glass-border);">
+            <option value="Journal Publication">Journal Publication (SCI / Scopus)</option>
+            <option value="Conference Paper">Conference Paper (IEEE / ACM / Springer)</option>
+            <option value="Patent">Patent / IPR</option>
+            <option value="Sponsored Research Project">Sponsored Research Grant</option>
+            <option value="Consultancy Project">Consultancy Work</option>
+          </select>
+        </div>
+        <div>
+          <label style="display:block;font-size:var(--text-xs);color:var(--text-secondary);margin-bottom:4px;">Paper / Project Title</label>
+          <input type="text" id="pub-title" class="form-control" placeholder="Title of publication, patent, or funded project" required style="width:100%;background:var(--surface-100);color:var(--text-primary);padding:8px;border-radius:var(--radius-sm);border:1px solid var(--glass-border);">
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:var(--space-3);">
+          <div>
+            <label style="display:block;font-size:var(--text-xs);color:var(--text-secondary);margin-bottom:4px;">Indexing / DOI</label>
+            <input type="text" id="pub-indexing" class="form-control" placeholder="e.g. Scopus Q1 / 10.1109..." required style="width:100%;background:var(--surface-100);color:var(--text-primary);padding:8px;border-radius:var(--radius-sm);border:1px solid var(--glass-border);">
+          </div>
+          <div>
+            <label style="display:block;font-size:var(--text-xs);color:var(--text-secondary);margin-bottom:4px;">Academic Year</label>
+            <select id="pub-year" class="form-control" style="width:100%;background:var(--surface-100);color:var(--text-primary);padding:8px;border-radius:var(--radius-sm);border:1px solid var(--glass-border);">
+              <option value="2024-25">2024-25 (CAY)</option>
+              <option value="2023-24">2023-24 (CAYm1)</option>
+              <option value="2022-23">2022-23 (CAYm2)</option>
+            </select>
+          </div>
+        </div>
+        <div>
+          <label style="display:block;font-size:var(--text-xs);color:var(--text-secondary);margin-bottom:4px;">Upload Offprint / Evidence (PDF)</label>
+          <input type="file" id="pub-file" class="form-control" style="width:100%;background:var(--surface-100);color:var(--text-primary);padding:6px;border-radius:var(--radius-sm);border:1px solid var(--glass-border);">
+        </div>
+        <div style="display:flex;justify-content:flex-end;gap:var(--space-3);margin-top:var(--space-2);">
+          <button type="button" id="pub-cancel-btn" class="btn btn--ghost">Cancel</button>
+          <button type="submit" class="btn btn--primary">Submit for HOD Verification</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Resubmit Correction Modal -->
+  <div id="resubmit-modal-backdrop" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);backdrop-filter:blur(6px);z-index:9999;align-items:center;justify-content:center;padding:var(--space-4);">
+    <div style="background:var(--surface-50);border:1px solid var(--glass-border);border-radius:var(--radius-lg);max-width:540px;width:100%;box-shadow:var(--shadow-xl);overflow:hidden;">
+      <div style="padding:var(--space-5);border-bottom:1px solid var(--glass-border);display:flex;justify-content:space-between;align-items:center;">
+        <h3 style="font-size:var(--text-lg);font-weight:700;">Resubmit Corrected Record</h3>
+        <button id="resubmit-modal-close-btn" class="btn btn--ghost btn--sm" style="font-size:18px;">&times;</button>
+      </div>
+      <form id="resubmit-form" style="padding:var(--space-6);display:flex;flex-direction:column;gap:var(--space-4);">
+        <div>
+          <div style="font-size:var(--text-xs);color:var(--text-muted);text-transform:uppercase;">Item Being Corrected</div>
+          <strong id="resubmit-item-title" style="color:var(--text-primary);display:block;margin-top:2px;">CS602 Laboratory Manual</strong>
+          <div id="resubmit-reviewer-note" style="font-size:var(--text-xs);color:var(--warning);margin-top:6px;padding:8px;background:rgba(245,158,11,0.1);border-radius:var(--radius-sm);border-left:3px solid var(--warning);">
+            HOD Note: "Please append the updated rubric mapping for Experiment 8."
+          </div>
+        </div>
+        <div>
+          <label style="display:block;font-size:var(--text-xs);color:var(--text-secondary);margin-bottom:4px;">Upload Corrected Document (PDF)</label>
+          <input type="file" id="resubmit-file" class="form-control" style="width:100%;background:var(--surface-100);color:var(--text-primary);padding:6px;border-radius:var(--radius-sm);border:1px solid var(--glass-border);" required>
+        </div>
+        <div>
+          <label style="display:block;font-size:var(--text-xs);color:var(--text-secondary);margin-bottom:4px;">Faculty Response Note</label>
+          <textarea id="resubmit-note" class="form-control" rows="2" placeholder="e.g. Appended experiment 8 rubrics and updated CO-PO mapping matrix." style="width:100%;background:var(--surface-100);color:var(--text-primary);padding:8px;border-radius:var(--radius-sm);border:1px solid var(--glass-border);"></textarea>
+        </div>
+        <div style="display:flex;justify-content:flex-end;gap:var(--space-3);margin-top:var(--space-2);">
+          <button type="button" id="resubmit-cancel-btn" class="btn btn--ghost">Cancel</button>
+          <button type="submit" class="btn btn--primary">Resubmit to HOD</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ══════════════════ MAIN CONTENT ══════════════════ -->
+  <main class="dashboard-main">
+    <div class="dashboard-content">
+
+      <!-- Faculty Profile Banner -->
+      <section class="criterion-header-card" style="border-left: 4px solid var(--aurora);">
+        <div class="crit-meta">
+          <div class="chip chip--info" style="margin-bottom:var(--space-2);background:rgba(0,245,160,0.15);color:var(--aurora);">
+            Faculty Personal Workspace
+          </div>
+          <h1 id="faculty-greeting">Welcome, Faculty Member</h1>
+          <p id="faculty-subtitle">Manage assigned course attainment, personal C5 profile, C6 research contributions, and evidence documents.</p>
+        </div>
+
+        <div style="display:flex;gap:var(--space-4);align-items:center;">
+          <div style="text-align:right;">
+            <div style="font-size:var(--text-xs);color:var(--text-muted);text-transform:uppercase;font-family:var(--font-mono);">Faculty ID</div>
+            <div style="font-size:var(--text-lg);font-weight:700;color:var(--text-primary);" id="faculty-id-badge">FAC003</div>
+          </div>
+          <div style="text-align:right;">
+            <div style="font-size:var(--text-xs);color:var(--text-muted);text-transform:uppercase;font-family:var(--font-mono);">Department</div>
+            <div style="font-size:var(--text-sm);font-weight:600;color:var(--cyan);" id="faculty-dept-badge">CSE</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── KPI Summary Cards (Prompt Mandate) ── -->
+      <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(180px, 1fr));gap:var(--space-4);margin-bottom:var(--space-6);">
+        <div class="chart-card">
+          <div style="font-size:var(--text-xs);color:var(--text-muted);text-transform:uppercase;">Assigned Courses</div>
+          <div style="font-size:1.8rem;font-weight:700;color:var(--aurora);margin:var(--space-1) 0;" id="kpi-courses-count">2 Courses</div>
+          <div style="font-size:var(--text-xs);color:var(--text-secondary);">CS501 (78%) &bull; CS602 (71%)</div>
+        </div>
+        <div class="chart-card">
+          <div style="font-size:var(--text-xs);color:var(--text-muted);text-transform:uppercase;">Total Submissions</div>
+          <div style="font-size:1.8rem;font-weight:700;color:var(--text-primary);margin:var(--space-1) 0;" id="kpi-total-subs">5 Records</div>
+          <div style="font-size:var(--text-xs);color:var(--text-secondary);">Across C3, C5, C6</div>
+        </div>
+        <div class="chart-card">
+          <div style="font-size:var(--text-xs);color:var(--text-muted);text-transform:uppercase;">Pending Approvals</div>
+          <div style="font-size:1.8rem;font-weight:700;color:var(--warning);margin:var(--space-1) 0;" id="kpi-pending-subs">2 In Review</div>
+          <div style="font-size:var(--text-xs);color:var(--warning);">Awaiting HOD verification</div>
+        </div>
+        <div class="chart-card">
+          <div style="font-size:var(--text-xs);color:var(--text-muted);text-transform:uppercase;">Approved Records</div>
+          <div style="font-size:1.8rem;font-weight:700;color:var(--pass);margin:var(--space-1) 0;" id="kpi-approved-subs">3 Verified</div>
+          <div style="font-size:var(--text-xs);color:var(--pass);">Locked into SAR ledger</div>
+        </div>
+        <div class="chart-card">
+          <div style="font-size:var(--text-xs);color:var(--text-muted);text-transform:uppercase;">Rejected Records</div>
+          <div style="font-size:1.8rem;font-weight:700;color:var(--text-secondary);margin:var(--space-1) 0;" id="kpi-rejected-subs">0 Records</div>
+          <div style="font-size:var(--text-xs);color:var(--pass);">Clean audit record</div>
+        </div>
+        <div class="chart-card">
+          <div style="font-size:var(--text-xs);color:var(--text-muted);text-transform:uppercase;">Action Required</div>
+          <div style="font-size:1.8rem;font-weight:700;color:var(--warning);margin:var(--space-1) 0;" id="kpi-actions-needed">1 Revision</div>
+          <div style="font-size:var(--text-xs);color:var(--warning);">HOD comment pending</div>
+        </div>
+      </div>
+
+      <!-- Dashboard Tabs -->
+      <nav class="dash-tabs" role="tablist">
+        <button class="dash-tab-btn active" data-tab="tab-assigned-courses">My Assigned Courses (C3)</button>
+        <button class="dash-tab-btn" data-tab="tab-faculty-students">Assigned Students (C4)</button>
+        <button class="dash-tab-btn" data-tab="tab-faculty-c5">My C5 Profile & FQI</button>
+        <button class="dash-tab-btn" data-tab="tab-faculty-c6">My C6 Research & Consultancy</button>
+        <button class="dash-tab-btn" data-tab="tab-faculty-uploads">Evidence Upload & Lifecycle</button>
+        <button class="dash-tab-btn" data-tab="tab-faculty-revisions">HOD Review & Action Queue</button>
+      </nav>
+
+      <!-- ── TAB 1: ASSIGNED COURSES (C3) ── -->
+      <div class="tab-pane active" id="tab-assigned-courses">
+        <div class="requirements-card">
+          <div style="padding:var(--space-5);border-bottom:1px solid var(--glass-border);display:flex;justify-content:space-between;align-items:center;">
+            <div>
+              <h3 style="font-size:var(--text-lg);font-weight:700;">Assigned Teaching Workload & CO Attainment</h3>
+              <p style="font-size:var(--text-xs);color:var(--text-muted);">Enter student CIE/SEE marks, upload Course Files, and submit assessments for HOD verification.</p>
+            </div>
+            <a href="c3.html" class="btn btn--outline btn--sm">Criterion 3 Hub &rarr;</a>
+          </div>
+
+          <table class="req-table">
+            <thead>
+              <tr>
+                <th>COURSE CODE & NAME</th>
+                <th>SEMESTER</th>
+                <th>STUDENTS</th>
+                <th>CO ATTAINMENT %</th>
+                <th>COURSE FILE</th>
+                <th style="text-align:right;">ACTION</th>
+              </tr>
+            </thead>
+            <tbody id="faculty-courses-tbody">
+              <!-- Populated dynamically via faculty.js -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ── TAB 2: ASSIGNED STUDENTS (C4) ── -->
+      <div class="tab-pane" id="tab-faculty-students" style="display:none;">
+        <div class="requirements-card">
+          <div style="padding:var(--space-5);border-bottom:1px solid var(--glass-border);display:flex;justify-content:space-between;align-items:center;">
+            <div>
+              <h3 style="font-size:var(--text-lg);font-weight:700;">My Assigned Mentee Students (Criterion 4)</h3>
+              <p style="font-size:var(--text-xs);color:var(--text-muted);">Maintain mentoring notes, track student academic performance, and monitor micro-projects.</p>
+            </div>
+            <a href="c4.html" class="btn btn--outline btn--sm">Criterion 4 Hub &rarr;</a>
+          </div>
+
+          <table class="req-table">
+            <thead>
+              <tr>
+                <th>USN</th>
+                <th>STUDENT NAME</th>
+                <th>SEMESTER</th>
+                <th>ACADEMIC PERFORMANCE</th>
+                <th>MENTORING STATUS</th>
+                <th style="text-align:right;">ACTION</th>
+              </tr>
+            </thead>
+            <tbody id="faculty-students-tbody">
+              <!-- Populated dynamically -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ── TAB 3: MY C5 PROFILE & FQI ── -->
+      <div class="tab-pane" id="tab-faculty-c5" style="display:none;">
+        <div style="display:grid;grid-template-columns:1fr 2fr;gap:var(--space-6);margin-bottom:var(--space-6);">
+          <div class="chart-card">
+            <div class="chart-card-header">
+              <h3>FQI Qualification Profile</h3>
+              <span class="chip chip--pass">Tier-I Eligible</span>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:var(--space-3);margin-top:var(--space-4);">
+              <div style="display:flex;justify-content:space-between;border-bottom:1px solid var(--glass-border);padding-bottom:8px;">
+                <span style="color:var(--text-secondary);font-size:var(--text-xs);">Highest Degree</span>
+                <strong style="color:var(--text-primary);font-size:var(--text-xs);">M.Tech (CSE), Ph.D. Pursuing</strong>
+              </div>
+              <div style="display:flex;justify-content:space-between;border-bottom:1px solid var(--glass-border);padding-bottom:8px;">
+                <span style="color:var(--text-secondary);font-size:var(--text-xs);">Cadre Designation</span>
+                <strong style="color:var(--text-primary);font-size:var(--text-xs);">Assistant Professor</strong>
+              </div>
+              <div style="display:flex;justify-content:space-between;border-bottom:1px solid var(--glass-border);padding-bottom:8px;">
+                <span style="color:var(--text-secondary);font-size:var(--text-xs);">Experience</span>
+                <strong style="color:var(--text-primary);font-size:var(--text-xs);">7.5 Years Teaching</strong>
+              </div>
+              <div style="display:flex;justify-content:space-between;border-bottom:1px solid var(--glass-border);padding-bottom:8px;">
+                <span style="color:var(--text-secondary);font-size:var(--text-xs);">FDP Days (CAY)</span>
+                <strong style="color:var(--aurora);font-size:var(--text-xs);">5 Days (Min: 5 Days) ✓</strong>
+              </div>
+            </div>
+            <a href="c5.html" class="btn btn--outline btn--sm" style="width:100%;margin-top:var(--space-4);justify-content:center;">View Department C5</a>
+          </div>
+
+          <div class="requirements-card">
+            <div style="padding:var(--space-4) var(--space-5);border-bottom:1px solid var(--glass-border);display:flex;justify-content:space-between;align-items:center;">
+              <h4 style="font-size:var(--text-sm);font-weight:600;text-transform:uppercase;color:var(--text-secondary);">Verified Faculty Credentials</h4>
+              <button class="btn btn--primary btn--sm" id="btn-add-credential">+ Add Qualification / Certificate</button>
+            </div>
+            <table class="req-table">
+              <thead>
+                <tr>
+                  <th>CREDENTIAL TITLE</th>
+                  <th>ISSUING BODY</th>
+                  <th>DATE</th>
+                  <th>VERIFICATION STATUS</th>
+                </tr>
+              </thead>
+              <tbody id="faculty-qual-tbody">
+                <!-- Populated dynamically -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── TAB 4: MY C6 CONTRIBUTIONS ── -->
+      <div class="tab-pane" id="tab-faculty-c6" style="display:none;">
+        <div class="requirements-card">
+          <div style="padding:var(--space-5);border-bottom:1px solid var(--glass-border);display:flex;justify-content:space-between;align-items:center;">
+            <div>
+              <h3 style="font-size:var(--text-lg);font-weight:700;">My Research, Publications & Consultancy</h3>
+              <p style="font-size:var(--text-xs);color:var(--text-muted);">Indexed journal offprints, patents, and technical contributions for Criterion 6.</p>
+            </div>
+            <button class="btn btn--primary btn--sm" id="btn-add-publication">+ Add Publication / Project</button>
+          </div>
+
+          <table class="req-table">
+            <thead>
+              <tr>
+                <th>TITLE & DETAILS</th>
+                <th>INDEXING / DOI</th>
+                <th>ACADEMIC YEAR</th>
+                <th>EVIDENCE PROOF</th>
+                <th style="text-align:right;">STATUS</th>
+              </tr>
+            </thead>
+            <tbody id="faculty-c6-tbody">
+              <!-- Populated dynamically -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ── TAB 5: EVIDENCE UPLOAD & LIFECYCLE ── -->
+      <div class="tab-pane" id="tab-faculty-uploads" style="display:none;">
+        <!-- Upload Form Card -->
+        <div class="chart-card" style="margin-bottom:var(--space-6);">
+          <div class="chart-card-header">
+            <h3>Upload New Evidence Document</h3>
+            <span class="chip chip--info">SHA-256 Tamper Evident</span>
+          </div>
+          <p style="font-size:var(--text-xs);color:var(--text-muted);margin-bottom:var(--space-4);">
+            Upload documents with exact criterion and sub-requirement tagging. Files undergo automated SHA-256 fingerprinting and are submitted to HOD.
+          </p>
+
+          <form id="faculty-upload-form" style="display:grid;grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));gap:var(--space-4);align-items:end;">
+            <div>
+              <label style="display:block;font-size:var(--text-xs);color:var(--text-secondary);margin-bottom:4px;">Target Criterion</label>
+              <select id="upload-criterion" class="form-control" style="background:var(--surface-100);color:var(--text-primary);border-color:var(--glass-border);padding:8px 12px;border-radius:var(--radius-sm);width:100%;">
+                <option value="C3" selected>Criterion 3 (Course Outcomes & Assessment)</option>
+                <option value="C4">Criterion 4 (Students' Performance)</option>
+                <option value="C5">Criterion 5 (Faculty Profile & FDP)</option>
+                <option value="C6">Criterion 6 (R&D, Patents & Consultancy)</option>
+              </select>
+            </div>
+
+            <div>
+              <label style="display:block;font-size:var(--text-xs);color:var(--text-secondary);margin-bottom:4px;">Sub-Requirement Code</label>
+              <input type="text" id="upload-subreq" class="form-control" placeholder="e.g. 3.1 or 3.2" value="3.1" style="background:var(--surface-100);color:var(--text-primary);border-color:var(--glass-border);padding:8px 12px;border-radius:var(--radius-sm);width:100%;">
+            </div>
+
+            <div>
+              <label style="display:block;font-size:var(--text-xs);color:var(--text-secondary);margin-bottom:4px;">Academic Year</label>
+              <select id="upload-year" class="form-control" style="background:var(--surface-100);color:var(--text-primary);border-color:var(--glass-border);padding:8px 12px;border-radius:var(--radius-sm);width:100%;">
+                <option value="CAY">CAY (2024-2025)</option>
+                <option value="CAYm1">CAYm1 (2023-2024)</option>
+                <option value="CAYm2">CAYm2 (2022-2023)</option>
+              </select>
+            </div>
+
+            <div>
+              <label style="display:block;font-size:var(--text-xs);color:var(--text-secondary);margin-bottom:4px;">Select File (PDF, XLSX, DOCX)</label>
+              <input type="file" id="upload-file-input" class="form-control" style="background:var(--surface-100);color:var(--text-primary);border-color:var(--glass-border);padding:6px;border-radius:var(--radius-sm);width:100%;">
+            </div>
+
+            <div>
+              <button type="submit" class="btn btn--primary" id="btn-submit-upload" style="width:100%;">
+                <span>Upload & Sign Hash</span>
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <!-- My Uploaded Documents Table -->
+        <div class="requirements-card">
+          <div style="padding:var(--space-4) var(--space-5);border-bottom:1px solid var(--glass-border);display:flex;justify-content:space-between;align-items:center;">
+            <div>
+              <h4 style="font-size:var(--text-sm);font-weight:600;text-transform:uppercase;color:var(--text-secondary);margin:0;">Uploaded Documents Lifecycle Tracker</h4>
+              <p style="font-size:11px;color:var(--text-muted);margin:2px 0 0 0;">Synchronized with Criterion 3 Evidence Repository &amp; HOD Verification Queue</p>
+            </div>
+            <div style="display:flex;gap:var(--space-2);align-items:center;">
+              <a href="c3.html#tab-evidence" class="btn btn--outline btn--sm">View in C3 Repository &rarr;</a>
+              <span class="chip chip--pass">Tracked Real-Time</span>
+            </div>
+          </div>
+          <table class="req-table">
+            <thead>
+              <tr>
+                <th>DOCUMENT NAME</th>
+                <th>CRITERION</th>
+                <th>YEAR</th>
+                <th>SHA-256 FINGERPRINT</th>
+                <th>LIFECYCLE STATUS</th>
+                <th style="text-align:right;">ACTION</th>
+              </tr>
+            </thead>
+            <tbody id="faculty-docs-tbody">
+              <!-- Populated dynamically -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ── TAB 6: HOD REVISIONS & ACTIONS QUEUE ── -->
+      <div class="tab-pane" id="tab-faculty-revisions" style="display:none;">
+        <div class="requirements-card">
+          <div style="padding:var(--space-5);border-bottom:1px solid var(--glass-border);">
+            <h3 style="font-size:var(--text-lg);font-weight:700;">HOD Review Feedback & Action Queue</h3>
+            <p style="font-size:var(--text-xs);color:var(--text-muted);">Items returned with correction notes or verification requests. Resubmit corrected versions directly here.</p>
+          </div>
+
+          <div id="faculty-revisions-container" style="padding:var(--space-6);display:flex;flex-direction:column;gap:var(--space-4);">
+            <!-- Populated dynamically -->
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <script type="module" src="../js/dash/faculty.js"></script>
+</body>
+</html>

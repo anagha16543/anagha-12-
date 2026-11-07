@@ -30,6 +30,7 @@ from fastapi import (
     BackgroundTasks,
     Depends,
     File,
+    Form,
     HTTPException,
     Query,
     UploadFile,
@@ -97,19 +98,46 @@ def _assert_document_access(doc: Document, user: User) -> None:
 # ---------------------------------------------------------------------------
 
 @router.post(
-    "/upload",
+    "",
     response_model=DocumentUploadResponse,
     status_code=status.HTTP_201_CREATED,
     summary="Upload an evidence document",
 )
+@router.post(
+    "/upload",
+    response_model=DocumentUploadResponse,
+    status_code=status.HTTP_201_CREATED,
+    summary="Upload an evidence document (alias)",
+)
 def upload_document(
     file: UploadFile = File(...),
-    academic_year_id: uuid.UUID = Query(...),
-    department: str = Query(...),
+    academic_year_id: Optional[str] = Query(default=None),
+    department: Optional[str] = Query(default=None),
+    academic_year_id_form: Optional[str] = Form(default=None, alias="academic_year_id"),
+    department_form: Optional[str] = Form(default=None, alias="department"),
+    title: Optional[str] = Form(default=None),
+    criterion_code: Optional[str] = Form(default=None),
     background_tasks: BackgroundTasks = BackgroundTasks(),
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
+    resolved_dept = department or department_form or "Computer Science and Engineering"
+    ay_val = academic_year_id or academic_year_id_form
+    if ay_val:
+        try:
+            year = db.query(AcademicYear).filter(AcademicYear.id == uuid.UUID(str(ay_val))).first()
+        except Exception:
+            year = None
+        if not year:
+            raise HTTPException(status_code=404, detail="Academic year not found.")
+    else:
+        year = db.query(AcademicYear).filter(AcademicYear.is_active == True).first()
+        if not year:
+            year = db.query(AcademicYear).order_by(AcademicYear.created_at.desc()).first()
+        if not year:
+            raise HTTPException(status_code=404, detail="No academic year available.")
+    academic_year_id = year.id
+    department = resolved_dept
     """
     Upload an evidence document.
 
@@ -252,9 +280,14 @@ def _process_document_bg(document_id: str, stored_filename: str, mime_type: str)
 # ---------------------------------------------------------------------------
 
 @router.get(
-    "/",
+    "",
     response_model=List[DocumentOut],
     summary="List documents (active, non-deleted)",
+)
+@router.get(
+    "/",
+    response_model=List[DocumentOut],
+    summary="List documents (active, non-deleted) (alias)",
 )
 def list_documents(
     department: Optional[str] = Query(default=None),

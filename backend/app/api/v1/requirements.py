@@ -36,7 +36,7 @@ from app.schemas.phase4 import (
     EvaluationTriggerRequest,
 )
 
-router = APIRouter(prefix="/nba", tags=["NBA Requirements"])
+router = APIRouter(tags=["NBA Requirements"])
 
 
 # ---------------------------------------------------------------------------

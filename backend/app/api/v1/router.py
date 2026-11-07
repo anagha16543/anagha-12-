@@ -4,10 +4,6 @@ api/v1/router.py
 
 Aggregates all v1 API routers into a single APIRouter that is then
 mounted on the FastAPI application by main.py.
-
-Adding a new domain router:
-    1. Create backend/app/api/v1/<domain>.py with its own APIRouter.
-    2. Import it here and call v1_router.include_router(...)
 """
 
 from __future__ import annotations
@@ -28,6 +24,7 @@ from app.api.v1 import (
     reports,
     requirements,
     subjects,
+    submissions,
     users,
 )
 
@@ -40,6 +37,7 @@ v1_router.include_router(subjects.router)
 v1_router.include_router(faculty_data.router)
 v1_router.include_router(curriculum.router)
 v1_router.include_router(requirements.router)
+v1_router.include_router(requirements.router, prefix="/nba")
 v1_router.include_router(documents.router)
 v1_router.include_router(analysis.router)
 v1_router.include_router(digital_twin.router)
@@ -47,4 +45,4 @@ v1_router.include_router(gaps.router)
 v1_router.include_router(reports.router)
 v1_router.include_router(notifications.router)
 v1_router.include_router(backups.router)
-
+v1_router.include_router(submissions.router)

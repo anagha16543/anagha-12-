@@ -6,7 +6,7 @@
  * No autonomous runaway timers or runaway animation loops.
  */
 
-import { initCriteriaCarousel, destroyCriteriaCarousel } from './carousel.js';
+import { initCriteriaCarousel, destroyCriteriaCarousel } from './carousel.js?v=c4_oneline_v3';
 import { countUp, initCursor, initThemeToggle } from './ui.js';
 import { store } from './store.js';
 
@@ -464,15 +464,16 @@ function _updateNavUserArea() {
   if (!userActions) return;
 
   if (store.isLoggedIn()) {
+    const user = store.getUser();
+    const role = user?.role ? ' (' + user.role.toUpperCase() + ')' : '';
     userActions.innerHTML = `
-      <a href="dashboards/c3.html" class="btn btn--primary btn--sm" data-magnetic>
-        Go to Dashboard →
-      </a>
+      <a href="login.html" class="btn btn--primary btn--sm nav-signin-btn" style="background:#CCFF00;color:#000000;font-weight:700;border-radius:999px;padding:8px 24px;box-shadow:0 0 16px rgba(204,255,0,0.5);text-decoration:none;letter-spacing:0.02em;">Sign In${role}</a>
+      <a href="dashboards/c3.html" class="btn btn--ghost btn--sm" style="color:#00F5A0;font-weight:600;">Console →</a>
     `;
   } else {
     userActions.innerHTML = `
-      <a href="login.html" class="btn btn--ghost btn--sm">Sign In</a>
-      <a href="register.html" class="btn btn--primary btn--sm" data-magnetic>Get Started</a>
+      <a href="login.html" class="btn btn--primary btn--sm nav-signin-btn" style="background:#CCFF00;color:#000000;font-weight:700;border-radius:999px;padding:8px 24px;box-shadow:0 0 16px rgba(204,255,0,0.5);text-decoration:none;letter-spacing:0.02em;">Sign In</a>
+      <a href="register.html" class="btn btn--ghost btn--sm" style="color:#A1A1AA;font-weight:500;">Faculty Register</a>
     `;
   }
 }

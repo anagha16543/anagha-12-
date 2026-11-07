@@ -1,8 +1,10 @@
 /* js/config.js — Central Configuration */
 
+const _originHost = (typeof window !== 'undefined' && window.location.hostname) ? window.location.hostname : '127.0.0.1';
+
 export const CONFIG = {
-  /** FastAPI backend base URL — never change to port 8001 */
-  API_BASE: 'http://localhost:8000/api/v1',
+  /** FastAPI backend base URL — dynamically uses same host (localhost or 127.0.0.1) */
+  API_BASE: `http://${_originHost}:8000/api/v1`,
 
   /** localStorage key for the JWT access token */
   TOKEN_KEY: 'nba_access_token',
@@ -46,8 +48,8 @@ export const CONFIG = {
   /** Default redirect after login per role */
   DEFAULT_REDIRECT: {
     ADMIN:   '/dashboards/admin.html',
-    HOD:     '/dashboards/reports.html',
-    FACULTY: '/dashboards/c3.html',
+    HOD:     '/dashboards/hod.html',
+    FACULTY: '/dashboards/faculty.html',
   },
 };
 

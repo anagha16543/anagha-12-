@@ -82,6 +82,7 @@
     </a>
 
     <ul class="landing-nav-links">
+      <li><a href="#role-dashboards-section" style="color:var(--lime,#CCFF00);font-weight:600;">3 Role Dashboards</a></li>
       <li><a href="#problem">The Problem</a></li>
       <li><a href="#loop-section">Continuous Loop</a></li>
       <li><a href="#digital-twin-reveal">Digital Twin</a></li>
@@ -98,9 +99,9 @@
           <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2"/>
         </svg>
       </button>
-      <div id="nav-user-actions" style="display:flex;gap:var(--space-2);align-items:center;">
-        <a href="login.html" class="btn btn--ghost btn--sm">Sign In</a>
-        <a href="register.html" class="btn btn--primary btn--sm" data-magnetic>Faculty Register</a>
+      <div id="nav-user-actions" style="display:flex;gap:12px;align-items:center;">
+        <a href="login.html" class="btn btn--primary btn--sm nav-signin-btn" style="background:#CCFF00;color:#000000;font-weight:700;border-radius:999px;padding:8px 24px;box-shadow:0 0 16px rgba(204,255,0,0.5);text-decoration:none;letter-spacing:0.02em;">Sign In</a>
+        <a href="register.html" class="btn btn--ghost btn--sm" style="color:#A1A1AA;font-weight:500;">Faculty Register</a>
       </div>
     </div>
   </header>
@@ -391,6 +392,139 @@
 
 
     <!-- ══════════════════ 5. COMPLIANCE ENGINE DEMO ══════════════════ -->
+    <!-- ══════════════════ 4B. TUESDAY DASHBOARD (RELAY) ══════════════════ -->
+    <section class="relay-tuesday-section relay-precision-section" id="tuesday-dashboard">
+      <div class="relay-tuesday-header">
+        <div class="relay-daily-tag">
+          <span class="pulse-dot"></span>
+          <span>daily telemetry view</span>
+        </div>
+        <h2 class="section-title" style="text-align:left;margin-bottom:0.5rem;">
+          A Tuesday, seen from AI-NBA Twin
+        </h2>
+        <p class="section-subtitle" style="text-align:left;margin-left:0;">
+          Deterministic compliance flows, verified evidence pipelines, and zero-panic audit telemetry.
+        </p>
+      </div>
+
+      <div class="relay-tuesday-grid">
+        <!-- Card 1: Runs per weekday (3D isometric columns) -->
+        <div class="tuesday-card card-runs-weekday">
+          <div class="tuesday-card-header">
+            <span class="tuesday-card-title">evaluations per weekday</span>
+            <span class="tuesday-card-sub">62,320 average</span>
+          </div>
+          <div class="iso-chart-wrap">
+            <div class="iso-col">
+              <div class="iso-bar" style="height: 48px;"><div class="iso-cap"></div></div>
+              <span class="iso-day">mon</span>
+            </div>
+            <div class="iso-col">
+              <div class="iso-bar" style="height: 72px;"><div class="iso-cap"></div></div>
+              <span class="iso-day">tue</span>
+            </div>
+            <div class="iso-col">
+              <div class="iso-bar" style="height: 88px;"><div class="iso-cap"></div></div>
+              <span class="iso-day">wed</span>
+            </div>
+            <div class="iso-col">
+              <div class="iso-bar" style="height: 60px;"><div class="iso-cap"></div></div>
+              <span class="iso-day">thu</span>
+            </div>
+            <div class="iso-col">
+              <div class="iso-bar" style="height: 94px;"><div class="iso-cap"></div></div>
+              <span class="iso-day">fri</span>
+            </div>
+            <div class="iso-col">
+              <div class="iso-bar highlight" style="height: 120px;"><div class="iso-cap"></div></div>
+              <span class="iso-day">sat</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 2: Waiting on people -->
+        <div class="tuesday-card card-waiting">
+          <div class="tuesday-card-header">
+            <span class="tuesday-card-title">waiting on faculty</span>
+            <span class="tuesday-card-sub">Criterion 3 & 5</span>
+          </div>
+          <div>
+            <div class="avatars-row">
+              <div class="avatar-circle">👨‍🏫</div>
+              <div class="avatar-circle">👩‍🏫</div>
+              <div class="avatar-circle">🎓</div>
+              <div class="avatar-circle">🔬</div>
+              <div class="avatar-circle">📋</div>
+            </div>
+            <div class="waiting-stat">3 approvals</div>
+            <div class="waiting-sub">Longest wait: 28 minutes, in #faculty-course-files</div>
+          </div>
+        </div>
+
+        <!-- Card 3: Failures and recoveries (Dual Sine Wave Oscilloscope) -->
+        <div class="tuesday-card card-failures">
+          <div class="tuesday-card-header">
+            <span class="tuesday-card-title">failures and recoveries</span>
+            <span class="tuesday-card-sub">continuous validation</span>
+          </div>
+          <div class="oscilloscope-canvas-wrap">
+            <canvas id="relay-oscilloscope-canvas"></canvas>
+          </div>
+          <div class="oscilloscope-legend">
+            <div class="legend-item">
+              <span class="legend-sq recovered"></span>
+              <span>recovered</span>
+            </div>
+            <div class="legend-item">
+              <span class="legend-sq failed"></span>
+              <span>failed hard</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 4: Where it ran -->
+        <div class="tuesday-card card-where">
+          <div class="tuesday-card-header">
+            <span class="tuesday-card-title">where it ran</span>
+            <span class="tuesday-card-sub">encrypted enclave</span>
+          </div>
+          <div class="region-list">
+            <div class="region-row">
+              <div class="region-meta">
+                <span>eu-central-1 (Frankfurt)</span>
+                <span style="color:var(--lime,#CCFF00);font-weight:700;">46%</span>
+              </div>
+              <div class="region-track">
+                <div class="region-bar lime" style="width: 46%;"></div>
+              </div>
+            </div>
+            <div class="region-row">
+              <div class="region-meta">
+                <span>us-east-1 (Virginia)</span>
+                <span>38%</span>
+              </div>
+              <div class="region-track">
+                <div class="region-bar silver" style="width: 38%;"></div>
+              </div>
+            </div>
+            <div class="region-row">
+              <div class="region-meta">
+                <span>ap-southeast-2 (Sydney)</span>
+                <span>16%</span>
+              </div>
+              <div class="region-track">
+                <div class="region-bar silver" style="width: 16%;"></div>
+              </div>
+            </div>
+          </div>
+          <div class="where-footer">
+            Every audit payload never leaves the zero-knowledge enclave.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════════ 5. COMPLIANCE ENGINE DEMO ══════════════════ -->
     <section class="landing-section relay-precision-section" id="compliance-demo">
       <div class="section-tag">Deterministic Engine</div>
       <h2 class="section-title">Rule Evaluation in Real-Time</h2>
@@ -475,7 +609,184 @@
       </p>
 
       <!-- Carousel Container Mounted via carousel.js -->
-      <div id="criteria-swiper-root" style="width: 100%;"></div>
+      <div id="criteria-swiper-root" style="width: 100%;">
+        <div class="criteria-cards-stage" id="criteria-cards-stage">
+          <!-- Card C3: Outcome-Based Assessment -->
+          <div class="criterion-card-slide is-center"
+               id="card-slide-C3"
+               data-index="0"
+               data-code="C3"
+               data-route="dashboards/c3.html"
+               style="--card-accent: #00F5A0; --card-glow: rgba(0, 245, 160, 0.35);"
+               tabindex="0"
+               role="button"
+               aria-label="C3: Outcome-Based Assessment">
+            <div class="criterion-card-inner">
+              <div class="card-header-top">
+                <span class="card-code">C3</span>
+                <div class="card-icon-wrap">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                    <polyline points="14 2 14 8 20 8"/>
+                    <line x1="16" y1="13" x2="8" y2="13"/>
+                    <line x1="16" y1="17" x2="8" y2="17"/>
+                    <polyline points="10 9 9 9 8 9"/>
+                  </svg>
+                </div>
+              </div>
+              <div class="card-body-content">
+                <h3 class="card-title">Outcome-Based Assessment</h3>
+                <p class="card-question">"Did students actually learn what we said they would learn?"</p>
+              </div>
+              <div class="card-stat-strip" id="stat-strip-C3">
+                <div class="locked-shimmer">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                    <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                  </svg>
+                  <span>Sign in for live stats</span>
+                  <div class="skeleton shimmer-box"></div>
+                </div>
+              </div>
+              <button class="card-cta-btn" type="button" tabindex="-1">
+                <span>Enter Dashboard</span>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M5 12h14M12 5l7 7-7 7"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <!-- Card C4: Students' Performance -->
+          <div class="criterion-card-slide"
+               id="card-slide-C4"
+               data-index="1"
+               data-code="C4"
+               data-route="dashboards/c4.html"
+               style="--card-accent: #F59E0B; --card-glow: rgba(245, 158, 11, 0.35);"
+               tabindex="0"
+               role="button"
+               aria-label="C4: Students' Performance">
+            <div class="criterion-card-inner">
+              <div class="card-header-top">
+                <span class="card-code">C4</span>
+                <div class="card-icon-wrap">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+                  </svg>
+                </div>
+              </div>
+              <div class="card-body-content">
+                <h3 class="card-title">Students' Performance</h3>
+                <p class="card-question">"Are students progressing on time, clearing exams, and securing top careers?"</p>
+              </div>
+              <div class="card-stat-strip" id="stat-strip-C4">
+                <div class="locked-shimmer">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                    <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                  </svg>
+                  <span>Sign in for live stats</span>
+                  <div class="skeleton shimmer-box"></div>
+                </div>
+              </div>
+              <button class="card-cta-btn" type="button" tabindex="-1">
+                <span>Enter Dashboard</span>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M5 12h14M12 5l7 7-7 7"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <!-- Card C5: Faculty Information -->
+          <div class="criterion-card-slide"
+               id="card-slide-C5"
+               data-index="2"
+               data-code="C5"
+               data-route="dashboards/c5.html"
+               style="--card-accent: #8B5CF6; --card-glow: rgba(139, 92, 246, 0.35);"
+               tabindex="0"
+               role="button"
+               aria-label="C5: Faculty Information">
+            <div class="criterion-card-inner">
+              <div class="card-header-top">
+                <span class="card-code">C5</span>
+                <div class="card-icon-wrap">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                    <circle cx="9" cy="7" r="4"/>
+                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                    <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                  </svg>
+                </div>
+              </div>
+              <div class="card-body-content">
+                <h3 class="card-title">Faculty Information</h3>
+                <p class="card-question">"Do we have enough qualified, cadre-balanced, and retained faculty?"</p>
+              </div>
+              <div class="card-stat-strip" id="stat-strip-C5">
+                <div class="locked-shimmer">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                    <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                  </svg>
+                  <span>Sign in for live stats</span>
+                  <div class="skeleton shimmer-box"></div>
+                </div>
+              </div>
+              <button class="card-cta-btn" type="button" tabindex="-1">
+                <span>Enter Dashboard</span>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M5 12h14M12 5l7 7-7 7"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <!-- Card C6: Faculty Contributions -->
+          <div class="criterion-card-slide"
+               id="card-slide-C6"
+               data-index="3"
+               data-code="C6"
+               data-route="dashboards/c6.html"
+               style="--card-accent: #D946EF; --card-glow: rgba(217, 70, 239, 0.35);"
+               tabindex="0"
+               role="button"
+               aria-label="C6: Faculty Contributions">
+            <div class="criterion-card-inner">
+              <div class="card-header-top">
+                <span class="card-code">C6</span>
+                <div class="card-icon-wrap">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                  </svg>
+                </div>
+              </div>
+              <div class="card-body-content">
+                <h3 class="card-title">Faculty Contributions</h3>
+                <p class="card-question">"What are our faculty contributing to research and innovation?"</p>
+              </div>
+              <div class="card-stat-strip" id="stat-strip-C6">
+                <div class="locked-shimmer">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                    <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                  </svg>
+                  <span>Sign in for live stats</span>
+                  <div class="skeleton shimmer-box"></div>
+                </div>
+              </div>
+              <button class="card-cta-btn" type="button" tabindex="-1">
+                <span>Enter Dashboard</span>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M5 12h14M12 5l7 7-7 7"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
     </section>
 
 
@@ -804,7 +1115,9 @@
         <div>
           <strong style="display:block;color:var(--text-primary);margin-bottom:var(--space-2);">Dashboards</strong>
           <ul style="list-style:none;display:flex;flex-direction:column;gap:var(--space-1);font-size:var(--text-xs);">
+            <li><a href="dashboards/faculty.html">Faculty Workspace</a></li>
             <li><a href="dashboards/c3.html">Criterion 3 (Assessment)</a></li>
+            <li><a href="dashboards/c4.html">Criterion 4 (Students)</a></li>
             <li><a href="dashboards/c5.html">Criterion 5 (Faculty)</a></li>
             <li><a href="dashboards/c6.html">Criterion 6 (R&D)</a></li>
           </ul>
@@ -833,9 +1146,10 @@
 
   <!-- Landing Logic Module -->
   <script type="module">
-    import { initLandingPage } from './js/landing.js';
+    import { initLandingPage } from './js/landing.js?v=c4_oneline_v3';
     initLandingPage();
   </script>
+  <script src="js/relay-wave.js"></script>
   <script src="js/relay.js"></script>
 </body>
 </html>

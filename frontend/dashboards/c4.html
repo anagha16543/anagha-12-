@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Criterion 4: Students' Performance — AI-NBA Readiness</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
+  <link rel="stylesheet" href="../css/base.css">
+  <link rel="stylesheet" href="../css/components.css">
+  <link rel="stylesheet" href="../css/dashboard.css">
+</head>
+<body class="dashboard-layout">
+
+  <div id="cursor-dot"  aria-hidden="true"></div>
+  <div id="cursor-ring" aria-hidden="true"></div>
+  <div id="toast-container" role="log" aria-live="polite"></div>
+
+  <aside class="sidebar" id="dashboard-sidebar"></aside>
+  <header class="topbar" id="dashboard-topbar"></header>
+
+  <!-- Command Palette Modal -->
+  <div id="command-palette-backdrop">
+    <div class="command-palette-box">
+      <div class="command-palette-header">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/>
+        </svg>
+        <input type="text" id="cmd-palette-input" class="command-palette-input" placeholder="Type a command or jump to page..." autofocus>
+      </div>
+      <ul class="command-palette-list" id="cmd-palette-list"></ul>
+    </div>
+  </div>
+
+  <main class="dashboard-main">
+    <div class="dashboard-content">
+
+      <!-- Header Card with Readiness Ring -->
+      <section class="criterion-header-card" style="border-left: 4px solid var(--warning);">
+        <div class="crit-meta">
+          <div class="chip chip--warning" style="margin-bottom:var(--space-2);background:rgba(245,158,11,0.15);color:var(--warning);">
+            Tier I UG (2026 Manual) • 100 Marks
+          </div>
+          <h1>Criterion 4: Students' Performance</h1>
+          <p>"Are our students successfully progressing, graduating on time, and securing quality careers?"</p>
+        </div>
+
+        <div class="readiness-ring-widget">
+          <div class="ring-svg-wrap">
+            <svg viewBox="0 0 60 60">
+              <circle class="ring-bg" cx="30" cy="30" r="26"/>
+              <circle class="ring-progress" id="c4-ring-progress" cx="30" cy="30" r="26" style="stroke:var(--warning);"/>
+            </svg>
+            <div class="ring-val-label" id="c4-ring-pct">--%</div>
+          </div>
+          <div>
+            <div style="font-family:var(--font-mono);font-size:var(--text-xs);color:var(--text-muted);text-transform:uppercase;">Criterion Readiness</div>
+            <div style="font-size:var(--text-lg);font-weight:700;" id="c4-score-text">-- / 100 Marks</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Dashboard Tabs -->
+      <nav class="dash-tabs" role="tablist">
+        <button class="dash-tab-btn active" data-tab="tab-c4-reqs">Requirements (4.1 - 4.7)</button>
+        <button class="dash-tab-btn" data-tab="tab-c4-progression">Success Rate & Academic Index</button>
+        <button class="dash-tab-btn" data-tab="tab-c4-placements">Placements & Higher Studies</button>
+        <button class="dash-tab-btn" data-tab="tab-c4-evidence">Evidence Checklist & Result Sheets</button>
+        <button class="dash-tab-btn" data-tab="tab-c4-ai">AI Advisory & Gap Analysis</button>
+      </nav>
+
+      <!-- ── TAB 1: REQUIREMENTS (4.1 - 4.7) ── -->
+      <div class="tab-pane active" id="tab-c4-reqs">
+        <div class="requirements-card">
+          <div style="padding:var(--space-5);border-bottom:1px solid var(--glass-border);display:flex;justify-content:space-between;align-items:center;">
+            <div>
+              <h3 style="font-size:var(--text-lg);font-weight:700;">Criterion 4 Requirements</h3>
+              <p style="font-size:var(--text-xs);color:var(--text-muted);">Enrolment (20m), Success Rate (15m), API 1st-3rd Year (30m), Placements & Higher Studies (25m), Professional Activities (10m).</p>
+            </div>
+            <button class="btn btn--primary btn--sm" id="btn-eval-all-c4" data-require-role="HOD ADMIN">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polygon points="5 3 19 12 5 21 5 3"/>
+              </svg>
+              <span>Evaluate Criterion 4</span>
+            </button>
+          </div>
+
+          <table class="req-table">
+            <thead>
+              <tr>
+                <th style="width: 80px;">CODE</th>
+                <th>REQUIREMENT TITLE</th>
+                <th style="width: 100px;">MAX MARKS</th>
+                <th style="width: 140px;">STATUS</th>
+                <th style="width: 180px; text-align: right;">ACTION</th>
+              </tr>
+            </thead>
+            <tbody id="c4-reqs-tbody">
+              <tr><td colspan="5" style="text-align:center;padding:2rem;">Loading requirements...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ── TAB 2: SUCCESS RATE & ACADEMIC INDEX ── -->
+      <div class="tab-pane" id="tab-c4-progression" style="display:none;">
+        <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(280px, 1fr));gap:var(--space-6);margin-bottom:var(--space-6);">
+          <div class="chart-card">
+            <div class="chart-card-header">
+              <h3>Success Rate Without Backlogs (4.2)</h3>
+              <span class="chip chip--pass">Avg: 78.4%</span>
+            </div>
+            <p style="font-size:var(--text-xs);color:var(--text-muted);margin-bottom:var(--space-4);">
+              Graduation in stipulated 4 years with 0 backlogs across CAY, CAYm1, and CAYm2 batches.
+            </p>
+            <div style="height:220px;">
+              <canvas id="c4-success-chart"></canvas>
+            </div>
+          </div>
+
+          <div class="chart-card">
+            <div class="chart-card-header">
+              <h3>Academic Performance Index (API)</h3>
+              <span class="chip chip--info">Avg API: 6.82</span>
+            </div>
+            <p style="font-size:var(--text-xs);color:var(--text-muted);margin-bottom:var(--space-4);">
+              Year-wise Mean CGPA × (Successful / Appeared) for 1st, 2nd, and 3rd year cohorts.
+            </p>
+            <div style="height:220px;">
+              <canvas id="c4-api-chart"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <div class="requirements-card">
+          <div style="padding:var(--space-4) var(--space-5);border-bottom:1px solid var(--glass-border);">
+            <h4 style="font-size:var(--text-sm);font-weight:600;text-transform:uppercase;letter-spacing:0.05em;color:var(--text-secondary);">Batch Progression Matrix</h4>
+          </div>
+          <table class="req-table">
+            <thead>
+              <tr>
+                <th>ACADEMIC BATCH</th>
+                <th>SANCTIONED (N)</th>
+                <th>ENROLLED (N1+N4)</th>
+                <th>GRADUATED (NO BACKLOG)</th>
+                <th>GRADUATED (WITH BACKLOG)</th>
+                <th>SUCCESS RATE %</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="mono"><strong>2021-2025 (CAY)</strong></td>
+                <td>120</td>
+                <td>118</td>
+                <td>92</td>
+                <td>14</td>
+                <td><span class="chip chip--pass">89.8%</span></td>
+              </tr>
+              <tr>
+                <td class="mono"><strong>2020-2024 (CAYm1)</strong></td>
+                <td>120</td>
+                <td>116</td>
+                <td>88</td>
+                <td>16</td>
+                <td><span class="chip chip--pass">89.6%</span></td>
+              </tr>
+              <tr>
+                <td class="mono"><strong>2019-2023 (CAYm2)</strong></td>
+                <td>120</td>
+                <td>115</td>
+                <td>84</td>
+                <td>18</td>
+                <td><span class="chip chip--warning">88.7%</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ── TAB 3: PLACEMENTS & HIGHER STUDIES ── -->
+      <div class="tab-pane" id="tab-c4-placements" style="display:none;">
+        <div style="display:grid;grid-template-columns:2fr 1fr;gap:var(--space-6);margin-bottom:var(--space-6);">
+          <div class="chart-card">
+            <div class="chart-card-header">
+              <h3>Placements & Career Outcomes Distribution (4.6)</h3>
+              <span class="chip chip--pass">Placement Index: 84.3%</span>
+            </div>
+            <p style="font-size:var(--text-xs);color:var(--text-muted);margin-bottom:var(--space-4);">
+              Composite tally of Campus Placements (X), Higher Studies (Y), and Entrepreneurship (Z).
+            </p>
+            <div style="height:240px;">
+              <canvas id="c4-placement-chart"></canvas>
+            </div>
+          </div>
+
+          <div class="chart-card" style="display:flex;flex-direction:column;justify-content:center;">
+            <div style="font-size:var(--text-xs);color:var(--text-muted);text-transform:uppercase;">Average CTC Package</div>
+            <div style="font-size:2.2rem;font-weight:700;color:var(--aurora);margin:var(--space-2) 0;">₹ 7.8 LPA</div>
+            <div style="font-size:var(--text-xs);color:var(--text-secondary);margin-bottom:var(--space-4);">Highest: ₹ 24.5 LPA (Amazon)</div>
+            <div class="progress-bar" style="margin-bottom:var(--space-4);">
+              <div class="progress-fill" style="width:85%;background:var(--aurora);"></div>
+            </div>
+            <div style="display:flex;justify-content:space-between;font-size:var(--text-xs);color:var(--text-muted);">
+              <span>Offers: 114</span>
+              <span>Unique Students: 98</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="requirements-card">
+          <div style="padding:var(--space-4) var(--space-5);border-bottom:1px solid var(--glass-border);display:flex;justify-content:space-between;align-items:center;">
+            <h4 style="font-size:var(--text-sm);font-weight:600;text-transform:uppercase;letter-spacing:0.05em;color:var(--text-secondary);">Recruiter Roster & Verified Compensation Proofs</h4>
+            <span class="chip chip--info">42 Companies Visited</span>
+          </div>
+          <table class="req-table">
+            <thead>
+              <tr>
+                <th>RECRUITING PARTNER</th>
+                <th>STUDENTS PLACED</th>
+                <th>MEDIAN PACKAGE</th>
+                <th>OFFER LETTER STATUS</th>
+                <th style="text-align:right;">VERIFICATION</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Tata Consultancy Services (Digital & Ninja)</strong></td>
+                <td>28</td>
+                <td class="mono">₹ 7.2 LPA</td>
+                <td><span class="chip chip--pass">28 / 28 Uploaded</span></td>
+                <td style="text-align:right;"><span class="chip chip--pass">Verified ✓</span></td>
+              </tr>
+              <tr>
+                <td><strong>Infosys Limited (SES & SE)</strong></td>
+                <td>22</td>
+                <td class="mono">₹ 6.5 LPA</td>
+                <td><span class="chip chip--pass">22 / 22 Uploaded</span></td>
+                <td style="text-align:right;"><span class="chip chip--pass">Verified ✓</span></td>
+              </tr>
+              <tr>
+                <td><strong>Cognizant Technology Solutions</strong></td>
+                <td>18</td>
+                <td class="mono">₹ 6.8 LPA</td>
+                <td><span class="chip chip--pass">18 / 18 Uploaded</span></td>
+                <td style="text-align:right;"><span class="chip chip--pass">Verified ✓</span></td>
+              </tr>
+              <tr>
+                <td><strong>Higher Studies (IITs, NITs, Universities Abroad)</strong></td>
+                <td>14</td>
+                <td class="mono">GATE / GRE Verified</td>
+                <td><span class="chip chip--pass">14 / 14 Scorecards</span></td>
+                <td style="text-align:right;"><span class="chip chip--pass">Verified ✓</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ── TAB 4: EVIDENCE CHECKLIST ── -->
+      <div class="tab-pane" id="tab-c4-evidence" style="display:none;">
+        <div class="requirements-card">
+          <div style="padding:var(--space-5);border-bottom:1px solid var(--glass-border);display:flex;justify-content:space-between;align-items:center;">
+            <div>
+              <h3 style="font-size:var(--text-lg);font-weight:700;">Criterion 4 Required Evidence Dossier</h3>
+              <p style="font-size:var(--text-xs);color:var(--text-muted);">Mandatory documentation required by the Visiting Committee to corroborate Criterion 4 marks.</p>
+            </div>
+            <a href="#upload" class="btn btn--primary btn--sm" id="btn-c4-upload-doc">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                <polyline points="17 8 12 3 7 8"/>
+                <line x1="12" y1="3" x2="12" y2="15"/>
+              </svg>
+              <span>Upload C4 Document</span>
+            </a>
+          </div>
+
+          <table class="req-table">
+            <thead>
+              <tr>
+                <th>SUB-REQ</th>
+                <th>EVIDENCE DOCUMENT DESCRIPTION</th>
+                <th>MANDATORY FORMAT</th>
+                <th>COMPLIANCE STATUS</th>
+                <th style="text-align:right;">HASH & ACTION</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="mono">4.1</td>
+                <td><strong>Sanctioned Intake & University Enrolment Registers</strong><br><small style="color:var(--text-muted)">State Admission Cell / DTE allotment records</small></td>
+                <td><span class="chip chip--info">PDF (Gazetted)</span></td>
+                <td><span class="chip chip--pass">Complete (3 Batches)</span></td>
+                <td style="text-align:right;"><button class="btn btn--ghost btn--sm view-doc-btn">View Hash</button></td>
+              </tr>
+              <tr>
+                <td class="mono">4.2</td>
+                <td><strong>University Result Tabulation Sheets (1st to 8th Sem)</strong><br><small style="color:var(--text-muted)">Controller of Examinations stamped gazette</small></td>
+                <td><span class="chip chip--info">PDF / XLSX</span></td>
+                <td><span class="chip chip--pass">Complete</span></td>
+                <td style="text-align:right;"><button class="btn btn--ghost btn--sm view-doc-btn">View Hash</button></td>
+              </tr>
+              <tr>
+                <td class="mono">4.6</td>
+                <td><strong>Placement Offer Letters with CTC Breakup</strong><br><small style="color:var(--text-muted)">Signed appointment letters or joining receipts</small></td>
+                <td><span class="chip chip--info">PDF Zip / Single PDFs</span></td>
+                <td><span class="chip chip--pass">114 Letters Verified</span></td>
+                <td style="text-align:right;"><button class="btn btn--ghost btn--sm view-doc-btn">View Hash</button></td>
+              </tr>
+              <tr>
+                <td class="mono">4.6</td>
+                <td><strong>Higher Studies Admission & Competitive Exam Scorecards</strong><br><small style="color:var(--text-muted)">GATE, GRE, CAT, TOEFL, IELTS scorecards + admission letters</small></td>
+                <td><span class="chip chip--info">PDF</span></td>
+                <td><span class="chip chip--pass">14 Verified</span></td>
+                <td style="text-align:right;"><button class="btn btn--ghost btn--sm view-doc-btn">View Hash</button></td>
+              </tr>
+              <tr>
+                <td class="mono">4.7</td>
+                <td><strong>Professional Chapters (IEEE, ACM, CSI) Activity Reports</strong><br><small style="color:var(--text-muted)">Event proceedings, participant attendance, photos, and expenditure bills</small></td>
+                <td><span class="chip chip--info">PDF</span></td>
+                <td><span class="chip chip--warning">CAY Pending Review</span></td>
+                <td style="text-align:right;"><button class="btn btn--ghost btn--sm view-doc-btn">View Hash</button></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ── TAB 5: AI ADVISORY & GAP ANALYSIS ── -->
+      <div class="tab-pane" id="tab-c4-ai" style="display:none;">
+        <div class="requirements-card">
+          <div style="padding:var(--space-5);border-bottom:1px solid var(--glass-border);">
+            <div class="chip chip--info" style="margin-bottom:var(--space-2);">Agent 4 • Student Progression Specialist</div>
+            <h3 style="font-size:var(--text-lg);font-weight:700;">Deterministic Rule Audit & Advisory Insights</h3>
+            <p style="font-size:var(--text-xs);color:var(--text-muted);">Advisory analysis grounded exclusively in verified university results and placement receipts.</p>
+          </div>
+
+          <div style="padding:var(--space-6);display:flex;flex-direction:column;gap:var(--space-4);">
+            <div style="background:var(--surface-100);border:1px solid var(--glass-border);border-left:4px solid var(--pass);padding:var(--space-4);border-radius:var(--radius-md);">
+              <h4 style="font-size:var(--text-sm);font-weight:600;color:var(--pass);margin-bottom:var(--space-1);">✓ Enrolment Ratio Compliance (4.1)</h4>
+              <p style="font-size:var(--text-sm);color:var(--text-secondary);line-height:1.6;">
+                Average Enrolment Ratio over 3 years is <strong>97.2%</strong> (N=120, avg enrolled=116.6). This comfortably exceeds the 90% threshold for maximum 20 marks according to NBA Tier-I Annexure VII.
+              </p>
+            </div>
+
+            <div style="background:var(--surface-100);border:1px solid var(--glass-border);border-left:4px solid var(--warning);padding:var(--space-4);border-radius:var(--radius-md);">
+              <h4 style="font-size:var(--text-sm);font-weight:600;color:var(--warning);margin-bottom:var(--space-1);">⚠ 2nd Year Academic Performance Dip (4.4)</h4>
+              <p style="font-size:var(--text-sm);color:var(--text-secondary);line-height:1.6;">
+                API for 2nd Year (3rd & 4th semesters) is <strong>5.94</strong> compared to 7.12 in 3rd Year. High backlogs observed in <em>Data Structures (CS301)</em> and <em>Discrete Mathematics (CS302)</em>. Recommendation: Conduct remedial classes before 3rd semester university examination.
+              </p>
+            </div>
+
+            <div style="background:var(--surface-100);border:1px solid var(--glass-border);border-left:4px solid var(--aurora);padding:var(--space-4);border-radius:var(--radius-md);">
+              <h4 style="font-size:var(--text-sm);font-weight:600;color:var(--aurora);margin-bottom:var(--space-1);">💡 Career Outcomes Index Strong (4.6)</h4>
+              <p style="font-size:var(--text-sm);color:var(--text-secondary);line-height:1.6;">
+                Composite placement and higher education index \(P = \frac{X+Y+Z}{N} \times 100\) stands at <strong>84.3%</strong>, securing 25.3 out of 30 marks. 100% of placement offer letters have valid SHA-256 hashes linked to the IQAC digital repository.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <script type="module" src="../js/dash/c4.js"></script>
+</body>
+</html>
+

@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HOD Command Center — AI-NBA Readiness System</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
+  <link rel="stylesheet" href="../css/base.css">
+  <link rel="stylesheet" href="../css/components.css">
+  <link rel="stylesheet" href="../css/dashboard.css">
+</head>
+<body class="dashboard-layout">
+
+  <div id="cursor-dot"  aria-hidden="true"></div>
+  <div id="cursor-ring" aria-hidden="true"></div>
+  <div id="toast-container" role="log" aria-live="polite"></div>
+
+  <!-- Shared Sidebar & Topbar Containers -->
+  <aside class="sidebar" id="dashboard-sidebar"></aside>
+  <header class="topbar" id="dashboard-topbar"></header>
+
+  <!-- Command Palette Modal -->
+  <div id="command-palette-backdrop">
+    <div class="command-palette-box">
+      <div class="command-palette-header">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/>
+        </svg>
+        <input type="text" id="cmd-palette-input" class="command-palette-input" placeholder="Type a command or jump to page..." autofocus>
+      </div>
+      <ul class="command-palette-list" id="cmd-palette-list"></ul>
+    </div>
+  </div>
+
+  <!-- Review Modal (Approve / Reject / Request Revision) -->
+  <div id="review-modal-backdrop" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);backdrop-filter:blur(6px);z-index:9999;align-items:center;justify-content:center;padding:var(--space-4);">
+    <div style="background:var(--surface-50);border:1px solid var(--glass-border);border-radius:var(--radius-lg);max-width:560px;width:100%;box-shadow:var(--shadow-xl);overflow:hidden;">
+      <div style="padding:var(--space-5);border-bottom:1px solid var(--glass-border);display:flex;justify-content:space-between;align-items:center;">
+        <h3 id="modal-review-title" style="font-size:var(--text-lg);font-weight:700;">Review Submission</h3>
+        <button id="modal-close-btn" class="btn btn--ghost btn--sm" style="font-size:18px;">&times;</button>
+      </div>
+      <div style="padding:var(--space-6);display:flex;flex-direction:column;gap:var(--space-4);">
+        <div>
+          <div style="font-size:var(--text-xs);color:var(--text-muted);text-transform:uppercase;">Item Details</div>
+          <div id="modal-review-item-name" style="font-weight:700;font-size:var(--text-md);margin-top:2px;">Course File CS501</div>
+          <div id="modal-review-meta" style="font-size:var(--text-xs);color:var(--text-secondary);margin-top:2px;">Submitted by Dr. Priya Nair &bull; Criterion 3</div>
+        </div>
+
+        <div>
+          <label style="display:block;font-size:var(--text-xs);color:var(--text-secondary);margin-bottom:6px;">Reviewer Notes / Revision Instructions (Required for revision):</label>
+          <textarea id="modal-review-comments" class="form-control" rows="4" placeholder="Enter specific feedback, missing rubrics, or verification notes..." style="width:100%;background:var(--surface-100);color:var(--text-primary);border:1px solid var(--glass-border);border-radius:var(--radius-sm);padding:8px;"></textarea>
+        </div>
+
+        <div style="display:flex;gap:var(--space-3);justify-content:flex-end;margin-top:var(--space-2);">
+          <button id="modal-btn-revision" class="btn btn--outline" style="border-color:var(--warning);color:var(--warning);">
+            Request Revision
+          </button>
+          <button id="modal-btn-reject" class="btn btn--danger">
+            Reject
+          </button>
+          <button id="modal-btn-approve" class="btn btn--primary">
+            ✓ Approve Record
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Course Assignment Modal -->
+  <div id="assign-modal-backdrop" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);backdrop-filter:blur(6px);z-index:9999;align-items:center;justify-content:center;padding:var(--space-4);">
+    <div style="background:var(--surface-50);border:1px solid var(--glass-border);border-radius:var(--radius-lg);max-width:520px;width:100%;box-shadow:var(--shadow-xl);overflow:hidden;">
+      <div style="padding:var(--space-5);border-bottom:1px solid var(--glass-border);display:flex;justify-content:space-between;align-items:center;">
+        <h3 style="font-size:var(--text-lg);font-weight:700;">Assign Course to Faculty</h3>
+        <button id="assign-modal-close-btn" class="btn btn--ghost btn--sm" style="font-size:18px;">&times;</button>
+      </div>
+      <form id="assign-course-form" style="padding:var(--space-6);display:flex;flex-direction:column;gap:var(--space-4);">
+        <div>
+          <label style="display:block;font-size:var(--text-xs);color:var(--text-secondary);margin-bottom:4px;">Select Subject / Course</label>
+          <select id="assign-subject-select" class="form-control" style="width:100%;background:var(--surface-100);color:var(--text-primary);padding:8px;border-radius:var(--radius-sm);border:1px solid var(--glass-border);" required>
+            <!-- Populated dynamically -->
+          </select>
+        </div>
+        <div>
+          <label style="display:block;font-size:var(--text-xs);color:var(--text-secondary);margin-bottom:4px;">Select Faculty Member</label>
+          <select id="assign-faculty-select" class="form-control" style="width:100%;background:var(--surface-100);color:var(--text-primary);padding:8px;border-radius:var(--radius-sm);border:1px solid var(--glass-border);" required>
+            <!-- Populated dynamically -->
+          </select>
+        </div>
+        <div style="display:flex;justify-content:flex-end;gap:var(--space-3);margin-top:var(--space-2);">
+          <button type="button" id="assign-cancel-btn" class="btn btn--ghost">Cancel</button>
+          <button type="submit" class="btn btn--primary">Assign Course</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ══════════════════ MAIN HOD DASHBOARD ══════════════════ -->
+  <main class="dashboard-main">
+    <div class="dashboard-content">
+
+      <!-- Department Overview Banner -->
+      <section class="criterion-header-card" style="border-left: 4px solid var(--cyan);">
+        <div class="crit-meta">
+          <div class="chip chip--info" style="margin-bottom:var(--space-2);background:rgba(0,245,160,0.15);color:var(--cyan);">
+            Head of Department Command Center
+          </div>
+          <h1 id="hod-greeting">Department of Computer Science & Engineering</h1>
+          <p id="hod-subtitle">Manage, review, and verify faculty academic submissions, monitor Student-Faculty Ratio (SFR), and drive NBA Criteria 3, 4, 5 & 6 compliance.</p>
+        </div>
+
+        <div class="readiness-ring-widget">
+          <div class="ring-svg-wrap">
+            <svg viewBox="0 0 60 60">
+              <circle class="ring-bg" cx="30" cy="30" r="26"/>
+              <circle class="ring-progress" id="hod-ring-progress" cx="30" cy="30" r="26" style="stroke:var(--cyan);"/>
+            </svg>
+            <div class="ring-val-label" id="hod-ring-pct">--%</div>
+          </div>
+          <div>
+            <div style="font-family:var(--font-mono);font-size:var(--text-xs);color:var(--text-muted);text-transform:uppercase;">Overall Department Readiness</div>
+            <div style="font-size:var(--text-lg);font-weight:700;" id="hod-score-text">-- / 440 Marks</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── KPI Summary Cards (Prompt Mandate) ── -->
+      <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));gap:var(--space-4);margin-bottom:var(--space-6);">
+        <div class="chart-card">
+          <div style="font-size:var(--text-xs);color:var(--text-muted);text-transform:uppercase;">Total Faculty</div>
+          <div style="font-size:1.8rem;font-weight:700;color:var(--text-primary);margin:var(--space-1) 0;" id="kpi-total-faculty">18</div>
+          <div style="font-size:var(--text-xs);color:var(--pass);">16 Approved &bull; 2 Pending</div>
+        </div>
+        <div class="chart-card">
+          <div style="font-size:var(--text-xs);color:var(--text-muted);text-transform:uppercase;">Total Students</div>
+          <div style="font-size:1.8rem;font-weight:700;color:var(--text-primary);margin:var(--space-1) 0;" id="kpi-total-students">360</div>
+          <div style="font-size:var(--text-xs);color:var(--text-secondary);">Sem 3: 120 &bull; Sem 5: 120 &bull; Sem 7: 120</div>
+        </div>
+        <div class="chart-card">
+          <div style="font-size:var(--text-xs);color:var(--text-muted);text-transform:uppercase;">Active Courses</div>
+          <div style="font-size:1.8rem;font-weight:700;color:var(--cyan);margin:var(--space-1) 0;" id="kpi-total-courses">14</div>
+          <div style="font-size:var(--text-xs);color:var(--text-secondary);">100% Assigned to Faculty</div>
+        </div>
+        <div class="chart-card">
+          <div style="font-size:var(--text-xs);color:var(--text-muted);text-transform:uppercase;">Pending Submissions</div>
+          <div style="font-size:1.8rem;font-weight:700;color:var(--warning);margin:var(--space-1) 0;" id="kpi-pending-submissions">--</div>
+          <div style="font-size:var(--text-xs);color:var(--warning);" id="kpi-pending-sub-sub">Awaiting your review</div>
+        </div>
+        <div class="chart-card">
+          <div style="font-size:var(--text-xs);color:var(--text-muted);text-transform:uppercase;">Approved Submissions</div>
+          <div style="font-size:1.8rem;font-weight:700;color:var(--pass);margin:var(--space-1) 0;" id="kpi-approved-submissions">--</div>
+          <div style="font-size:var(--text-xs);color:var(--pass);">Locked & Verified</div>
+        </div>
+        <div class="chart-card">
+          <div style="font-size:var(--text-xs);color:var(--text-muted);text-transform:uppercase;">SFR Ratio (C5)</div>
+          <div style="font-size:1.8rem;font-weight:700;color:var(--pass);margin:var(--space-1) 0;" id="kpi-sfr">20:1</div>
+          <div style="font-size:var(--text-xs);color:var(--pass);">Target &le; 20:1 (20 Marks)</div>
+        </div>
+      </div>
+
+      <!-- ── Tab Navigation ── -->
+      <nav class="dash-tabs" role="tablist">
+        <button class="dash-tab-btn active" data-tab="tab-hod-overview">Department Overview</button>
+        <button class="dash-tab-btn" data-tab="tab-pending-approvals">Pending Approvals Queue</button>
+        <button class="dash-tab-btn" data-tab="tab-course-management">Course Assignments (C3)</button>
+        <button class="dash-tab-btn" data-tab="tab-faculty-mgmt">Faculty Strength & SFR (C5)</button>
+        <button class="dash-tab-btn" data-tab="tab-student-mgmt">Students Performance (C4)</button>
+        <button class="dash-tab-btn" data-tab="tab-c6-mgmt">Research & Contributions (C6)</button>
+        <button class="dash-tab-btn" data-tab="tab-hod-reports">Department Analytics & SAR</button>
+      </nav>
+
+      <!-- ── TAB 1: DEPARTMENT OVERVIEW ── -->
+      <div class="tab-pane active" id="tab-hod-overview">
+        <!-- 4 Criteria Macro Grid -->
+        <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(260px, 1fr));gap:var(--space-6);margin-bottom:var(--space-8);">
+          <!-- C3 Card -->
+          <div class="chart-card" style="border-top:3px solid var(--aurora);">
+            <div class="chart-card-header">
+              <h3 style="font-size:var(--text-md);">Criterion 3: Outcome Assessment</h3>
+              <span class="chip chip--pass" id="hod-c3-chip">78%</span>
+            </div>
+            <p style="font-size:var(--text-xs);color:var(--text-secondary);margin:var(--space-2) 0;">Direct & indirect attainment across CIE, SEE, and CO-PO matrix.</p>
+            <div style="font-size:var(--text-xs);color:var(--text-muted);margin-bottom:var(--space-4);">
+              Score: <strong style="color:var(--text-primary);" id="hod-c3-score">93.6 / 120 Marks</strong>
+            </div>
+            <div style="display:flex;gap:var(--space-2);">
+              <a href="c3.html" class="btn btn--outline btn--sm" style="flex:1;justify-content:center;">Open C3 Hub</a>
+            </div>
+          </div>
+
+          <!-- C4 Card -->
+          <div class="chart-card" style="border-top:3px solid var(--warning);">
+            <div class="chart-card-header">
+              <h3 style="font-size:var(--text-md);">Criterion 4: Students' Performance</h3>
+              <span class="chip chip--warning" id="hod-c4-chip">68%</span>
+            </div>
+            <p style="font-size:var(--text-xs);color:var(--text-secondary);margin:var(--space-2) 0;">Enrolment ratio, graduation success rate, API, and placement records.</p>
+            <div style="font-size:var(--text-xs);color:var(--text-muted);margin-bottom:var(--space-4);">
+              Score: <strong style="color:var(--text-primary);" id="hod-c4-score">68.0 / 100 Marks</strong>
+            </div>
+            <div style="display:flex;gap:var(--space-2);">
+              <a href="c4.html" class="btn btn--outline btn--sm" style="flex:1;justify-content:center;">Open C4 Hub</a>
+            </div>
+          </div>
+
+          <!-- C5 Card -->
+          <div class="chart-card" style="border-top:3px solid var(--violet);">
+            <div class="chart-card-header">
+              <h3 style="font-size:var(--text-md);">Criterion 5: Faculty Information</h3>
+              <span class="chip chip--pass" id="hod-c5-chip">83%</span>
+            </div>
+            <p style="font-size:var(--text-xs);color:var(--text-secondary);margin:var(--space-2) 0;">Student-Faculty Ratio (SFR), Faculty Qualification Index (FQI), and retention.</p>
+            <div style="font-size:var(--text-xs);color:var(--text-muted);margin-bottom:var(--space-4);">
+              Score: <strong style="color:var(--text-primary);" id="hod-c5-score">83.0 / 100 Marks</strong>
+            </div>
+            <div style="display:flex;gap:var(--space-2);">
+              <a href="c5.html" class="btn btn--outline btn--sm" style="flex:1;justify-content:center;">Open C5 Hub</a>
+            </div>
+          </div>
+
+          <!-- C6 Card -->
+          <div class="chart-card" style="border-top:3px solid var(--fuchsia);">
+            <div class="chart-card-header">
+              <h3 style="font-size:var(--text-md);">Criterion 6: Faculty Contributions</h3>
+              <span class="chip chip--pass" id="hod-c6-chip">74%</span>
+            </div>
+            <p style="font-size:var(--text-xs);color:var(--text-secondary);margin:var(--space-2) 0;">R&D, sponsored research, patents, indexed journals, and consultancy.</p>
+            <div style="font-size:var(--text-xs);color:var(--text-muted);margin-bottom:var(--space-4);">
+              Score: <strong style="color:var(--text-primary);" id="hod-c6-score">88.8 / 120 Marks</strong>
+            </div>
+            <div style="display:flex;gap:var(--space-2);">
+              <a href="c6.html" class="btn btn--outline btn--sm" style="flex:1;justify-content:center;">Open C6 Hub</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Recent Department Activity & Audit Trail -->
+        <div class="requirements-card">
+          <div style="padding:var(--space-4) var(--space-5);border-bottom:1px solid var(--glass-border);display:flex;justify-content:space-between;align-items:center;">
+            <h3 style="font-size:var(--text-md);font-weight:700;">Department Verification Log & Submissions Trail</h3>
+            <span class="chip chip--info">Live Audit</span>
+          </div>
+          <table class="req-table">
+            <thead>
+              <tr>
+                <th>SUBMISSION TITLE</th>
+                <th>CRITERION</th>
+                <th>SUBMITTER</th>
+                <th>TIMESTAMP</th>
+                <th>STATUS</th>
+                <th style="text-align:right;">ACTION</th>
+              </tr>
+            </thead>
+            <tbody id="hod-overview-submissions-tbody">
+              <tr><td colspan="6" style="text-align:center;padding:1.5rem;">Loading activity stream...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ── TAB 2: PENDING APPROVALS QUEUE (HOD CORE MANDATE) ── -->
+      <div class="tab-pane" id="tab-pending-approvals" style="display:none;">
+        <div class="requirements-card">
+          <div style="padding:var(--space-5);border-bottom:1px solid var(--glass-border);display:flex;justify-content:space-between;align-items:center;">
+            <div>
+              <h3 style="font-size:var(--text-lg);font-weight:700;">Faculty Submissions Awaiting HOD Verification</h3>
+              <p style="font-size:var(--text-xs);color:var(--text-muted);">Review submitted Blue Books, Course Files, Research Papers, and Certificates. Approved records are locked into the SAR ledger.</p>
+            </div>
+            <div style="display:flex;gap:var(--space-2);">
+              <select id="filter-submission-criterion" class="form-control" style="background:var(--surface-100);color:var(--text-primary);border:1px solid var(--glass-border);padding:4px 8px;border-radius:var(--radius-sm);font-size:12px;">
+                <option value="">All Criteria</option>
+                <option value="C3">Criterion 3 (Assessment)</option>
+                <option value="C4">Criterion 4 (Students)</option>
+                <option value="C5">Criterion 5 (Faculty)</option>
+                <option value="C6">Criterion 6 (R&D)</option>
+              </select>
+            </div>
+          </div>
+
+          <table class="req-table">
+            <thead>
+              <tr>
+                <th>SUBMISSION TITLE & CONTEXT</th>
+                <th>CRITERION</th>
+                <th>SUBMITTED BY</th>
+                <th>DATE</th>
+                <th>STATUS</th>
+                <th style="text-align:right;">HOD DECISION</th>
+              </tr>
+            </thead>
+            <tbody id="hod-pending-submissions-tbody">
+              <tr><td colspan="6" style="text-align:center;padding:2rem;">Loading pending submissions...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ── TAB 3: COURSE MANAGEMENT (ASSIGN COURSES TO FACULTY) ── -->
+      <div class="tab-pane" id="tab-course-management" style="display:none;">
+        <div class="requirements-card">
+          <div style="padding:var(--space-5);border-bottom:1px solid var(--glass-border);display:flex;justify-content:space-between;align-items:center;">
+            <div>
+              <h3 style="font-size:var(--text-lg);font-weight:700;">Department Course Management & Workload Allocation</h3>
+              <p style="font-size:var(--text-xs);color:var(--text-muted);">Assign teaching responsibilities, track CO attainment progress, and monitor Course File compliance.</p>
+            </div>
+            <button class="btn btn--primary btn--sm" id="btn-open-assign-modal">+ Assign Subject to Faculty</button>
+          </div>
+
+          <table class="req-table">
+            <thead>
+              <tr>
+                <th>COURSE CODE & TITLE</th>
+                <th>SEMESTER</th>
+                <th>ASSIGNED FACULTY</th>
+                <th>STUDENTS</th>
+                <th>CO ATTAINMENT</th>
+                <th>COURSE FILE STATUS</th>
+                <th style="text-align:right;">ACTION</th>
+              </tr>
+            </thead>
+            <tbody id="hod-courses-tbody">
+              <tr><td colspan="7" style="text-align:center;padding:2rem;">Loading course workload...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ── TAB 4: FACULTY STRENGTH & SFR (C5) ── -->
+      <div class="tab-pane" id="tab-faculty-mgmt" style="display:none;">
+        <div style="display:grid;grid-template-columns:1fr 2fr;gap:var(--space-6);margin-bottom:var(--space-6);">
+          <div class="chart-card">
+            <div class="chart-card-header">
+              <h3>Student-Faculty Ratio (SFR)</h3>
+              <span class="chip chip--pass">Tier-I UG Metric</span>
+            </div>
+            <div style="padding:var(--space-4) 0;text-align:center;">
+              <div style="font-size:3rem;font-weight:700;color:var(--cyan);font-family:var(--font-mono);">20.0</div>
+              <div style="font-size:var(--text-xs);color:var(--text-muted);margin-top:4px;">Students per regular faculty</div>
+              <div style="font-size:var(--text-xs);color:var(--pass);margin-top:6px;">✓ Complies with NBA Tier-I 1:20 threshold</div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:var(--space-2);border-top:1px solid var(--glass-border);padding-top:var(--space-4);">
+              <div style="display:flex;justify-content:space-between;font-size:var(--text-xs);">
+                <span style="color:var(--text-secondary);">Total UG Students (UG2 + UG3 + UG4)</span>
+                <strong>360</strong>
+              </div>
+              <div style="display:flex;justify-content:space-between;font-size:var(--text-xs);">
+                <span style="color:var(--text-secondary);">Regular Faculty Count (F)</span>
+                <strong>18</strong>
+              </div>
+              <div style="display:flex;justify-content:space-between;font-size:var(--text-xs);">
+                <span style="color:var(--text-secondary);">Cadre Proportion (Prof : Assoc : Asst)</span>
+                <strong>1 : 2 : 6 (Meets Standard)</strong>
+              </div>
+            </div>
+          </div>
+
+          <div class="requirements-card">
+            <div style="padding:var(--space-4) var(--space-5);border-bottom:1px solid var(--glass-border);display:flex;justify-content:space-between;align-items:center;">
+              <h4 style="font-size:var(--text-sm);font-weight:600;text-transform:uppercase;">Department Faculty Profiles & Verification</h4>
+              <span class="chip chip--info">18 Faculty Members</span>
+            </div>
+            <table class="req-table">
+              <thead>
+                <tr>
+                  <th>FACULTY NAME & DESIGNATION</th>
+                  <th>ID</th>
+                  <th>QUALIFICATION</th>
+                  <th>FDP DAYS (CAY)</th>
+                  <th>STATUS</th>
+                  <th style="text-align:right;">ACTION</th>
+                </tr>
+              </thead>
+              <tbody id="hod-faculty-roster-tbody">
+                <tr><td colspan="6" style="text-align:center;padding:1.5rem;">Loading faculty profiles...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── TAB 5: STUDENTS PERFORMANCE (C4) ── -->
+      <div class="tab-pane" id="tab-student-mgmt" style="display:none;">
+        <div class="requirements-card">
+          <div style="padding:var(--space-5);border-bottom:1px solid var(--glass-border);display:flex;justify-content:space-between;align-items:center;">
+            <div>
+              <h3 style="font-size:var(--text-lg);font-weight:700;">Department Student Progression & Mentoring Records</h3>
+              <p style="font-size:var(--text-xs);color:var(--text-muted);">Batch-wise performance summaries, Academic Performance Index (API), and placement statistics.</p>
+            </div>
+            <a href="c4.html" class="btn btn--outline btn--sm">Full Criterion 4 Dashboard &rarr;</a>
+          </div>
+
+          <table class="req-table">
+            <thead>
+              <tr>
+                <th>USN</th>
+                <th>STUDENT NAME</th>
+                <th>CURRENT SEM</th>
+                <th>MENTOR FACULTY</th>
+                <th>ACADEMIC STATUS</th>
+                <th style="text-align:right;">ACTION</th>
+              </tr>
+            </thead>
+            <tbody id="hod-students-tbody">
+              <tr><td colspan="6" style="text-align:center;padding:2rem;">Loading student records...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ── TAB 6: RESEARCH & CONTRIBUTIONS (C6) ── -->
+      <div class="tab-pane" id="tab-c6-mgmt" style="display:none;">
+        <div class="requirements-card">
+          <div style="padding:var(--space-5);border-bottom:1px solid var(--glass-border);display:flex;justify-content:space-between;align-items:center;">
+            <div>
+              <h3 style="font-size:var(--text-lg);font-weight:700;">Department Research, Publications & Grants (Criterion 6)</h3>
+              <p style="font-size:var(--text-xs);color:var(--text-muted);">Indexed journal offprints, sponsored R&D, patents, and consultancy verification.</p>
+            </div>
+            <a href="c6.html" class="btn btn--outline btn--sm">Full Criterion 6 Dashboard &rarr;</a>
+          </div>
+
+          <table class="req-table">
+            <thead>
+              <tr>
+                <th>PUBLICATION / PROJECT TITLE</th>
+                <th>FACULTY AUTHOR</th>
+                <th>INDEXING / GRANT</th>
+                <th>ACADEMIC YEAR</th>
+                <th>VERIFICATION STATUS</th>
+                <th style="text-align:right;">ACTION</th>
+              </tr>
+            </thead>
+            <tbody id="hod-c6-tbody">
+              <tr><td colspan="6" style="text-align:center;padding:2rem;">Loading contributions...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ── TAB 7: DEPARTMENT ANALYTICS & SAR REPORTS ── -->
+      <div class="tab-pane" id="tab-hod-reports" style="display:none;">
+        <div class="chart-card" style="margin-bottom:var(--space-6);">
+          <div class="chart-card-header">
+            <h3>Department Self-Assessment Report (SAR) Exports</h3>
+            <span class="chip chip--info">NBA Tier-I Compliant</span>
+          </div>
+          <p style="font-size:var(--text-sm);color:var(--text-secondary);margin-bottom:var(--space-6);">
+            Generate official NBA visiting committee documentation computed directly from active verified data records.
+          </p>
+
+          <div style="display:flex;gap:var(--space-4);flex-wrap:wrap;">
+            <button class="btn btn--primary" id="hod-btn-export-pdf">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                <polyline points="14 2 14 8 20 8"/>
+              </svg>
+              <span>Download Department SAR Executive Summary (PDF)</span>
+            </button>
+            <button class="btn btn--outline" id="hod-btn-export-excel">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                <polyline points="14 2 14 8 20 8"/>
+              </svg>
+              <span>Export Full Criteria Excel Ledger (.xlsx)</span>
+            </button>
+            <a href="inspection.html" class="btn btn--outline">
+              <span>🏆 Launch Virtual Mock NBA Inspection</span>
+            </a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <script type="module" src="../js/dash/hod.js"></script>
+</body>
+</html>
+

@@ -34,7 +34,7 @@
 .criteria-cards-stage {
   position: relative;
   width: 100%;
-  max-width: 1240px;
+  max-width: 1400px;
   height: 530px;
   margin: 0 auto;
   display: flex;
@@ -47,23 +47,23 @@
 
 @media (max-width: 900px) {
   .criteria-cards-stage {
-    max-width: 920px;
-    height: 490px;
+    max-width: 980px;
+    height: 500px;
   }
 }
 
 @media (max-width: 600px) {
   .criteria-cards-stage {
     max-width: 100%;
-    height: 450px;
+    height: 460px;
   }
 }
 
 /* Each Slide / Card */
 .criterion-card-slide {
   position: absolute;
-  width: 320px;
-  height: 490px;
+  width: 285px;
+  height: 485px;
   border-radius: var(--radius-2xl); /* rounded-3xl */
   background: var(--ink-800);
   border: 1px solid var(--glass-border);
@@ -73,48 +73,22 @@
   transform-style: preserve-3d;
   cursor: pointer;
   will-change: transform, opacity;
-  transition: opacity 0.4s ease,
-              box-shadow 0.4s ease,
-              filter 0.4s ease;
+  transition: box-shadow 0.4s ease, filter 0.4s ease;
 }
 
 @media (max-width: 600px) {
   .criterion-card-slide {
-    width: 270px;
-    height: 420px;
+    width: 250px;
+    height: 430px;
   }
 }
 
-/* Positions: Center (Active), Left (C6 upon scrolling), Right (C5) */
+.criterion-card-slide:hover {
+  filter: brightness(1.08);
+}
+
 .criterion-card-slide.is-center {
-  transform: translate3d(0, 0, 40px) scale(1);
-  z-index: 10;
-  opacity: 1;
-  box-shadow: 0 12px 48px rgba(0, 0, 0, 0.7), 0 0 30px var(--card-glow, rgba(0, 245, 160, 0.28));
-}
-
-.criterion-card-slide.is-left {
-  transform: translate3d(-390px, 0, -40px) rotateY(15deg) scale(0.88);
-  z-index: 5;
-  opacity: 0.85;
-  filter: brightness(0.9);
-}
-
-.criterion-card-slide.is-right {
-  transform: translate3d(390px, 0, -40px) rotateY(-15deg) scale(0.88);
-  z-index: 5;
-  opacity: 0.85;
-  filter: brightness(0.9);
-}
-
-.criterion-card-slide.is-left:hover {
-  opacity: 0.98;
-  filter: brightness(1.05);
-}
-
-.criterion-card-slide.is-right:hover {
-  opacity: 0.98;
-  filter: brightness(1.05);
+  box-shadow: 0 16px 56px rgba(0, 0, 0, 0.8), 0 0 35px var(--card-glow, rgba(0, 245, 160, 0.28));
 }
 
 /* Moving gradient border for ACTIVE card */

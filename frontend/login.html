@@ -119,28 +119,15 @@
       </div>
 
       <header class="auth-form-header">
-        <div class="badge">Secure Access Portal</div>
+        <div class="badge">Institutional Sign In</div>
         <h1>Welcome back</h1>
-        <p>Sign in with your Admin, HOD, or Faculty credentials</p>
+        <p>Sign in with your institutional credentials:</p>
       </header>
-
-      <!-- Role Selector Tabs -->
-      <div style="display:grid;grid-template-columns:repeat(3, 1fr);gap:var(--space-2);margin-bottom:var(--space-6);">
-        <button type="button" class="btn btn--ghost btn--sm role-quick-btn" data-email="admin@college.edu" data-pw="password123" data-dest="/dashboards/admin.html" style="font-size:11px;padding:6px 8px;border-color:var(--glass-border);">
-          👑 <strong>Admin</strong>
-        </button>
-        <button type="button" class="btn btn--ghost btn--sm role-quick-btn" data-email="hod@college.edu" data-pw="password123" data-dest="/dashboards/reports.html" style="font-size:11px;padding:6px 8px;border-color:var(--glass-border);">
-          🎓 <strong>HOD</strong>
-        </button>
-        <button type="button" class="btn btn--ghost btn--sm role-quick-btn" data-email="faculty@college.edu" data-pw="password123" data-dest="/dashboards/c3.html" style="font-size:11px;padding:6px 8px;border-color:var(--glass-border);">
-          👩‍🏫 <strong>Faculty</strong>
-        </button>
-      </div>
 
       <!-- Global message area -->
       <div id="auth-message" class="alert" role="alert" aria-live="assertive"></div>
 
-      <form id="login-form" class="auth-form" novalidate autocomplete="on">
+      <form id="login-form" class="auth-form" novalidate autocomplete="on" action="javascript:void(0);" method="POST">
 
         <!-- Email -->
         <div class="auth-field form-group--float">
@@ -206,27 +193,61 @@
       </div>
 
       <!-- Demo credentials hint -->
-      <div style="margin-top:var(--space-8);padding:var(--space-4);background:var(--surface-100);border:1px solid var(--glass-border);border-radius:var(--radius-md);">
-        <p style="font-size:var(--text-xs);color:var(--text-muted);margin-bottom:var(--space-3);text-transform:uppercase;letter-spacing:0.06em;font-weight:600;">Demo Credentials</p>
-        <div style="display:flex;flex-direction:column;gap:var(--space-2);">
+      <div style="margin-top:var(--space-6);padding:var(--space-4);background:var(--surface-100);border:1px solid var(--glass-border);border-radius:var(--radius-md);">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:var(--space-3);">
+          <span style="font-size:var(--text-xs);color:var(--text-muted);text-transform:uppercase;letter-spacing:0.06em;font-weight:700;">Role-Based Demo Logins</span>
+          <span class="chip chip--pass" style="font-size:10px;">Click Any Role Below</span>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:var(--space-3);">
+          <!-- Admin -->
           <button class="demo-cred" data-email="admin@college.edu" data-pw="password123" style="
-            text-align:left;background:var(--surface-100);border:1px solid var(--glass-border);
-            border-radius:var(--radius-sm);padding:var(--space-2) var(--space-3);cursor:pointer;
-            font-size:var(--text-xs);color:var(--text-secondary);transition:all var(--dur-fast);">
-            🔑 <strong style="color:var(--text-primary)">Admin</strong> — admin@college.edu / password123
+            text-align:left;background:rgba(139,92,246,0.08);border:1px solid rgba(139,92,246,0.25);
+            border-radius:var(--radius-sm);padding:var(--space-3);cursor:pointer;
+            transition:all var(--dur-fast);">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:2px;">
+              <span style="color:var(--violet,#8B5CF6);font-weight:700;font-size:var(--text-sm);">👑 Administrator</span>
+              <span style="font-size:11px;color:var(--violet,#8B5CF6);text-decoration:underline;">Open Admin Console &rarr;</span>
+            </div>
+            <div style="font-size:11px;color:var(--text-secondary);">admin@college.edu &bull; User Mgmt, All Departments, Audit Logs & Overrides</div>
           </button>
+
+          <!-- HOD -->
           <button class="demo-cred" data-email="hod@college.edu" data-pw="password123" style="
-            text-align:left;background:var(--surface-100);border:1px solid var(--glass-border);
-            border-radius:var(--radius-sm);padding:var(--space-2) var(--space-3);cursor:pointer;
-            font-size:var(--text-xs);color:var(--text-secondary);transition:all var(--dur-fast);">
-            🎓 <strong style="color:var(--text-primary)">HOD</strong> — hod@college.edu / password123
+            text-align:left;background:rgba(0,245,160,0.08);border:1px solid rgba(0,245,160,0.25);
+            border-radius:var(--radius-sm);padding:var(--space-3);cursor:pointer;
+            transition:all var(--dur-fast);">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:2px;">
+              <span style="color:var(--cyan,#00F5A0);font-weight:700;font-size:var(--text-sm);">🎓 Head of Department (HOD)</span>
+              <span style="font-size:11px;color:var(--cyan,#00F5A0);text-decoration:underline;">Open HOD Dashboard &rarr;</span>
+            </div>
+            <div style="font-size:11px;color:var(--text-secondary);">hod@college.edu &bull; Pending Approvals Queue, Course Allocations, SFR 20:1, SAR</div>
           </button>
+
+          <!-- Faculty -->
           <button class="demo-cred" data-email="faculty@college.edu" data-pw="password123" style="
-            text-align:left;background:var(--surface-100);border:1px solid var(--glass-border);
-            border-radius:var(--radius-sm);padding:var(--space-2) var(--space-3);cursor:pointer;
-            font-size:var(--text-xs);color:var(--text-secondary);transition:all var(--dur-fast);">
-            👩‍🏫 <strong style="color:var(--text-primary)">Faculty</strong> — faculty@college.edu / password123
+            text-align:left;background:rgba(204,255,0,0.08);border:1px solid rgba(204,255,0,0.25);
+            border-radius:var(--radius-sm);padding:var(--space-3);cursor:pointer;
+            transition:all var(--dur-fast);">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:2px;">
+              <span style="color:var(--aurora,#CCFF00);font-weight:700;font-size:var(--text-sm);">👩‍🏫 Faculty Member</span>
+              <span style="font-size:11px;color:var(--aurora,#CCFF00);text-decoration:underline;">Open Faculty Workspace &rarr;</span>
+            </div>
+            <div style="font-size:11px;color:var(--text-secondary);">faculty@college.edu &bull; My Assigned Courses (C3), Mentee Students (C4), C5 & C6</div>
           </button>
+        </div>
+
+        <!-- PDF Guide Download Button -->
+        <div style="margin-top:var(--space-3);text-align:center;">
+          <a href="NBA_Role_Dashboards_Guide.pdf" download class="btn btn--ghost btn--sm" style="width:100%;display:inline-flex;align-items:center;justify-content:center;gap:8px;border:1px solid var(--glass-border);color:var(--text-secondary);">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+              <polyline points="14 2 14 8 20 8"/>
+              <line x1="12" y1="18" x2="12" y2="12"/>
+              <line x1="9" y1="15" x2="12" y2="18"/>
+              <line x1="15" y1="15" x2="12" y2="18"/>
+            </svg>
+            <span>Download 3-Dashboards Role Guide (PDF)</span>
+          </a>
         </div>
       </div>
 
@@ -241,43 +262,19 @@ import { store }            from './js/store.js';
 import { login, friendlyAuthError } from './js/auth.js';
 import { ApiError }         from './js/api.js';
 
-// ── Init ─────────────────────────────────────────────────────
-initCursor();
-
-// Check session state on load
-const roleParam = (getParam('role') || '').toLowerCase();
-if (roleParam) {
-  store.clearSession();
-} else if (store.isLoggedIn()) {
-  const currentRole = store.getTopRole();
-  const currentUser = store.getUser();
-  const dest = CONFIG.DEFAULT_REDIRECT[currentRole] || '/dashboards/c3.html';
-  // Notify user they have an active session instead of auto-bouncing
-  showMessage(`Active session as <strong>${currentUser?.email || ''}</strong> (${currentRole}). <a href="${dest}" style="color:var(--cyan);text-decoration:underline;font-weight:600;">Go to ${currentRole} Dashboard &rarr;</a>`, 'info');
-}
-
-// ── Floating labels ───────────────────────────────────────────
-document.querySelectorAll('.auth-field .form-control').forEach(bindFloatingLabel);
-
-// ── Password toggle ───────────────────────────────────────────
+// ── DOM References (Declared FIRST before any function calls) ──
+const formEl     = document.getElementById('login-form');
+const emailInput = document.getElementById('email');
 const pwInput    = document.getElementById('password');
+const loginBtn   = document.getElementById('login-btn');
+const msgEl      = document.getElementById('auth-message');
 const toggleBtn  = document.getElementById('toggle-pw');
 const iconShow   = document.getElementById('pw-icon-show');
 const iconHide   = document.getElementById('pw-icon-hide');
 
-toggleBtn.addEventListener('click', () => {
-  const isHidden = pwInput.type === 'password';
-  pwInput.type   = isHidden ? 'text' : 'password';
-  iconShow.style.display = isHidden ? 'none' : '';
-  iconHide.style.display = isHidden ? '' : 'none';
-  toggleBtn.setAttribute('aria-label', isHidden ? 'Hide password' : 'Show password');
-});
-
-// ── Form validation ───────────────────────────────────────────
-const emailInput = document.getElementById('email');
-const msgEl      = document.getElementById('auth-message');
-
+// ── Message helpers ──
 function showMessage(text, type = 'error') {
+  if (!msgEl) return;
   msgEl.className = `alert alert--${type} visible`;
   msgEl.innerHTML = `
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0">
@@ -290,10 +287,12 @@ function showMessage(text, type = 'error') {
 }
 
 function clearMessage() {
+  if (!msgEl) return;
   msgEl.className = 'alert';
   msgEl.innerHTML = '';
 }
 
+// ── Validation helpers ──
 function validateEmail(val) {
   if (!val) return 'Email is required.';
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val)) return 'Enter a valid email address.';
@@ -305,113 +304,128 @@ function validatePassword(val) {
   return null;
 }
 
-emailInput.addEventListener('blur', () => {
-  const err = validateEmail(emailInput.value.trim());
-  if (err) setFieldError(emailInput, err);
-  else clearFieldError(emailInput);
-});
-
-// ── Login form submit ─────────────────────────────────────────
-document.getElementById('login-form').addEventListener('submit', async e => {
-  e.preventDefault();
+// ── Core Login Execution Function ──
+async function doLogin(email, password) {
   clearMessage();
 
-  const email    = emailInput.value.trim();
-  const password = pwInput.value;
-
-  // Client-side validation
-  let hasError = false;
   const emailErr = validateEmail(email);
   const pwErr    = validatePassword(password);
 
-  if (emailErr) { setFieldError(emailInput, emailErr); hasError = true; }
+  if (emailErr) { setFieldError(emailInput, emailErr); return; }
   else clearFieldError(emailInput);
 
-  if (pwErr) { setFieldError(pwInput, pwErr); hasError = true; }
+  if (pwErr) { setFieldError(pwInput, pwErr); return; }
   else clearFieldError(pwInput);
 
-  if (hasError) return;
-
-  const btn     = document.getElementById('login-btn');
-  const restore = setButtonLoading(btn, 'Signing in…');
+  const restore = setButtonLoading(loginBtn, 'Signing in…');
 
   try {
     const rawRedirect = getParam('redirect');
     const redirect = (rawRedirect && !rawRedirect.includes('c3.html')) ? rawRedirect : null;
     await login(email, password, redirect);
-    // navigation happens inside login()
   } catch (err) {
     restore();
     const msg = friendlyAuthError(err);
-
     if (err.message?.toLowerCase().includes('pending')) {
       showMessage(msg, 'warning');
     } else {
       showMessage(msg, 'error');
     }
   }
+}
+
+// ── Init ──
+initCursor();
+
+// Floating labels
+document.querySelectorAll('.auth-field .form-control').forEach(bindFloatingLabel);
+
+// Email input blur validation
+emailInput?.addEventListener('blur', () => {
+  const err = validateEmail(emailInput.value.trim());
+  if (err) setFieldError(emailInput, err);
+  else clearFieldError(emailInput);
 });
 
-// ── Demo credential & Quick Role buttons ───────────────────────
+// Password toggle
+toggleBtn?.addEventListener('click', () => {
+  const isHidden = pwInput.type === 'password';
+  pwInput.type   = isHidden ? 'text' : 'password';
+  if (iconShow) iconShow.style.display = isHidden ? 'none' : '';
+  if (iconHide) iconHide.style.display = isHidden ? '' : 'none';
+  toggleBtn.setAttribute('aria-label', isHidden ? 'Hide password' : 'Show password');
+});
+
+// Form submit event
+formEl?.addEventListener('submit', (e) => {
+  e.preventDefault();
+  e.stopPropagation();
+  const email = emailInput?.value.trim() || '';
+  const password = pwInput?.value || '';
+  doLogin(email, password);
+  return false;
+});
+
+// Demo credential buttons
 function applyCredentials(email, pw, autoSubmit = false) {
-  emailInput.value = email;
-  pwInput.value = pw;
-  emailInput.classList.add('has-value');
-  pwInput.classList.add('has-value');
+  if (emailInput) {
+    emailInput.value = email;
+    emailInput.classList.add('has-value');
+    clearFieldError(emailInput);
+  }
+  if (pwInput) {
+    pwInput.value = pw;
+    pwInput.classList.add('has-value');
+    clearFieldError(pwInput);
+  }
   clearMessage();
-  clearFieldError(emailInput);
-  clearFieldError(pwInput);
 
   if (autoSubmit) {
-    // Quick 1-click sign in
-    document.getElementById('login-form').requestSubmit();
+    doLogin(email, pw);
   }
 }
 
-// Top role tabs: 1-click instant login directly to role destination
-document.querySelectorAll('.role-quick-btn').forEach(btn => {
-  btn.addEventListener('mouseenter', () => { btn.style.borderColor = 'rgba(0, 245, 160,0.6)'; btn.style.background = 'var(--surface-200)'; });
-  btn.addEventListener('mouseleave', () => { btn.style.borderColor = 'var(--glass-border)'; btn.style.background = 'var(--surface-100)'; });
-  btn.addEventListener('click', async () => {
-    store.clearSession();
-    emailInput.value = btn.dataset.email;
-    pwInput.value = btn.dataset.pw;
-    emailInput.classList.add('has-value');
-    pwInput.classList.add('has-value');
-    clearMessage();
-
-    const restore = setButtonLoading(btn, 'Signing in…');
-    try {
-      await login(btn.dataset.email, btn.dataset.pw, btn.dataset.dest);
-    } catch (err) {
-      restore();
-      showMessage(friendlyAuthError(err), 'error');
-    }
-  });
-});
-
-// Bottom demo credentials: fill inputs
 document.querySelectorAll('.demo-cred').forEach(btn => {
-  btn.addEventListener('mouseenter', () => { btn.style.borderColor = 'rgba(0, 245, 160,0.4)'; btn.style.background = 'var(--surface-200)'; });
-  btn.addEventListener('mouseleave', () => { btn.style.borderColor = 'var(--glass-border)'; btn.style.background = 'var(--surface-100)'; });
-  btn.addEventListener('click', () => {
-    applyCredentials(btn.dataset.email, btn.dataset.pw, false);
+  btn.addEventListener('mouseenter', () => {
+    btn.style.borderColor = 'rgba(0, 245, 160, 0.4)';
+    btn.style.background = 'var(--surface-200)';
+  });
+  btn.addEventListener('mouseleave', () => {
+    btn.style.borderColor = 'var(--glass-border)';
+    btn.style.background = 'var(--surface-100)';
+  });
+  btn.addEventListener('click', (e) => {
+    e.preventDefault();
+    store.clearSession();
+    applyCredentials(btn.dataset.email, btn.dataset.pw, true);
   });
 });
 
-// Auto-login role if provided in URL (e.g. login.html?role=admin)
-if (roleParam === 'admin') {
-  login('admin@college.edu', 'password123', '/dashboards/admin.html');
-} else if (roleParam === 'hod') {
-  login('hod@college.edu', 'password123', '/dashboards/reports.html');
-} else if (roleParam === 'faculty') {
-  login('faculty@college.edu', 'password123', '/dashboards/c3.html');
+// Check session state on load
+const roleParam = (getParam('role') || '').toLowerCase();
+if (roleParam) {
+  store.clearSession();
+  if (roleParam === 'admin') {
+    applyCredentials('admin@college.edu', 'password123', true);
+  } else if (roleParam === 'hod') {
+    applyCredentials('hod@college.edu', 'password123', true);
+  } else if (roleParam === 'faculty') {
+    applyCredentials('faculty@college.edu', 'password123', true);
+  }
+} else if (store.isLoggedIn()) {
+  const currentRole = store.getTopRole();
+  const currentUser = store.getUser();
+  const dest = CONFIG.DEFAULT_REDIRECT[currentRole] || '/dashboards/c3.html';
+  showMessage(`Active session as <strong>${currentUser?.email || ''}</strong> (${currentRole}). <a href="${dest}" style="color:var(--cyan);text-decoration:underline;font-weight:600;">Go to ${currentRole} Dashboard &rarr;</a>`, 'info');
 }
 
-// ── Keyboard shortcut: Enter submits ─────────────────────────
+// Keyboard Enter
 document.addEventListener('keydown', e => {
   if (e.key === 'Enter' && document.activeElement?.tagName !== 'BUTTON') {
-    document.getElementById('login-form').requestSubmit();
+    e.preventDefault();
+    const email = emailInput?.value.trim() || '';
+    const password = pwInput?.value || '';
+    doLogin(email, password);
   }
 });
 </script>

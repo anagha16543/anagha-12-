@@ -14,20 +14,8 @@ import { countUp } from './ui.js';
 import { cardExpandNavigate } from './transitions.js';
 
 // ── Criteria Configuration ────────────────────────────────────
-// C6 on Left (Index 0), C3 in Center (Index 1), C5 on Right (Index 2)
+// All 4 Criteria: C3, C4, C5, C6 in one line spread upon scrolling
 export const CRITERIA_CONFIG = [
-  {
-    code: 'C6',
-    title: 'Faculty Contributions',
-    question: 'What are our faculty contributing to research and innovation?',
-    route: 'dashboards/c6.html',
-    accent: '#D946EF',
-    glow: 'rgba(217, 70, 239, 0.35)',
-    roles: ['FACULTY', 'HOD', 'ADMIN'],
-    icon: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-             <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
-           </svg>`
-  },
   {
     code: 'C3',
     title: 'Outcome-Based Assessment',
@@ -45,9 +33,21 @@ export const CRITERIA_CONFIG = [
            </svg>`
   },
   {
+    code: 'C4',
+    title: 'Students\' Performance',
+    question: 'Are students progressing on time, clearing exams, and securing top careers?',
+    route: 'dashboards/c4.html',
+    accent: '#F59E0B',
+    glow: 'rgba(245, 158, 11, 0.35)',
+    roles: ['FACULTY', 'HOD', 'ADMIN'],
+    icon: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+             <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+           </svg>`
+  },
+  {
     code: 'C5',
     title: 'Faculty Information',
-    question: 'Do we have enough qualified faculty?',
+    question: 'Do we have enough qualified, cadre-balanced, and retained faculty?',
     route: 'dashboards/c5.html',
     accent: '#8B5CF6',
     glow: 'rgba(139, 92, 246, 0.35)',
@@ -58,10 +58,22 @@ export const CRITERIA_CONFIG = [
              <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
              <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
            </svg>`
+  },
+  {
+    code: 'C6',
+    title: 'Faculty Contributions',
+    question: 'What are our faculty contributing to research and innovation?',
+    route: 'dashboards/c6.html',
+    accent: '#D946EF',
+    glow: 'rgba(217, 70, 239, 0.35)',
+    roles: ['FACULTY', 'HOD', 'ADMIN'],
+    icon: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+             <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+           </svg>`
   }
 ];
 
-let _activeIndex = 1; // Default to C3 in center
+let _activeIndex = 0; // Default to C3 (or first card) in active focus
 let _scrollTriggerInstance = null;
 let _currentScrollProgress = 0; // Start at 0 (stacked), scroll drives to 1 (spread)
 
@@ -167,8 +179,8 @@ export async function initCriteriaCarousel(containerSelector = '#criteria-swiper
 }
 
 /**
- * Set initial stacked positions — all 3 cards overlapping at center
- * C3 (active) on top, C6 and C5 tucked behind with slight z-offset
+ * Set initial stacked positions — all 4 cards overlapping at center directly behind each other.
+ * Active card (C3) in front, subsequent cards (C4, C5, C6) tucked directly behind each other in 3D depth.
  */
 function _setInitialStackedPositions() {
   const cards = document.querySelectorAll('.criterion-card-slide');
@@ -176,102 +188,83 @@ function _setInitialStackedPositions() {
     const idx = parseInt(card.dataset.index, 10);
     card.classList.remove('is-left', 'is-center', 'is-right');
 
-    if (idx === 1) {
-      // C3 — front and center
+    if (idx === _activeIndex) {
       card.classList.add('is-center');
       gsap.set(card, { x: 0, y: 0, z: 0, rotationY: 0, scale: 1, opacity: 1 });
       card.style.zIndex = 10;
     } else {
-      // C6 & C5 — stacked behind C3
-      gsap.set(card, { x: 0, y: 0, z: -80, rotationY: 0, scale: 0.92, opacity: 0.5 });
-      card.style.zIndex = idx === 0 ? 3 : 4;
+      const depth = Math.abs(idx - _activeIndex);
+      gsap.set(card, {
+        x: 0,
+        y: depth * 5,
+        z: -depth * 45,
+        rotationY: 0,
+        scale: 1 - depth * 0.04,
+        opacity: Math.max(0.35, 1 - depth * 0.2)
+      });
+      card.style.zIndex = Math.max(1, 10 - depth);
     }
   });
 }
 
 /**
  * Compute the target spread distance based on screen width.
- * Ensures C6 and C5 NEVER touch C3 at any screen size.
+ * Ensures all 4 cards display evenly in one clean horizontal line.
  */
 function _getTargetSpread() {
   const w = window.innerWidth;
-  if (w < 600) return 220;
-  if (w < 900) return 300;
-  if (w < 1150) return 350;
-  return 390;
+  if (w < 600) return 120;
+  if (w < 900) return 180;
+  if (w < 1250) return 245;
+  return 305;
 }
 
 /**
- * Apply 3D positions to the cards based on _activeIndex.
- * Smoothly positions C3 at center, C6 on left, C5 on right at strictly equal distance.
+ * Apply 3D positions to the cards in ONE SINGLE LINE based on _activeIndex.
+ * All 4 cards sit visibly side-by-side; active card elevates forward with moving gradient border.
  */
 function _applyCardPositions(animate = true) {
   const cards = document.querySelectorAll('.criterion-card-slide');
-  // Full separation spread is always preserved so cards never touch
   const targetSpread = _getTargetSpread();
 
   cards.forEach(card => {
     const idx = parseInt(card.dataset.index, 10);
+    const isActive = (idx === _activeIndex);
+
     card.classList.remove('is-left', 'is-center', 'is-right');
-
-    let x = 0;
-    let z = 0;
-    let rotationY = 0;
-    let scale = 1;
-    let opacity = 1;
-    let zIndex = 1;
-
-    if (idx === _activeIndex) {
+    if (isActive) {
       card.classList.add('is-center');
-      x = 0;
-      z = 40;
-      rotationY = 0;
-      scale = 1;
-      opacity = 1;
-      zIndex = 10;
-    } else if (idx < _activeIndex || (_activeIndex === 0 && idx === 2)) {
-      card.classList.add('is-left');
-      x = -targetSpread;
-      z = -40;
-      rotationY = 15;
-      scale = 0.88;
-      opacity = 0.85;
-      zIndex = 5;
-    } else {
-      card.classList.add('is-right');
-      x = targetSpread;
-      z = -40;
-      rotationY = -15;
-      scale = 0.88;
-      opacity = 0.85;
-      zIndex = 5;
     }
+
+    // Position in ONE LINE centered at index 1.5 (-1.5, -0.5, +0.5, +1.5)
+    const x = (idx - 1.5) * targetSpread;
+    const y = isActive ? -12 : 0;
+    const z = isActive ? 35 : 0;
+    const rotationY = isActive ? 0 : ((idx < 1.5 ? 1 : -1) * (Math.abs(idx - 1.5) === 1.5 ? 8 : 2));
+    const scale = isActive ? 1.03 : 0.96;
+    const opacity = 1;
+    const zIndex = isActive ? 20 : (10 - Math.abs(idx - 1.5));
 
     if (typeof gsap !== 'undefined') {
       if (animate) {
         gsap.to(card, {
           x,
+          y,
           z,
           rotationY,
           scale,
           opacity,
-          duration: 0.65,
+          duration: 0.6,
           ease: 'power3.out',
           overwrite: 'auto'
         });
         card.style.zIndex = zIndex;
       } else {
-        gsap.set(card, {
-          x,
-          z,
-          rotationY,
-          scale,
-          opacity
-        });
+        gsap.set(card, { x, y, z, rotationY, scale, opacity });
         card.style.zIndex = zIndex;
       }
     } else {
-      card.style.transform = `translate3d(${x}px, 0, ${z}px) rotateY(${rotationY}deg) scale(${scale})`;
+      card.style.transform = `translate3d(${x}px, ${y}px, ${z}px) rotateY(${rotationY}deg) scale(${scale})`;
       card.style.opacity = opacity;
       card.style.zIndex = zIndex;
     }
@@ -288,9 +281,9 @@ function _applyCardPositions(animate = true) {
 }
 
 /**
- * ScrollTrigger: Stacked-to-spread animation.
- * Progress 0 = all cards stacked at center.
- * Progress 1 = C6 on left, C3 center raised, C5 on right — with clear equal gap.
+ * ScrollTrigger: Stacked-to-one-line spread animation.
+ * Progress 0 = all 4 cards stacked directly behind each other at center.
+ * Progress 1 = all 4 cards smoothly fan out and display in ONE SINGLE LINE side-by-side!
  */
 function _setupScrollDrivenCardsSpread() {
   const section = document.getElementById('criteria-carousel-section');
@@ -309,32 +302,33 @@ function _setupScrollDrivenCardsSpread() {
 
       cards.forEach(card => {
         const idx = parseInt(card.dataset.index, 10);
+        const isActive = (idx === _activeIndex);
 
-        if (idx === _activeIndex) {
-          // C3 (center): Rise slightly forward
-          gsap.set(card, {
-            x: 0,
-            y: (1 - p) * 15,
-            z: p * 40,
-            rotationY: 0,
-            scale: 0.95 + 0.05 * p,
-            opacity: 1
-          });
-          card.style.zIndex = 10;
-        } else {
-          // Non-active cards: fan out to left or right based on relative index
-          const isLeft = (idx < _activeIndex) || (_activeIndex === 0 && idx === 2);
-          const dir = isLeft ? -1 : 1;
-          gsap.set(card, {
-            x: dir * targetSpread * p,
-            y: (1 - p) * 20,
-            z: -80 + 40 * p,                     // -80 → -40
-            rotationY: -dir * 15 * p,             // Left card tilts +15 deg inward, right tilts -15 deg
-            scale: 0.92 - 0.04 * p,               // 0.92 → 0.88 settled
-            opacity: 0.5 + 0.35 * p               // 0.5 → 0.85
-          });
-          card.style.zIndex = 5;
-        }
+        // Target position in ONE LINE
+        const targetX = (idx - 1.5) * targetSpread;
+
+        // In stacked state (p=0), depth order behind active card
+        const stackDepth = isActive ? 0 : Math.abs(idx - _activeIndex);
+        const startZ = -stackDepth * 45;
+        const startScale = 1 - stackDepth * 0.04;
+        const startOpacity = Math.max(0.35, 1 - stackDepth * 0.2);
+
+        // In spread state (p=1)
+        const endZ = isActive ? 35 : 0;
+        const endRotY = (idx < 1.5 ? 1 : -1) * (Math.abs(idx - 1.5) === 1.5 ? 8 : 2);
+        const endScale = isActive ? 1.03 : 0.96;
+        const endOpacity = 1;
+
+        gsap.set(card, {
+          x: targetX * p,
+          y: (1 - p) * (stackDepth * 5) + (isActive ? -12 * p : 0),
+          z: startZ * (1 - p) + endZ * p,
+          rotationY: endRotY * p,
+          scale: startScale * (1 - p) + endScale * p,
+          opacity: startOpacity * (1 - p) + endOpacity * p
+        });
+
+        card.style.zIndex = isActive ? 20 : (10 - Math.abs(idx - 1.5));
       });
     }
   });

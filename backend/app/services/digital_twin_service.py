@@ -198,7 +198,12 @@ class DigitalTwinService:
 
         criteria_query = self.db.query(NBACriterion).filter(NBACriterion.is_active.is_(True))
         if criterion_code:
-            criteria_query = criteria_query.filter(NBACriterion.code == criterion_code.upper().strip())
+            code_clean = criterion_code.upper().strip()
+            # Normalize C3 -> CRITERION_3, etc.
+            normalized = f"CRITERION_{code_clean[1:]}" if (code_clean.startswith("C") and not code_clean.startswith("CRITERION_")) else code_clean
+            criteria_query = criteria_query.filter(
+                (NBACriterion.code == code_clean) | (NBACriterion.code == normalized)
+            )
         criteria = criteria_query.order_by(NBACriterion.display_order).all()
 
         criterion_analytics_list: List[CriterionReadinessAnalytics] = []

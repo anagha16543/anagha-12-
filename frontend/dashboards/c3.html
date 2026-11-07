@@ -231,7 +231,16 @@
               <h3>Accreditation Evidence Repository (Criterion 3)</h3>
               <p style="font-size:var(--text-xs);color:var(--text-muted);">Multipart uploads stored with SHA-256 integrity and chunked for pgvector RAG.</p>
             </div>
-            <button class="btn btn--primary btn--sm" id="btn-upload-evidence">+ Upload Evidence Document</button>
+            <div style="display:flex;gap:var(--space-2);">
+              <button class="btn btn--outline btn--sm" id="btn-refresh-evidence">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M23 4v6h-6"></path><path d="M1 20v-6h6"></path>
+                  <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+                </svg>
+                <span>Refresh List</span>
+              </button>
+              <button class="btn btn--primary btn--sm" id="btn-upload-evidence">+ Upload Evidence Document</button>
+            </div>
           </div>
           <table class="req-table">
             <thead>
@@ -327,6 +336,97 @@
             Upload to pgvector RAG
           </button>
         </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Evidence Download & Workflow Next Steps Modal -->
+  <div id="next-steps-modal-backdrop" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);backdrop-filter:blur(6px);z-index:9999;align-items:center;justify-content:center;padding:var(--space-4);">
+    <div style="background:var(--surface-50);border:1px solid var(--glass-border);border-radius:var(--radius-lg);max-width:640px;width:100%;box-shadow:var(--shadow-xl);overflow:hidden;">
+      <div style="padding:var(--space-5);border-bottom:1px solid var(--glass-border);display:flex;justify-content:space-between;align-items:center;">
+        <div style="display:flex;align-items:center;gap:var(--space-3);">
+          <div style="width:36px;height:36px;border-radius:50%;background:rgba(34,197,94,0.15);display:flex;align-items:center;justify-content:center;color:var(--pass);">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+              <polyline points="7 10 12 15 17 10"></polyline>
+              <line x1="12" y1="15" x2="12" y2="3"></line>
+            </svg>
+          </div>
+          <div>
+            <h3 style="font-size:var(--text-lg);font-weight:700;margin:0;">Evidence Downloaded Successfully</h3>
+            <p style="font-size:var(--text-xs);color:var(--text-muted);margin:2px 0 0 0;" id="next-steps-filename">dummy.pdf</p>
+          </div>
+        </div>
+        <button id="next-steps-close-btn" class="btn btn--ghost btn--sm" style="font-size:20px;line-height:1;">&times;</button>
+      </div>
+
+      <div style="padding:var(--space-6);display:flex;flex-direction:column;gap:var(--space-5);">
+        <!-- File status banner -->
+        <div style="background:rgba(59,130,246,0.08);border:1px solid rgba(59,130,246,0.25);border-radius:var(--radius-md);padding:var(--space-4);display:flex;justify-content:space-between;align-items:center;">
+          <div>
+            <div style="font-size:var(--text-xs);color:var(--cyan);font-weight:600;text-transform:uppercase;">Criterion 3 Assessment Evidence</div>
+            <div style="font-size:var(--text-sm);color:var(--text-primary);font-weight:600;margin-top:2px;">Course Outcomes &amp; Continuous Assessment Package</div>
+          </div>
+          <span class="chip chip--pass" style="font-size:11px;">SHA-256 Validated ✓</span>
+        </div>
+
+        <!-- Next Steps Roadmap -->
+        <div>
+          <h4 style="font-size:var(--text-sm);font-weight:700;text-transform:uppercase;color:var(--text-secondary);margin-bottom:var(--space-3);letter-spacing:0.5px;">
+            Accreditation Workflow: What to do next?
+          </h4>
+          
+          <div style="display:flex;flex-direction:column;gap:var(--space-3);">
+            <!-- Step 1 -->
+            <div style="display:flex;gap:var(--space-3);padding:var(--space-3);border-radius:var(--radius-sm);background:rgba(255,255,255,0.02);border:1px solid var(--glass-border);">
+              <div style="width:24px;height:24px;border-radius:50%;background:rgba(34,197,94,0.2);color:var(--pass);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;">✓</div>
+              <div style="flex:1;">
+                <div style="font-size:var(--text-sm);font-weight:600;color:var(--text-primary);">Step 1: Course Evidence Document Stored</div>
+                <div style="font-size:var(--text-xs);color:var(--text-muted);margin-top:2px;">Course file, rubrics, and Blue Books are signed and available for peer/external evaluators.</div>
+              </div>
+            </div>
+
+            <!-- Step 2 -->
+            <div style="display:flex;gap:var(--space-3);padding:var(--space-3);border-radius:var(--radius-sm);background:rgba(255,255,255,0.02);border:1px solid var(--glass-border);">
+              <div style="width:24px;height:24px;border-radius:50%;background:rgba(59,130,246,0.2);color:var(--cyan);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;">2</div>
+              <div style="flex:1;">
+                <div style="font-size:var(--text-sm);font-weight:600;color:var(--text-primary);">Step 2: Evaluate CO Attainment &amp; Articulation Matrix</div>
+                <div style="font-size:var(--text-xs);color:var(--text-muted);margin-top:2px;">Calculate direct attainment (80% CIE/SEE) and indirect survey (20%). Verify the CO-PO correlation matrix (levels 1, 2, 3).</div>
+                <div style="margin-top:8px;">
+                  <button class="btn btn--primary btn--sm" id="btn-goto-attainment">Open Attainment &amp; Heatmap Tab &rarr;</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Step 3 -->
+            <div style="display:flex;gap:var(--space-3);padding:var(--space-3);border-radius:var(--radius-sm);background:rgba(255,255,255,0.02);border:1px solid var(--glass-border);">
+              <div style="width:24px;height:24px;border-radius:50%;background:rgba(168,85,247,0.2);color:var(--violet);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;">3</div>
+              <div style="flex:1;">
+                <div style="font-size:var(--text-sm);font-weight:600;color:var(--text-primary);">Step 3: Run AI Advisory Review &amp; Batch Evaluation</div>
+                <div style="font-size:var(--text-xs);color:var(--text-muted);margin-top:2px;">Audit CO-PO coverage against Tier-I 2026 guidelines and verify compliance rules (3.1 to 3.8).</div>
+                <div style="margin-top:8px;">
+                  <button class="btn btn--outline btn--sm" id="btn-goto-ai">Run AI Assessment Agent &rarr;</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Step 4 -->
+            <div style="display:flex;gap:var(--space-3);padding:var(--space-3);border-radius:var(--radius-sm);background:rgba(255,255,255,0.02);border:1px solid var(--glass-border);">
+              <div style="width:24px;height:24px;border-radius:50%;background:rgba(245,158,11,0.2);color:var(--warning);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;">4</div>
+              <div style="flex:1;">
+                <div style="font-size:var(--text-sm);font-weight:600;color:var(--text-primary);">Step 4: HOD Department Verification &amp; SAR Ledger Lock</div>
+                <div style="font-size:var(--text-xs);color:var(--text-muted);margin-top:2px;">Head of Department reviews submission in Pending Approvals queue and locks score into institutional accreditation record.</div>
+                <div style="margin-top:8px;">
+                  <a href="hod.html#tab-pending-approvals" class="btn btn--ghost btn--sm" style="color:var(--warning);border:1px solid var(--warning);">Open HOD Approvals Queue &rarr;</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div style="display:flex;justify-content:flex-end;border-top:1px solid var(--glass-border);padding-top:var(--space-4);">
+          <button id="next-steps-done-btn" class="btn btn--primary">Got it, proceed with accreditation</button>
+        </div>
       </div>
     </div>
   </div>

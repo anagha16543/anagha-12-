@@ -773,6 +773,107 @@ export const api = {
     return request(`/backups/${backupId}/restore`, { method: 'POST', body: payload });
   },
 
+
+  // ══════════════════════════════════════════════════════════
+  // WORKFLOW SUBMISSIONS & APPROVALS (Criteria 3, 4, 5, 6)
+  // ══════════════════════════════════════════════════════════
+
+  async listSubmissions(params = {}) {
+    const qs = new URLSearchParams(params).toString();
+    return request(`/submissions${qs ? '?' + qs : ''}`);
+  },
+
+  async createSubmission(payload) {
+    return request('/submissions', { method: 'POST', body: payload });
+  },
+
+  async getSubmission(id) {
+    return request(`/submissions/${id}`);
+  },
+
+  async approveSubmission(id, comments = '') {
+    return request(`/submissions/${id}/approve`, {
+      method: 'POST',
+      body: comments ? { comments } : {},
+    });
+  },
+
+  async rejectSubmission(id, comments = '') {
+    return request(`/submissions/${id}/reject`, {
+      method: 'POST',
+      body: comments ? { comments } : {},
+    });
+  },
+
+  async requestRevision(id, comments) {
+    return request(`/submissions/${id}/request-revision`, {
+      method: 'POST',
+      body: { comments },
+    });
+  },
+
+  async resubmitRecord(id, payload = {}) {
+    return request(`/submissions/${id}/resubmit`, {
+      method: 'POST',
+      body: payload,
+    });
+  },
+
+  async overrideSubmission(id, status, reason) {
+    return request(`/submissions/${id}/override`, {
+      method: 'POST',
+      body: { status, reason },
+    });
+  },
+
+  async listAuditLogs(limit = 50, department = '') {
+    const params = { limit };
+    if (department) params.department = department;
+    const qs = new URLSearchParams(params).toString();
+    return request(`/submissions/audit-logs/all${qs ? '?' + qs : ''}`);
+  },
+
+  // ══════════════════════════════════════════════════════════
+  // ACADEMIC & SUBJECT ASSIGNMENTS
+  // ══════════════════════════════════════════════════════════
+
+  async assignSubject(subjectId, payload) {
+    return request(`/subjects/${subjectId}/assignments`, {
+      method: 'POST',
+      body: payload,
+    });
+  },
+
+  async getFacultySubjects(facultyId) {
+    return request(`/faculty/${facultyId}/subjects`);
+  },
+
+  async listStudents(department = '', academicYearId = '') {
+    const params = {};
+    if (department) params.department = department;
+    if (academicYearId) params.academic_year_id = academicYearId;
+    const qs = new URLSearchParams(params).toString();
+    return request(`/students${qs ? '?' + qs : ''}`);
+  },
+
+  async createStudent(payload) {
+    return request('/students', { method: 'POST', body: payload });
+  },
+
+  async recordStudentMarks(subjectId, payload) {
+    return request(`/subjects/${subjectId}/marks`, { method: 'POST', body: payload });
+  },
+
+  async listStudentMarks(subjectId, schemeId = '') {
+    const qs = schemeId ? `?assessment_scheme_id=${schemeId}` : '';
+    return request(`/subjects/${subjectId}/marks${qs}`);
+  },
+
+  async recordAttendance(subjectId, payload) {
+    return request(`/subjects/${subjectId}/attendance`, { method: 'POST', body: payload });
+  },
+
+
 }; // end api
 
 export default api;

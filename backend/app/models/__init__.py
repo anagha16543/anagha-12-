@@ -66,6 +66,12 @@ from app.models.phase5 import (
     Notification,
     NotificationType,
 )
+# Workflow & Audit
+from app.models.workflow import (
+    AuditLog,
+    SubmissionStatus,
+    WorkflowSubmission,
+)
 
 __all__ = [
     "Base",
@@ -123,5 +129,9 @@ __all__ = [
     "NotificationType",
     "BackupRecord",
     "BackupStatus",
+    # Workflow & Audit
+    "WorkflowSubmission",
+    "SubmissionStatus",
+    "AuditLog",
 ]
 

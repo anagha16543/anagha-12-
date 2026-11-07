@@ -357,7 +357,19 @@ export function getParam(name) {
 
 /** Navigate with optional delay (for transitions) */
 export function navigate(url, delay = 0) {
-  setTimeout(() => { window.location.href = url; }, delay);
+  let target = url;
+  if (window.location.protocol === 'file:') {
+    if (target.startsWith('/')) {
+      const depth = window.location.pathname.split('/').filter(Boolean).length - 1;
+      target = (depth > 0 ? '../'.repeat(depth) : './') + target.replace(/^\/+/, '');
+    }
+  } else {
+    // Over HTTP, ensure root-relative paths start with / so they resolve from site root
+    if (!target.startsWith('/') && !target.startsWith('http')) {
+      target = '/' + target;
+    }
+  }
+  setTimeout(() => { window.location.href = target; }, delay);
 }
 
 /** Floating label: mark input as has-value for CSS */
