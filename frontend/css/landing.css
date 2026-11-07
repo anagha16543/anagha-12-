@@ -863,3 +863,17 @@
   opacity: 1;
   box-shadow: 0 0 10px rgba(0, 245, 160, 0.5);
 }
+
+/* Hero text: bright white so it stays clear over the green wave (dark theme) */
+:root:not([data-theme="light"]) .hero-desc {
+  color: #ffffff;
+  text-shadow: 0 1px 12px rgba(0, 0, 0, 0.75), 0 0 2px rgba(0, 0, 0, 0.6);
+}
+:root:not([data-theme="light"]) .hero-title .gradient-text,
+:root:not([data-theme="light"]) .hero-title .text-roll.gradient-text .text-roll-char,
+:root:not([data-theme="light"]) .hero-title .text-roll.gradient-text .text-roll-char-in {
+  background: none;
+  -webkit-text-fill-color: #ffffff;
+  color: #ffffff;
+  text-shadow: 0 0 22px rgba(255, 255, 255, 0.35), 0 2px 14px rgba(0, 0, 0, 0.6);
+}

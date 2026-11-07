@@ -139,6 +139,9 @@
       // Soft ceiling clamp
       finalColor = clamp(finalColor, 0.0, 1.0);
 
+      // Dimmed so text on top stays clearly readable
+      finalColor *= 0.72;
+
       gl_FragColor = vec4(finalColor, 1.0);
     }
   `;
@@ -354,7 +357,7 @@
         }
 
         const grad = ctx.createLinearGradient(0, 0, w, h);
-        grad.addColorStop(0, 'rgba(0, 245, 160, 0.4)');
+        grad.addColorStop(0, 'rgba(0, 245, 160, 0.32)');
         grad.addColorStop(0.5, 'rgba(204, 255, 0, 0.85)');
         grad.addColorStop(1, 'rgba(5, 150, 105, 0.3)');
 
