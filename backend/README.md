@@ -28,7 +28,6 @@ REST API for the AI-Driven NBA Accreditation Readiness System, built with
 17. [Running tests](#running-tests)
 18. [Swagger documentation](#swagger-documentation)
 19. [Directory structure](#directory-structure)
-20. [Docker Compose](#docker-compose)
 21. [Phase 4 Completion Checklist](#phase-4-completion-checklist)
 22. [Phase 5 Completion Checklist](#phase-5-completion-checklist)
 23. [Phase 5 Final Report](#phase-5-final-report)
@@ -43,7 +42,7 @@ REST API for the AI-Driven NBA Accreditation Readiness System, built with
 | PostgreSQL | 14+ with pgvector | Vector search enabled via `CREATE EXTENSION vector` |
 | pip | 23+ | Bundled with Python |
 | Tesseract OCR | 5.x | Optional; needed for scanned PDF/image OCR fallback |
-| Docker + Compose | — | Optional; for containerised workflow |
+
 
 ---
 
@@ -563,7 +562,6 @@ backend/
 │   └── test_nba_2026_rules.py           # 32 tests (Phase 6 Deterministic NBA 2026 Rules & Audit Corrections)
 ├── .env.example              # Environment variable template
 ├── alembic.ini               # Alembic configuration
-├── Dockerfile                # Production container image
 ├── pytest.ini                # Pytest configuration
 ├── README.md                 # Documentation
 └── requirements.txt          # Python dependencies

@@ -27,7 +27,7 @@ This system keeps a live digital copy of the department (a "digital twin") and c
 
 # 2. Start the system
 
-You need Docker Desktop (for the database) and Python 3.11+.
+You need Python 3.11+ and PostgreSQL 14+ with the **pgvector** extension (macOS: `brew install postgresql@17 pgvector && brew services start postgresql@17`, then `createdb nba_readiness`). No Docker is needed.
 
 First time only:
 
@@ -50,7 +50,7 @@ Then open **http://127.0.0.1:5500** in your browser.
 | Website | http://127.0.0.1:5500 | What users see |
 | Backend API | http://127.0.0.1:8000/docs | Interactive API documentation |
 | AI service | http://127.0.0.1:8001 | Optional AI agents |
-| Database | port 5433 | PostgreSQL with pgvector (searchable document text) |
+| Database | port 5432 (or your DATABASE_URL) | PostgreSQL with pgvector (searchable document text) |
 
 ## Sample logins (all passwords `password123`)
 
@@ -371,7 +371,7 @@ Each run is stored as evaluation history, so you can compare today with last mon
 |---|---|
 | Page loads but data is empty or login fails | Open the site as `127.0.0.1:5500`, not `localhost` |
 | "Failed to fetch" | Check the backend runs: open http://127.0.0.1:8000/api/v1/health |
-| Database errors | Make sure Docker Desktop is running; `docker ps` should list `nba-pg` |
+| Database errors | Make sure PostgreSQL is running and `DATABASE_URL` in `backend/.env` is correct; `psql "$DATABASE_URL" -c 'select 1'` should work |
 | New faculty cannot sign in | An admin or HOD must approve them first |
 | Evaluate says *missing context keys* | Click **Inputs** and fill the listed fields |
 | Upload rejected | Use PDF, DOCX, XLSX, CSV, TXT, PNG or JPEG under 25 MB; renamed files are caught |
